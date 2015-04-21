@@ -13,21 +13,38 @@ class DegreeDays(Estimator):
         return [
             #'Ds', # start date (Julian)
             'Tb', # base temperature (C)
-            'Rd', # GDD accumulation requirement
+            'Rd', # accumulation requirement
         ]
 
     @property
     def default_options(self):
         return {
-            'coeff0': (4.5, 250),
-            'grid': (slice(2, 7, 0.1), slice(200, 400, 5)),
+            'coeff0': (5, 800),
+            'grid': (slice(3, 8, 0.1), slice(500, 1000, 5)),
         }
 
-    def _estimate(self, year, met, coeff):
+    def _calculate(self, year, met, coeff):
         tbase = coeff['Tb']
         tdd = (met.tavg - tbase).clip(lower=0) / 24.
+        return tdd
+
+    def _estimate(self, year, met, coeff):
+        tdd = self._calculate(year, met, coeff)
         aux = pd.concat({
             'Dd': tdd,
             'Cd': tdd.cumsum(),
         }, axis=1)
         return self._match(aux['Cd'], coeff['Rd'])
+
+
+class GrowingDegreeDay(DegreeDays):
+    @property
+    def name(self):
+        return 'GDD'
+
+    def _calculate(self, year, met, coeff):
+        T = met.tavg.resample('D', how={'tmax': np.max, 'tmin': np.min})
+        tbase = coeff['Tb']
+        tdd = ((T.tmax + T.tmin) / 2. - tbase).clip(lower=0)
+        tdd = tdd.resample('H', fill_method='ffill') / 24.
+        return tdd
