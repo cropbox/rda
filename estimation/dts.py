@@ -31,8 +31,9 @@ class Dts(Estimator):
         R = 8.314 # gas constant (J K-1 mol-1)
         dts = np.exp(Ea * 1000. * (T - Ts) / (R * T * Ts))
         #dts = dts.resample('H', fill_method='ffill')
+        dts = dts / 24.
         aux = pd.concat({
             'Dd': dts,
-            'Cd': dts.cumsum() / 24.,
+            'Cd': dts.cumsum(),
         }, axis=1)
         return self._match(aux['Cd'], coeff['Rd'])
