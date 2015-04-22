@@ -146,6 +146,15 @@ class Estimator(object):
                 },
             )
             coeff = self._dictify(res.x)
+        elif opts['method'] == 'global':
+            res = scipy.optimize.basinhopping(
+                func=cost,
+                x0=self._listify(self._normalize(opts['coeff0'])),
+                minimizer_kwargs={
+                    'method': 'L-BFGS-B',
+                },
+            )
+            coeff = res.x
         elif opts['method'] == 'brute':
             res = scipy.optimize.brute(
                 func=cost,
