@@ -129,27 +129,15 @@ class Estimator(object):
 
     # calibration
     def _calibrate(self, years, **kwargs):
-        def cost(year, coeff):
-            try:
-                est = self.estimate(year, coeff)
-                obs = self.observe(year)
-                hour = 60*60
-                return ((est - obs).total_seconds() / hour)**2
-                #return (est - obs).days**2
-            except EstimationError:
-                return (24*365)**2
-                #return 365**2
-                #return np.inf
-
-        def costs(x, *args):
-            return sum([cost(y, x) for y in years])
+        def cost(x, *args):
+            return self.error(years, x, 'rmse')
 
         opts = self.default_options.copy()
         opts.update(kwargs)
 
         if not opts.has_key('method') or opts['method'] == 'minimize':
             res = scipy.optimize.minimize(
-                fun=costs,
+                fun=cost,
                 x0=self._listify(self._normalize(opts['coeff0'])),
                 args=(),
                 method='Nelder-Mead',
@@ -160,7 +148,7 @@ class Estimator(object):
             coeff = self._dictify(res.x)
         elif opts['method'] == 'brute':
             res = scipy.optimize.brute(
-                func=costs,
+                func=cost,
                 ranges=opts['grid'],
                 args=(),
                 full_output=True,
@@ -176,3 +164,29 @@ class Estimator(object):
         years = self._years(years)
         self._coeff = self._calibrate(years, **kwargs)
         return self._coeff
+
+    # validation
+    def residual(self, year, coeff=None):
+        try:
+            est = self.estimate(year, coeff)
+            obs = self.observe(year)
+            sec_per_day = 60*60*24.
+            return (est - obs).total_seconds() / sec_per_day
+            #return (est - obs).days
+        except EstimationError:
+            return 365.
+            #return np.inf
+
+    def error(self, years, coeff=None, how='rmse'):
+        years = self._years(years)
+        e = np.array([self.residual(y, coeff) for y in years])
+
+        how = how.lower()
+        if how == 'residual':
+            return e
+        elif how == 'rmse':
+            return np.sqrt(np.mean(e**2))
+        elif how == 'mae':
+            return np.mean(e)
+        elif how == 'xe':
+            return np.max(e)
