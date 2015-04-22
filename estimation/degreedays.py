@@ -19,7 +19,7 @@ class DegreeDays(Estimator):
     @property
     def default_options(self):
         return {
-            'coeff0': (5, 800),
+            'coeff0': (4.5, 250),
             'grid': (slice(3, 8, 0.1), slice(500, 1000, 5)),
         }
 
