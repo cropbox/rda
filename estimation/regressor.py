@@ -15,14 +15,14 @@ class MonthlyRegressor(Estimator):
 
     @property
     def default_options(self):
-        return {
-            'month': 0,
-        }
+        return {}
+
+    def setup(self):
+        self.month = 0
 
     def _calibrate(self, years, **kwargs):
         opts = self.default_options.copy()
         opts.update(kwargs)
-        self.month = opts['month']
 
         met = pd.concat([self._mets.loc['%d' % y] for y in years])
         T = met.tavg.resample('M')
@@ -43,16 +43,10 @@ class MonthlyRegressor(Estimator):
 
 
 class February(MonthlyRegressor):
-    @property
-    def default_options(self):
-        return {
-            'month': 2,
-        }
+    def setup(self):
+        self.month = 2
 
 
 class March(MonthlyRegressor):
-    @property
-    def default_options(self):
-        return {
-            'month': 3,
-        }
+    def setup(self):
+        self.month = 3

@@ -11,6 +11,7 @@ class Estimator(object):
         self._mets = mets
         self._obss = obss
         self._coeff = coeff
+        self.setup()
 
     @property
     def name(self):
@@ -28,6 +29,9 @@ class Estimator(object):
             'grid': (),
             'fixed_coeff': {}
         }
+
+    def setup(self):
+        pass
 
     # date range
     def start_date(self, year, coeff):
