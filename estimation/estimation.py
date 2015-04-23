@@ -189,7 +189,11 @@ class Estimator(object):
                 coeff = x
             return self.error(years, 'rmse', coeff)
 
-        if not opts.has_key('method') or 'nelder-mead'.startswith(opts['method']):
+        # new default to 'differential evolution'
+        if not opts.has_key('method'):
+            opts['method'] = 'evolution'
+
+        if 'nelder-mead'.startswith(opts['method']):
             res = scipy.optimize.minimize(
                 fun=cost,
                 x0=x0,
