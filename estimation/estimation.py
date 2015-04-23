@@ -233,9 +233,9 @@ class Estimator(object):
         coeff = self._dictify(res, coeff_names, fixed_coeff)
         return coeff
 
-    def calibrate(self, years=None, **kwargs):
+    def calibrate(self, years=None, disp=True, **kwargs):
         years = self._years(years)
-        self._coeff = self._calibrate(years, **kwargs)
+        self._coeff = self._calibrate(years, disp, **kwargs)
         return self._coeff
 
     # validation

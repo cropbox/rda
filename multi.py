@@ -18,7 +18,7 @@ def calibrate(model, years, n=3, **kwargs):
     years = model._years(years)
     #yearss = itertools.combinations(years, n)
     yearss = sum([[list(x) for x in list(itertools.combinations(years, len(years)-i))] for i in range(n)], [])
-    argss = [(model, [years], kwargs) for years in yearss]
+    argss = [(model, [years, False], kwargs) for years in yearss]
     coeffs = pool.map(_calibrate_func, argss)
     model._coeffs = coeffs
 
