@@ -191,13 +191,13 @@ def main():
 
     # Apple - Fuji
     cultivar = '11 Fuji, Red Sport # 2'
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=4)
+    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     export_single_model(models, export_years).to_csv('apple_fuji.csv')
     export_multi_model(models, export_years).to_csv('apple_fuji_multi.csv')
 
     # Apple - Honeycrisp
     cultivar = '16 Honeycrisp/M.9'
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=4)
+    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     export_single_model(models, export_years).to_csv('apple_honeycrisp.csv')
     export_multi_model(models, export_years).to_csv('apple_honeycrisp_multi.csv')
 

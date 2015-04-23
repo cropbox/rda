@@ -13,7 +13,7 @@ def _calibrate_func(x):
     model, args, kwargs = x
     return model.calibrate(*args, **kwargs)
 
-def calibrate(model, years, n=3, **kwargs):
+def calibrate(model, years, n=2, **kwargs):
     pool = mp.Pool()
     years = model._years(years)
     #yearss = itertools.combinations(years, n)
