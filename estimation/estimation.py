@@ -112,7 +112,9 @@ class Estimator(object):
         try:
             met = self._clip(year, coeff)
         except:
-            return None
+            #FIXME DC weather data missing for 2007-02
+            #return None
+            raise EstimationError("weather cannot be clipped for '{}'".format(year))
         return self._estimate(year, met, coeff).to_datetime()
 
     def estimate_multi(self, year, coeffs=None):
