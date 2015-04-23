@@ -11,6 +11,7 @@ class ChillDays(Estimator):
     @property
     def coeff_names(self):
         return [
+            'Ds', # start date (Julian)
             'Tc', # base temperature (C)
             'Rc', # chilling requirement
             'Rh', # heating requirement
@@ -19,8 +20,12 @@ class ChillDays(Estimator):
     @property
     def default_options(self):
         return {
-            'coeff0': (4.5, -200, 300),
-            'grid': (slice(2, 7, 0.1), slice(-300, -100, 5), slice(200, 400, 5)),
+            #'coeff0': (4.5, -200, 300),
+            #'bounds': ((0, 10), (0, 10), (-400, -100), (100, 400)),
+            #'grid': (slice(2, 7, 0.1), slice(-300, -100, 5), slice(200, 400, 5)),
+            'coeff0': (-92, 4.5, -200, 300),
+            'bounds': ((-100, 100), (0, 10), (-400, -0), (0, 400)),
+            'grid': (slice(-100, 100, 1), slice(2, 7, 0.1), slice(-300, -100, 5), slice(200, 400, 5)),
         }
 
     def _estimate(self, year, met, coeff):

@@ -24,13 +24,17 @@ class Estimator(object):
     def default_options(self):
         return {
             'coeff0': {},
+            'bounds': (),
             'grid': (),
+            'fixed_coeff': {}
         }
 
     # date range
     def start_date(self, year, coeff):
         try:
-            return datetime.datetime.strptime('{}-{}'.format(year, int(coeff['Ds'])), '%Y-%j')
+            #return datetime.datetime.strptime('{}-{}'.format(year, int(coeff['Ds'])), '%Y-%j')
+            jday = int(coeff['Ds']) - 1
+            return datetime.date(year, 1, 1) + datetime.timedelta(days=jday)
         except:
             return datetime.date(year-1, 10, 1)
 
@@ -60,11 +64,23 @@ class Estimator(object):
             return years
 
     # coefficient
-    def _listify(self, coeff):
-        return list(coeff[k] for k in self.coeff_names)
+    def _listify(self, coeff, keys=None):
+        if keys is None:
+            keys = self.coeff_names
+        if type(coeff) is list:
+            return list(coeff)
+        else:
+            return list(coeff[k] for k in keys)
 
-    def _dictify(self, x):
-        return dict(zip(self.coeff_names, x))
+    def _dictify(self, values, keys=None, update={}):
+        if keys is None:
+            keys = self.coeff_names
+        if type(values) is dict:
+            d = dict(values)
+        else:
+            d = dict(zip(keys, values))
+        d.update(update)
+        return d
 
     def _normalize(self, coeff):
         if type(coeff) is dict:
@@ -128,45 +144,78 @@ class Estimator(object):
         return self._obss.loc[year].to_datetime().replace(hour=12)
 
     # calibration
-    def _calibrate(self, years, **kwargs):
-        def cost(x, *args):
-            return self.error(years, x, 'rmse')
-
-        opts = self.default_options.copy()
+    def _calibrate(self, years, disp=True, **kwargs):
+        opts = dict(self.default_options)
         opts.update(kwargs)
 
-        if not opts.has_key('method') or opts['method'] == 'minimize':
+        try:
+            fixed_coeff = opts['fixed_coeff']
+        except:
+            fixed_coeff = {}
+        coeff0 = self._dictify(opts['coeff0'])
+        coeff_names = list(self.coeff_names)
+        fixed_coeff_index = []
+        for k in fixed_coeff:
+            coeff0.pop(k)
+            coeff_names.remove(k)
+            fixed_coeff_index.append(self.coeff_names.index(k))
+
+        x0 = self._listify(coeff0, coeff_names)
+        args = (coeff_names, fixed_coeff)
+        bounds = np.delete(opts['bounds'], fixed_coeff_index, axis=0)
+        ranges = np.delete(opts['grid'], fixed_coeff_index, axis=0)
+
+        def cost(x, *args):
+            try:
+                coeff_names, fixed_coeff = args
+                coeff = self._dictify(x, coeff_names)
+                coeff.update(fixed_coeff)
+            except:
+                coeff = x
+            return self.error(years, 'rmse', coeff)
+
+        if not opts.has_key('method') or 'nelder-mead'.startswith(opts['method']):
             res = scipy.optimize.minimize(
                 fun=cost,
-                x0=self._listify(self._normalize(opts['coeff0'])),
-                args=(),
+                x0=x0,
+                args=args,
                 method='Nelder-Mead',
                 options={
-                    'disp': False,
+                    'disp': disp,
                 },
-            )
-            coeff = self._dictify(res.x)
-        elif opts['method'] == 'global':
+            ).x
+        elif 'basinhopping'.startswith(opts['method']):
             res = scipy.optimize.basinhopping(
                 func=cost,
-                x0=self._listify(self._normalize(opts['coeff0'])),
+                x0=x0,
+                niter=100,
                 minimizer_kwargs={
                     'method': 'L-BFGS-B',
+                    'bounds': bounds,
+                    #'method': 'Nelder-Mead',
+                    'args': args,
                 },
-            )
-            coeff = res.x
-        elif opts['method'] == 'brute':
+                disp=disp,
+            ).x
+        elif 'evolution'.startswith(opts['method']):
+            res = scipy.optimize.differential_evolution(
+                func=cost,
+                bounds=bounds,
+                args=args,
+                disp=disp,
+            ).x
+        elif 'brute'.startswith(opts['method']):
             res = scipy.optimize.brute(
                 func=cost,
-                ranges=opts['grid'],
-                args=(),
+                ranges=ranges,
+                args=args,
                 full_output=True,
                 finish=scipy.optimize.fmin,
-                disp=True,
-            )
-            coeff = self._dictify(res[0])
+                disp=disp,
+            )[0]
         else:
             raise NameError("method '{}' is not defined".format(opts['method']))
+        coeff = self._dictify(res, coeff_names, fixed_coeff)
         return coeff
 
     def calibrate(self, years=None, **kwargs):
@@ -186,7 +235,7 @@ class Estimator(object):
             return 365.
             #return np.inf
 
-    def error(self, years, coeff=None, how='rmse'):
+    def error(self, years, how='rmse', coeff=None):
         years = self._years(years)
         e = np.array([self.residual(y, coeff) for y in years])
 

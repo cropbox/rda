@@ -11,7 +11,7 @@ class Dts(Estimator):
     @property
     def coeff_names(self):
         return [
-            #'Ds', # start date (Julian)
+            'Ds', # start date (Julian)
             'Ea', # temperature sensitivity rate (kJ mol-1)
             'Rd', # standard temperature accumulation requirement
         ]
@@ -19,8 +19,12 @@ class Dts(Estimator):
     @property
     def default_options(self):
         return {
-            'coeff0': (20, 200),
-            'grid': (slice(10, 100, 1), slice(100, 300, 1)),
+            #'coeff0': (20, 200),
+            #'bounds': ((0, 100), (0, 500)),
+            #'grid': (slice(10, 100, 1), slice(100, 300, 1)),
+            'coeff0': (1, 20, 200),
+            'bounds': ((-100, 100), (0, 200), (0, 500)),
+            'grid': (slice(-100, 100, 1), slice(0, 200, 1), slice(0, 500, 1)),
         }
 
     def _estimate(self, year, met, coeff):
