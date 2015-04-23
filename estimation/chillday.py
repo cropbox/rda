@@ -3,10 +3,10 @@ from estimation import Estimator
 import numpy as np
 import pandas as pd
 
-class ChillDays(Estimator):
+class ChillDay(Estimator):
     @property
     def name(self):
-        return 'ChillDays'
+        return 'ChillDay'
 
     @property
     def coeff_names(self):

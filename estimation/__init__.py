@@ -1,8 +1,8 @@
-#__all__ = ['estimation', 'degreedays', 'chilldays', 'betafunc', 'dts', 'regressor']
+#__all__ = ['estimation', 'degreeday', 'chillday', 'betafunc', 'dts', 'regressor']
 
 from estimation import Estimator
-from degreedays import DegreeDays, GrowingDegreeDay
-from chilldays import ChillDays
+from degreeday import DegreeDay, GrowingDegreeDay
+from chillday import ChillDay
 from betafunc import BetaFunc
 from dts import Dts
 from regressor import February, March

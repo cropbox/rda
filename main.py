@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 #############
 
 DEFAULT_MODELS = [
-    DegreeDays,
-    ChillDays,
+    GrowingDegreeDay,
+    ChillDay,
     BetaFunc,
     Dts,
 ]
@@ -170,7 +170,7 @@ def main():
     # Cherry - Yoshino
     cultivar = 'Yoshino'
     years = (1994, 2014)
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[March])
+    models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
     export_single_model(models, export_years).to_csv('cherry_yoshino.csv')
     export_multi_model(models, export_years).to_csv('cherry_yoshino_multi.csv')
 

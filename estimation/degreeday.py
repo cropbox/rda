@@ -3,10 +3,10 @@ from estimation import Estimator
 import numpy as np
 import pandas as pd
 
-class DegreeDays(Estimator):
+class DegreeDay(Estimator):
     @property
     def name(self):
-        return 'DegreeDays'
+        return 'DegreeDay'
 
     @property
     def coeff_names(self):
@@ -41,7 +41,7 @@ class DegreeDays(Estimator):
         return self._match(aux['Cd'], coeff['Rd'])
 
 
-class GrowingDegreeDay(DegreeDays):
+class GrowingDegreeDay(DegreeDay):
     @property
     def name(self):
         return 'GDD'
