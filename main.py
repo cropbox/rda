@@ -58,7 +58,7 @@ def plot_single_model(models, years, show_as_diff=False):
         return np.array([julian(t) for t in obss[x]])
 
     def y_est(m):
-        return np.array([julian(m.estimate(t)) for t in x])
+        return np.array([julian(t) for t in m.estimates(x)])
 
     # for regular plot
     def plot_obs():
@@ -90,7 +90,7 @@ def export_single_model(models, years):
     x = models[0]._years(years)
     df = pd.concat(
         [models[0]._obss[x]] +
-        [pd.Series([m.estimate(t) for t in x], index=x) for m in models],
+        [pd.Series(m.estimates(x), index=x) for m in models],
         keys=['Obs'] + [m.name for m in models],
         axis=1
     )

@@ -117,6 +117,15 @@ class Estimator(object):
             raise EstimationError("weather cannot be clipped for '{}'".format(year))
         return self._estimate(year, met, coeff).to_datetime()
 
+    def estimates(self, years, coeff=None):
+        def estimate_safely(y):
+            try:
+                return self.estimate(y, coeff)
+            except:
+                return None
+        years = self._years(years)
+        return [estimate_safely(y) for y in years]
+
     def estimate_multi(self, year, coeffs=None):
         if coeffs is None:
             coeffs = self._coeffs
