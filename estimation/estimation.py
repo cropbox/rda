@@ -33,6 +33,10 @@ class Estimator(object):
             'fixed_coeff': {}
         }
 
+    def options(self, **kwargs):
+        opts = self.default_options.copy()
+        opts.update(kwargs)
+        return opts
 
     # date range
     def start_date(self, year, coeff):
@@ -161,8 +165,7 @@ class Estimator(object):
 
     # calibration
     def _calibrate(self, years, disp=True, **kwargs):
-        opts = dict(self.default_options)
-        opts.update(kwargs)
+        opts = self.options(**kwargs)
 
         try:
             fixed_coeff = opts['fixed_coeff']

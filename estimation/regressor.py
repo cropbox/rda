@@ -21,8 +21,7 @@ class MonthlyRegressor(Estimator):
         return {}
 
     def _calibrate(self, years, **kwargs):
-        opts = self.default_options.copy()
-        opts.update(kwargs)
+        opts = self.options(**kwargs)
 
         met = pd.concat([self._mets.loc['%d' % y] for y in years])
         T = met.tavg.resample('M')
