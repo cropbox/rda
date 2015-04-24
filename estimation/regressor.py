@@ -30,7 +30,7 @@ class MonthlyRegressor(Estimator):
         Y = self._obss.loc[years].apply(lambda x: int(x.strftime('%j')))
         X.index = Y.index
         m = sm.OLS(Y, X).fit()
-        coeff = dict(zip(['b0', 'b1'], m.params))
+        coeff = self._dictify(m.params)
         return coeff
 
     def _estimate(self, year, met, coeff):
