@@ -6,6 +6,9 @@ import statsmodels.api as sm
 import datetime
 
 class MonthlyRegressor(Estimator):
+    def setup(self):
+        self.month = 0
+
     @property
     def coeff_names(self):
         return [
@@ -16,9 +19,6 @@ class MonthlyRegressor(Estimator):
     @property
     def default_options(self):
         return {}
-
-    def setup(self):
-        self.month = 0
 
     def _calibrate(self, years, **kwargs):
         opts = self.default_options.copy()

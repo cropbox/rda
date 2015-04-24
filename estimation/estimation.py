@@ -13,6 +13,9 @@ class Estimator(object):
         self._coeff = coeff
         self.setup()
 
+    def setup(self):
+        pass
+
     @property
     def name(self):
         return str(self.__class__.__name__)
@@ -30,8 +33,6 @@ class Estimator(object):
             'fixed_coeff': {}
         }
 
-    def setup(self):
-        pass
 
     # date range
     def start_date(self, year, coeff):
