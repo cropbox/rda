@@ -20,7 +20,7 @@ class MonthlyRegressor(Estimator):
     def default_options(self):
         return {}
 
-    def _calibrate(self, years, **kwargs):
+    def _calibrate(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)
 
         met = pd.concat([self._mets.loc['%d' % y] for y in years])
@@ -30,6 +30,10 @@ class MonthlyRegressor(Estimator):
         Y = self._obss.loc[years].apply(lambda x: int(x.strftime('%j')))
         X.index = Y.index
         m = sm.OLS(Y, X).fit()
+
+        if disp:
+            print m.summary()
+
         coeff = self._dictify(m.params)
         return coeff
 
