@@ -163,6 +163,15 @@ class Estimator(object):
     def observe(self, year):
         return self._obss.loc[year].to_datetime().replace(hour=12)
 
+    def observes(self, years):
+        def observe_safely(y):
+            try:
+                return self.observe(y)
+            except:
+                return None
+        years = self._years(years)
+        return [observe_safely(y) for y in years]
+
     # calibration
     def _calibrate(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)
