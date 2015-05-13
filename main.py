@@ -115,6 +115,21 @@ def export_single_model(models, years):
     df.index.name = 'year'
     return df
 
+def show_single_summary(models, years):
+    print " * Years: {}".format(years)
+    print " * Parameters"
+    for m in models:
+        print "  - {}: {}".format(m.name, m._coeff)
+    print " * RMSE"
+    for m in models:
+        print "  - {}: {}".format(m.name, m.error(years, "rmse"))
+    print " * MAE"
+    for m in models:
+        print "  - {}: {}".format(m.name, m.error(years, "mae"))
+    print " * XE"
+    for m in models:
+        print "  - {}: {}".format(m.name, m.error(years, "xe"))
+
 ###############
 # Multi Model #
 ###############
@@ -189,6 +204,7 @@ def main():
     cultivar = 'Yoshino'
     years = (1994, 2014)
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+    show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('cherry_yoshino.csv')
     export_multi_model(models, export_years).to_csv('cherry_yoshino_multi.csv')
     plot_single_model(models, years, True, 'cherry_yoshino.png')
@@ -197,6 +213,7 @@ def main():
     cultivar = 'Kwanzan'
     years = (1991, 2011)
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[March])
+    show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('cherry_kwanzan.csv')
     export_multi_model(models, export_years).to_csv('cherry_kwanzan_multi.csv')
     plot_single_model(models, years, True, 'cherry_kwanzan.png')
@@ -212,6 +229,7 @@ def main():
     # Apple - Fuji
     cultivar = '11 Fuji, Red Sport # 2'
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('apple_fuji.csv')
     export_multi_model(models, export_years).to_csv('apple_fuji_multi.csv')
     plot_single_model(models, years, True, 'apple_fuji.png')
@@ -219,6 +237,7 @@ def main():
     # Apple - Honeycrisp
     cultivar = '16 Honeycrisp/M.9'
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('apple_honeycrisp.csv')
     export_multi_model(models, export_years).to_csv('apple_honeycrisp_multi.csv')
     plot_single_model(models, years, True, 'apple_honeycrisp.png')
