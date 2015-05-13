@@ -246,6 +246,40 @@ def main():
     export_multi_model(models, export_years).to_csv('apple_honeycrisp_multi.csv')
     plot_single_model(models, years, True, 'apple_honeycrisp.png')
 
+    # Korea (from Dr. Jina Hur)
+    weather_filename = 'data/korea_jina.pkl'
+    location = 295 # Namhae
+    stage = 'FFD'
+    years = (1998, 2008)
+    export_years = (1982, 2010)
+
+    # Peach (Korean)
+    observation_filename = 'data/peach_korea.pkl'
+    cultivar = 'Korean Peach'
+    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    show_single_summary(models, years)
+    export_single_model(models, export_years).to_csv('peach_namhae.csv')
+    export_multi_model(models, export_years).to_csv('peach_namhae_multi.csv')
+    plot_single_model(models, years, True, 'peach_namhae.png')
+
+    # Pear (Korean)
+    observation_filename = 'data/pear_korea.pkl'
+    cultivar = 'Korean Pear'
+    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    show_single_summary(models, years)
+    export_single_model(models, export_years).to_csv('pear_namhae.csv')
+    export_multi_model(models, export_years).to_csv('pear_namhae_multi.csv')
+    plot_single_model(models, years, True, 'pear_namhae.png')
+
+    # Cherry (Korean) (from Dr. Uran Chung)
+    weather_filename = 'data/korea_uran.pkl'
+    location = 184 # Jeju
+    observation_filename = 'data/cherry_korea.pkl'
+    cultivar = 'Korean Cherry'
+    stage = 'Full Bloom'
+    years = (1984, 1994)
+    export_years = (1984, 2004)
+
 if __name__ == '__main__':
     main()
     #df.xs('DegreeDays', level='model')
