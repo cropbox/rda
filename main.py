@@ -29,7 +29,6 @@ def run(weather_filename, location, observation_filename, cultivar, stage, years
 
     # calibration
     for m in models:
-        print m
         #m.calibrate(years)
         #multi.calibrate(m, years)
         multi.preset(m, location, cultivar, stage, years, n)
