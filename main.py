@@ -279,6 +279,11 @@ def main():
     stage = 'Full Bloom'
     years = (1984, 1994)
     export_years = (1984, 2004)
+    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    show_single_summary(models, years)
+    export_single_model(models, export_years).to_csv('cherry_jeju.csv')
+    export_multi_model(models, export_years).to_csv('cherry_jeju_multi.csv')
+    plot_single_model(models, years, True, 'cherry_jeju.png')
 
 if __name__ == '__main__':
     main()
