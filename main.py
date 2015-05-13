@@ -35,6 +35,17 @@ def run(weather_filename, location, observation_filename, cultivar, stage, years
     # single model plot
     #plot_single_model(models, years)
     #plot_single_model(models, years, show_as_diff=True)
+
+    # ensemble test
+    e1 = Ensemble(mets, obss)
+    e1.use(models, 'Ensemble')
+
+    e2 = Ensemble(mets, obss)
+    e2.use(models, 'EnsembleW')
+    e2.calibrate(years)
+
+    models = models + [e1, e2]
+
     return models
 
 ################
