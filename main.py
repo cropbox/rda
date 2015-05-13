@@ -21,7 +21,11 @@ def run(weather_filename, location, observation_filename, cultivar, stage, years
     mets = pd.read_pickle(weather_filename).loc[location]
 
     # observation
-    obss = pd.read_pickle(observation_filename).loc[cultivar][stage]
+    obsdf = pd.read_pickle(observation_filename)
+    #HACK: some local datasets missing station code
+    if 'station' in obsdf.index.names:
+        obsdf = obsdf.loc[location]
+    obss = obsdf.loc[cultivar][stage]
 
     # models
     models = [m(mets, obss) for m in MODELS]
