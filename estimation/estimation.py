@@ -280,10 +280,6 @@ class Estimator(object):
         years = self._years(years)
         e = np.array([self.residual(y, coeff) for y in years])
 
-        est_hat = np.array([int(self.observe(y).strftime('%j')) for y in years]).mean()
-        d_est = np.array([self._diff(self.estimate(y, coeff), est_hat, y) for y in years])
-        d_obs = np.array([self._diff(self.observe(y), est_hat, y) for y in years])
-
         how = how.lower()
         if how == 'e':
             return e
@@ -295,7 +291,12 @@ class Estimator(object):
             return np.mean(np.abs(e))
         elif how == 'xe':
             return np.max(e)
-        elif how == 'ef':
+
+        est_hat = np.array([int(self.observe(y).strftime('%j')) for y in years]).mean()
+        d_est = np.array([self._diff(self.estimate(y, coeff), est_hat, y) for y in years])
+        d_obs = np.array([self._diff(self.observe(y), est_hat, y) for y in years])
+
+        if how == 'ef':
             return 1. - np.sum(e**2) / np.sum(d_obs**2)
         elif how == 'd':
             return 1. - np.sum(e**2) / np.sum((np.abs(d_est) + np.abs(d_obs))**2)
