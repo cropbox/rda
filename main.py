@@ -212,7 +212,7 @@ def main():
     # Cherry - Yoshino
     cultivar = 'Kwanzan'
     years = (1991, 2011)
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[March])
+    models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('cherry_kwanzan.csv')
     export_multi_model(models, export_years).to_csv('cherry_kwanzan_multi.csv')
