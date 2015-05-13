@@ -265,16 +265,16 @@ class Estimator(object):
                 return (t - datetime.datetime(year, 1, 1)).total_seconds() / sec_per_day
             else:
                 return t
+        return jday(t0) - jday(t1)
+
+    def residual(self, year, coeff=None):
         try:
-            return jday(t0) - jday(t1)
+            obs = self.observe(year)
+            est = self.estimate(year, coeff)
+            return self._diff(obs, est, year)
         except EstimationError:
             return 365.
             #return np.inf
-
-    def residual(self, year, coeff=None):
-        obs = self.observe(year)
-        est = self.estimate(year, coeff)
-        return self._diff(obs, est, year)
 
     def error(self, years, how='e', coeff=None):
         years = self._years(years)
