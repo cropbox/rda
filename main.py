@@ -319,7 +319,7 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
         for m in models:
             #m.calibrate(years)
             #multi.calibrate(m, years)
-            multi.preset(m, weather_loc, observation_loc, species, cultivar, stage, years, n)
+            multi.preset(m, weather_loc, observation_loc, species, c, stage, years, n)
         # single model plot
         #plot_single_model(models, years)
         #plot_single_model(models, years, show_as_diff=True)
