@@ -52,7 +52,7 @@ def run(weather_filename, location, observation_filename, cultivar, stage, years
 # Single Model #
 ################
 
-def plot_single_model(models, years, show_as_diff=False):
+def plot_single_model(models, years, show_as_diff=False, filename=None):
     #HACK use first model to populate observation data
     x = models[0]._years(years)
     obss = models[0]._obss
@@ -75,15 +75,19 @@ def plot_single_model(models, years, show_as_diff=False):
         plt.plot(x, y_obs(), label='Obs')
 
     def plot_est(m):
-        plt.plot(x, y_est(m), '.', label=m.name)
+        plt.plot(x, y_est(m), '.-', label=m.name)
 
     # for diff plot
     def plot_zero():
-        plt.axhline(0)
+        plt.axhline(0, color='grey', ls=':')
 
     def plot_diff(m):
         y = y_est(m) - y_obs()
-        plt.plot(x, y, '.', label=m.name)
+        ls = '--' if m.__class__ is Ensemble else '-'
+        lw = 3.0 if m.__class__ is Ensemble else 1.0
+        marker = 'o' if m.__class__ is Ensemble else '.'
+        alpha = 0.9 if m.__class__ is Ensemble else 0.5
+        plt.plot(x, y, ls=ls, lw=lw, marker=marker, alpha=alpha, label=m.name)
 
     if show_as_diff:
         plot_zero()
@@ -92,8 +96,12 @@ def plot_single_model(models, years, show_as_diff=False):
         plot_obs()
         [plot_est(m) for m in models]
 
+    #plt.legend(loc=9, bbox_to_anchor=(0.5, -0.1))
     plt.legend()
     plt.xlim(*years)
+
+    if filename:
+        plt.savefig(filename, dpi=300)
     plt.show()
 
 def export_single_model(models, years):
@@ -183,6 +191,7 @@ def main():
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
     export_single_model(models, export_years).to_csv('cherry_yoshino.csv')
     export_multi_model(models, export_years).to_csv('cherry_yoshino_multi.csv')
+    plot_single_model(models, years, True, 'cherry_yoshino.png')
 
     # Cherry - Yoshino
     cultivar = 'Kwanzan'
@@ -190,6 +199,7 @@ def main():
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[March])
     export_single_model(models, export_years).to_csv('cherry_kwanzan.csv')
     export_multi_model(models, export_years).to_csv('cherry_kwanzan_multi.csv')
+    plot_single_model(models, years, True, 'cherry_kwanzan.png')
 
     # Apple
     weather_filename = 'data/martinsburg.pkl'
@@ -204,12 +214,14 @@ def main():
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     export_single_model(models, export_years).to_csv('apple_fuji.csv')
     export_multi_model(models, export_years).to_csv('apple_fuji_multi.csv')
+    plot_single_model(models, years, True, 'apple_fuji.png')
 
     # Apple - Honeycrisp
     cultivar = '16 Honeycrisp/M.9'
     models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     export_single_model(models, export_years).to_csv('apple_honeycrisp.csv')
     export_multi_model(models, export_years).to_csv('apple_honeycrisp_multi.csv')
+    plot_single_model(models, years, True, 'apple_honeycrisp.png')
 
 if __name__ == '__main__':
     main()
