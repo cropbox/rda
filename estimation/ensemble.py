@@ -9,6 +9,14 @@ class Ensemble(Estimator):
     def setup(self):
         self.estimators = []
         self.n = 0
+        self.nick = None
+
+    @property
+    def name(self):
+        if self.nick:
+            return self.nick
+        else:
+            return super(Ensemble, self).name
 
     @property
     def coeff_names(self):
@@ -18,10 +26,11 @@ class Ensemble(Estimator):
     def default_options(self):
         return {}
 
-    def use(self, estimators):
+    def use(self, estimators, nick=None):
         self.estimators = estimators
         self.n = len(estimators)
         self._coeff = self.default_coeff()
+        self.nick = nick
 
     def default_coeff(self):
         return self._dictify(np.ones(self.n) / self.n)
