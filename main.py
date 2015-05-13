@@ -334,7 +334,7 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
 
         models = models + [e1, e2]
 
-        name = '{}_{}'.format(species, c)
+        name = '{}_{}'.format(species, multi._slugify(c))
         show_single_summary(models, years)
         export_single_model(models, export_years).to_csv('{}.csv'.format(name))
         export_multi_model(models, export_years).to_csv('{}_multi.csv'.format(name))
