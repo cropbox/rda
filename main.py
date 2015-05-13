@@ -5,9 +5,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#############
-# Model Run #
-#############
+from itertools import product
+
+##############
+# Model Init #
+##############
 
 DEFAULT_MODELS = [
     GrowingDegreeDay,
@@ -16,7 +18,7 @@ DEFAULT_MODELS = [
     Dts,
 ]
 
-def run(weather_filename, location, observation_filename, cultivar, stage, years, n=3, MODELS=DEFAULT_MODELS):
+def init(weather_filename, location, observation_filename, cultivar, stage, years, n=3, MODELS=DEFAULT_MODELS):
     # weather
     mets = pd.read_pickle(weather_filename).loc[location]
 
@@ -216,7 +218,7 @@ def main():
     # Cherry - Yoshino
     cultivar = 'Yoshino'
     years = (1994, 2014)
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+    models = init(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('cherry_yoshino.csv')
     export_multi_model(models, export_years).to_csv('cherry_yoshino_multi.csv')
@@ -225,7 +227,7 @@ def main():
     # Cherry - Yoshino
     cultivar = 'Kwanzan'
     years = (1991, 2011)
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+    models = init(weather_filename, location, observation_filename, cultivar, stage, years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('cherry_kwanzan.csv')
     export_multi_model(models, export_years).to_csv('cherry_kwanzan_multi.csv')
@@ -241,7 +243,7 @@ def main():
 
     # Apple - Fuji
     cultivar = '11 Fuji, Red Sport # 2'
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    models = init(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('apple_fuji.csv')
     export_multi_model(models, export_years).to_csv('apple_fuji_multi.csv')
@@ -249,7 +251,7 @@ def main():
 
     # Apple - Honeycrisp
     cultivar = '16 Honeycrisp/M.9'
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    models = init(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('apple_honeycrisp.csv')
     export_multi_model(models, export_years).to_csv('apple_honeycrisp_multi.csv')
@@ -265,7 +267,7 @@ def main():
     # Peach (Korean)
     observation_filename = 'data/peach_korea.pkl'
     cultivar = 'Korean Peach'
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    models = init(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('peach_namhae.csv')
     export_multi_model(models, export_years).to_csv('peach_namhae_multi.csv')
@@ -274,7 +276,7 @@ def main():
     # Pear (Korean)
     observation_filename = 'data/pear_korea.pkl'
     cultivar = 'Korean Pear'
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    models = init(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('pear_namhae.csv')
     export_multi_model(models, export_years).to_csv('pear_namhae_multi.csv')
@@ -288,7 +290,7 @@ def main():
     stage = 'Full Bloom'
     years = (1984, 1994)
     export_years = (1984, 2004)
-    models = run(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
+    models = init(weather_filename, location, observation_filename, cultivar, stage, years, n=3)
     show_single_summary(models, years)
     export_single_model(models, export_years).to_csv('cherry_jeju.csv')
     export_multi_model(models, export_years).to_csv('cherry_jeju_multi.csv')
