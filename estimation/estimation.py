@@ -274,7 +274,7 @@ class Estimator(object):
         est = self.estimate(year, coeff)
         return self._diff(obs, est, year)
 
-    def error(self, years, how='rmse', coeff=None):
+    def error(self, years, how='e', coeff=None):
         years = self._years(years)
         e = np.array([self.residual(y, coeff) for y in years])
 

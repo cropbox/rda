@@ -36,7 +36,7 @@ class Ensemble(Estimator):
         return self._dictify(np.ones(self.n) / self.n)
 
     def _calibrate(self, years, disp=True, **kwargs):
-        w = [1. / m.error(years) for m in self.estimators]
+        w = [1. / m.error(years, 'rmse') for m in self.estimators]
         w = w / sum(w)
         coeff = self._dictify(w)
         return coeff
