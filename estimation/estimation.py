@@ -256,27 +256,44 @@ class Estimator(object):
         return self._coeff
 
     # validation
-    def residual(self, year, coeff=None):
+    def _diff(self, t0, t1, year):
+        def jday(t):
+            if type(t) is datetime.datetime:
+                sec_per_day = 60*60*24.
+                return (t - datetime.datetime(year, 1, 1)).total_seconds() / sec_per_day
+            else:
+                return t
         try:
-            est = self.estimate(year, coeff)
-            obs = self.observe(year)
-            sec_per_day = 60*60*24.
-            return (est - obs).total_seconds() / sec_per_day
-            #return (est - obs).days
+            return jday(t0) - jday(t1)
         except EstimationError:
             return 365.
             #return np.inf
+
+    def residual(self, year, coeff=None):
+        obs = self.observe(year)
+        est = self.estimate(year, coeff)
+        return self._diff(obs, est, year)
 
     def error(self, years, how='rmse', coeff=None):
         years = self._years(years)
         e = np.array([self.residual(y, coeff) for y in years])
 
+        est_hat = np.array([int(self.observe(y).strftime('%j')) for y in years]).mean()
+        d_est = np.array([self._diff(self.estimate(y, coeff), est_hat, y) for y in years])
+        d_obs = np.array([self._diff(self.observe(y), est_hat, y) for y in years])
+
         how = how.lower()
-        if how == 'residual':
+        if how == 'e':
             return e
         elif how == 'rmse':
             return np.sqrt(np.mean(e**2))
-        elif how == 'mae':
+        elif how == 'me':
             return np.mean(e)
+        elif how == 'mae':
+            return np.mean(np.abs(e))
         elif how == 'xe':
             return np.max(e)
+        elif how == 'ef':
+            return 1. - np.sum(e**2) / np.sum(d_obs**2)
+        elif how == 'd':
+            return 1. - np.sum(e**2) / np.sum((np.abs(d_est) + np.abs(d_obs))**2)
