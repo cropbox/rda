@@ -24,8 +24,8 @@ class ChillDay(Estimator):
             #'bounds': ((0, 10), (0, 10), (-400, -100), (100, 400)),
             #'grid': (slice(2, 7, 0.1), slice(-300, -100, 5), slice(200, 400, 5)),
             'coeff0': (-92, 4.5, -200, 300),
-            'bounds': ((-100, 100), (0, 10), (-400, -0), (0, 400)),
-            'grid': (slice(-100, 100, 1), slice(2, 7, 0.1), slice(-300, -100, 5), slice(200, 400, 5)),
+            'bounds': ((-100, 0), (0, 10), (-400, -0), (0, 400)),
+            'grid': (slice(-100, 0, 1), slice(2, 7, 0.1), slice(-300, -100, 5), slice(200, 400, 5)),
         }
 
     def _estimate(self, year, met, coeff):
