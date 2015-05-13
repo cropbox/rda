@@ -127,12 +127,21 @@ def show_single_summary(models, years):
     print " * RMSE"
     for m in models:
         print "  - {}: {}".format(m.name, m.error(years, "rmse"))
+    print " * ME"
+    for m in models:
+        print "  - {}: {}".format(m.name, m.error(years, "me"))
     print " * MAE"
     for m in models:
         print "  - {}: {}".format(m.name, m.error(years, "mae"))
     print " * XE"
     for m in models:
         print "  - {}: {}".format(m.name, m.error(years, "xe"))
+    print " * EF"
+    for m in models:
+        print "  - {}: {}".format(m.name, m.error(years, "ef"))
+    print " * D"
+    for m in models:
+        print "  - {}: {}".format(m.name, m.error(years, "d"))
 
 ###############
 # Multi Model #
