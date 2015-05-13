@@ -37,7 +37,7 @@ def init(weather_filename, location, observation_filename, cultivar, stage, year
     for m in models:
         #m.calibrate(years)
         #multi.calibrate(m, years)
-        multi.preset(m, location, cultivar, stage, years, n)
+        multi.preset(m, location, '', '', cultivar, stage, years, n)
     # single model plot
     #plot_single_model(models, years)
     #plot_single_model(models, years, show_as_diff=True)
@@ -295,6 +295,120 @@ def main():
     export_single_model(models, export_years).to_csv('cherry_jeju.csv')
     export_multi_model(models, export_years).to_csv('cherry_jeju_multi.csv')
     plot_single_model(models, years, True, 'cherry_jeju.png')
+
+def run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years, n=3, MODELS=DEFAULT_MODELS):
+    metdf = pd.read_pickle(weather_filename)
+    obsdf = pd.read_pickle(observation_filename)
+
+    def run_each(o, c):
+        # weather
+        try:
+            w = weather_loc if weather_loc else o
+            mets = metdf.loc[w]
+        except:
+            #HACK: weather data missing for existing observation (i.e. Korean cherry)
+            return
+
+        # observation
+        obss = obsdf.loc[o, c][stage]
+
+        # models
+        models = [m(mets, obss) for m in MODELS]
+
+        # calibration
+        for m in models:
+            #m.calibrate(years)
+            #multi.calibrate(m, years)
+            multi.preset(m, weather_loc, observation_loc, species, cultivar, stage, years, n)
+        # single model plot
+        #plot_single_model(models, years)
+        #plot_single_model(models, years, show_as_diff=True)
+
+        # ensemble test
+        e1 = Ensemble(mets, obss)
+        e1.use(models, 'Ensemble')
+
+        e2 = Ensemble(mets, obss)
+        e2.use(models, 'EnsembleW')
+        e2.calibrate(years)
+
+        models = models + [e1, e2]
+
+        name = '{}_{}'.format(species, c)
+        show_single_summary(models, years)
+        export_single_model(models, export_years).to_csv('{}.csv'.format(name))
+        export_multi_model(models, export_years).to_csv('{}_multi.csv'.format(name))
+        #plot_single_model(models, years, True, '{}.png'.format(name))
+
+    # populate available options from observation dataset
+    observations = [observation_loc] if observation_loc else obsdf.index.levels[0]
+    cultivars = [cultivar] if cultivar else obsdf.index.levels[1]
+    [run_each(*oc) for oc in product(observations, cultivars)]
+
+def main2():
+    # Cherry (DC)
+    weather_filename = 'data/dc.pkl'
+    weather_loc = 'USW00013743'
+    observation_filename = 'data/cherry_dc.pkl'
+    observation_loc = 'DC'
+    species = 'cherry'
+    stage = 'Peak Bloom'
+    export_years = (1946, 2015)
+
+    # Cherry (DC) - Yoshino
+    cultivar = 'Yoshino'
+    years = (1994, 2014)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+
+    # Cherry (DC) - Kwanzan
+    cultivar = 'Kwanzan'
+    years = (1991, 2011)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+
+    # Apple
+    weather_filename = 'data/martinsburg.pkl'
+    weather_loc = 'Martinsburg'
+    observation_filename = 'data/apple_kearneysville.pkl'
+    observation_loc = 'Kearneysville'
+    species = 'apple'
+    cultivars = None
+    stage = 'Full Bloom'
+    years = (1997, 2007)
+    export_years = (1950, 2010)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
+
+    # Korea (from Dr. Jina Hur)
+    weather_filename = 'data/korea_jina.pkl'
+    weather_loc = None
+    stage = 'FFD'
+    years = (1998, 2008)
+    export_years = (1982, 2010)
+
+    # Peach (Korean)
+    observation_filename = 'data/peach_korea.pkl'
+    observation_loc = None
+    species = 'peach'
+    cultivar = 'Korean Peach'
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
+
+    # Pear (Korean)
+    observation_filename = 'data/pear_korea.pkl'
+    observation_loc = None
+    species = 'pear'
+    cultivar = 'Korean Pear'
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
+
+    # Cherry (Korean) (from Dr. Uran Chung)
+    weather_filename = 'data/korea_uran.pkl'
+    weather_loc = None
+    observation_filename = 'data/cherry_korea.pkl'
+    observation_loc = None
+    species = 'cherry'
+    cultivar = 'Korean Cherry'
+    stage = 'Full Bloom'
+    years = (1984, 1994)
+    export_years = (1984, 2004)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
 
 if __name__ == '__main__':
     main()

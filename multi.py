@@ -52,11 +52,11 @@ VALID_CHARS = frozenset("-_.() %s%s" % (string.ascii_letters, string.digits))
 def _slugify(v):
     return ''.join(c for c in str(v) if c in VALID_CHARS)
 
-def preset(model, location, cultivar, stage, years, n=3, **kwargs):
+def preset(model, weather_loc, observation_loc, species, cultivar, stage, years, n=3, **kwargs):
     def filename(var):
-        keys = [model.name, location, cultivar, stage, years, var]
+        keys = [model.name, weather_loc, observation_loc, species, cultivar, stage, years, var]
         keys = [_slugify(k) for k in keys]
-        return 'data/{}_{}_{}_{}_{}_{}.npy'.format(*keys)
+        return 'data/{}_{}_{}_{}_{}_{}_{}_{}.npy'.format(*keys)
 
     def load(var, callback):
         fn = filename(var)
