@@ -3,6 +3,7 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(scales)
+library(lubridate)
 
 ##################
 # load functions #
