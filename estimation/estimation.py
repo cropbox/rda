@@ -139,7 +139,7 @@ class Estimator(object):
             try:
                 return self.estimate(y, coeff, julian)
             except:
-                return None if julian else 0
+                return 0 if julian else None
         years = self._years(years)
         return [estimate_safely(y) for y in years]
 
@@ -187,7 +187,7 @@ class Estimator(object):
             try:
                 return self.observe(y, julian)
             except:
-                return None if julian else 0
+                return 0 if julian else None
         years = self._years(years)
         return [observe_safely(y) for y in years]
 
