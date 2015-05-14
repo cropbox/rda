@@ -324,7 +324,7 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
             mets = metdf.loc[w]
         except:
             #HACK: weather data missing for existing observation (i.e. Korean cherry)
-            return
+            return []
 
         # observation
         obss = obsdf.loc[o, c][stage]
