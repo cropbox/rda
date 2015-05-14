@@ -49,7 +49,7 @@ def estimate(models, year):
 
 def preset(slugname, model, years, n=3, **kwargs):
     def filename(var):
-        return 'data/{}_{}.npy'.format(slugname, var)
+        return 'coeffs/current/{}_{}.npy'.format(slugname, var)
 
     def load(var, callback):
         fn = filename(var)
