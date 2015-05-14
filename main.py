@@ -372,7 +372,7 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
     ocs = list(product(observations, cultivars))
     modelss = [run_each(*oc) for oc in ocs]
 
-    indices = ['_'.join(str(oc)) for oc in ocs]
+    indices = ['_'.join([str(v) for v in oc]) for oc in ocs]
     export_single_summaries(indices, modelss, calibrate_years, '{}_calibrate'.format(slugname(species, calibrate_years, stage)))
     export_single_summaries(indices, modelss, validate_years, '{}_validate'.format(slugname(species, calibrate_years, validate_years, stage)))
     return modelss
