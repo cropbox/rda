@@ -111,6 +111,7 @@ def plot_single_model(models, years, show_as_diff=False, filename=None):
     if filename:
         plt.savefig(filename)
     #plt.show()
+    plt.close()
 
 def export_single_model(models, years):
     x = models[0]._years(years)
