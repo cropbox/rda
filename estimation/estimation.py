@@ -127,7 +127,9 @@ class Estimator(object):
         except:
             #FIXME DC weather data missing for 2007-02
             #return None
-            raise EstimationError("weather cannot be clipped for '{}'".format(year))
+            #HACK: allow masking for exceptions on missing data
+            #raise EstimationError("weather cannot be clipped for '{}'".format(year))
+            raise ObservationError("weather cannot be clipped for '{}'".format(year))
         t = self._estimate(year, met, coeff).to_datetime()
         if julian:
             return self._julian(t)
@@ -291,14 +293,15 @@ class Estimator(object):
             est = self.estimate(year, coeff)
             return self._diff(obs, est, year)
         except ObservationError:
-            return 0.
+            return -365.
         except EstimationError:
             return 365.
             #return np.inf
 
     def error(self, years, how='e', coeff=None):
         years = self._years(years)
-        e = np.array([self.residual(y, coeff) for y in years])
+        #e = np.array([self.residual(y, coeff) for y in years])
+        e = np.ma.masked_values([self.residual(y, coeff) for y in years], -365.)
 
         how = how.lower()
         if how == 'e':
