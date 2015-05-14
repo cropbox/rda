@@ -95,6 +95,8 @@ def plot_single_model(models, years, show_as_diff=False, filename=None):
         alpha = 0.9 if m.__class__ is Ensemble else 0.5
         plt.plot(x, y, ls=ls, lw=lw, marker=marker, alpha=alpha, label=m.name)
 
+    plt.figure()
+
     if show_as_diff:
         plot_zero()
         [plot_diff(m) for m in models]
@@ -107,8 +109,8 @@ def plot_single_model(models, years, show_as_diff=False, filename=None):
     plt.xlim(*years)
 
     if filename:
-        plt.savefig(filename, dpi=300)
-    plt.show()
+        plt.savefig(filename)
+    #plt.show()
 
 def export_single_model(models, years):
     x = models[0]._years(years)
