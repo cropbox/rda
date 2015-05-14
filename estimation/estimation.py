@@ -3,6 +3,9 @@ import scipy.optimize
 import pandas as pd
 import datetime
 
+class ObservationError(Exception):
+    pass
+
 class EstimationError(Exception):
     pass
 
@@ -98,6 +101,10 @@ class Estimator(object):
         else:
             return self._dictify(coeff)
 
+    # date conversion
+    def _julian(self, t):
+        return int(t.strftime('%j'))
+
     # estimation
     def _match(self, ts, value):
         i = ts.fillna(0).searchsorted(value)[0]
@@ -110,7 +117,7 @@ class Estimator(object):
         #FIXME: raise NotImplementedError?
         return self._match(met.ix[:, -1], 1.0)
 
-    def estimate(self, year, coeff=None):
+    def estimate(self, year, coeff=None, julian=False):
         if coeff is None:
             coeff = self._coeff
         else:
@@ -121,14 +128,18 @@ class Estimator(object):
             #FIXME DC weather data missing for 2007-02
             #return None
             raise EstimationError("weather cannot be clipped for '{}'".format(year))
-        return self._estimate(year, met, coeff).to_datetime()
+        t = self._estimate(year, met, coeff).to_datetime()
+        if julian:
+            return self._julian(t)
+        else:
+            return t
 
-    def estimates(self, years, coeff=None):
+    def estimates(self, years, coeff=None, julian=False):
         def estimate_safely(y):
             try:
-                return self.estimate(y, coeff)
+                return self.estimate(y, coeff, julian)
             except:
-                return None
+                return None if julian else 0
         years = self._years(years)
         return [estimate_safely(y) for y in years]
 
@@ -140,7 +151,7 @@ class Estimator(object):
 
         def estimate(c):
             try:
-                return self._estimate(year, self._clip(year, c), c).to_datetime().strftime('%j')
+                return self._estimate(year, self._clip(year, c), c, julian=True).to_datetime()
             except:
                 return None
         ests = [estimate(c) for c in coeffs]
@@ -161,15 +172,22 @@ class Estimator(object):
         return pd.Series(ests).value_counts().sort_index().resample('D', 'sum').dropna().astype(int)
 
     # observation
-    def observe(self, year):
-        return self._obss.loc[year].to_datetime().replace(hour=12)
+    def observe(self, year, julian=False):
+        try:
+            t = self._obss.loc[year].to_datetime().replace(hour=12)
+        except:
+            raise ObservationError("observation is not available for '{}'".format(year))
+        if julian:
+            return self._julian(t)
+        else:
+            return t
 
-    def observes(self, years):
+    def observes(self, years, julian=False):
         def observe_safely(y):
             try:
-                return self.observe(y)
+                return self.observe(y, julian)
             except:
-                return None
+                return None if julian else 0
         years = self._years(years)
         return [observe_safely(y) for y in years]
 
@@ -272,6 +290,8 @@ class Estimator(object):
             obs = self.observe(year)
             est = self.estimate(year, coeff)
             return self._diff(obs, est, year)
+        except ObservationError:
+            return 0.
         except EstimationError:
             return 365.
             #return np.inf
@@ -292,9 +312,9 @@ class Estimator(object):
         elif how == 'xe':
             return np.max(e)
 
-        est_hat = np.array([int(self.observe(y).strftime('%j')) for y in years]).mean()
-        d_est = np.array([self._diff(self.estimate(y, coeff), est_hat, y) for y in years])
-        d_obs = np.array([self._diff(self.observe(y), est_hat, y) for y in years])
+        est_hat = np.mean(self.observes(years, julian=True))
+        d_est = np.ma.masked_values(self.estimates(years, coeff, julian=True), 0) - est_hat
+        d_obs = np.ma.masked_values(self.observes(years, julian=True), 0) - est_hat
 
         if how == 'ef':
             return 1. - np.sum(e**2) / np.sum(d_obs**2)
