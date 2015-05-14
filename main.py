@@ -128,24 +128,27 @@ def show_single_summary(models, years):
     print " * Parameters"
     for m in models:
         print "  - {}: {}".format(m.name, m._coeff)
-    print " * RMSE"
-    for m in models:
-        print "  - {}: {}".format(m.name, m.error(years, "rmse"))
-    print " * ME"
-    for m in models:
-        print "  - {}: {}".format(m.name, m.error(years, "me"))
-    print " * MAE"
-    for m in models:
-        print "  - {}: {}".format(m.name, m.error(years, "mae"))
-    print " * XE"
-    for m in models:
-        print "  - {}: {}".format(m.name, m.error(years, "xe"))
-    print " * EF"
-    for m in models:
-        print "  - {}: {}".format(m.name, m.error(years, "ef"))
-    print " * D"
-    for m in models:
-        print "  - {}: {}".format(m.name, m.error(years, "d"))
+    df = pd.DataFrame({
+        'RMSE': [m.error(years, 'rmse') for m in models],
+        'ME': [m.error(years, 'me') for m in models],
+        'MAE': [m.error(years, 'mae') for m in models],
+        'XE': [m.error(years, 'xe') for m in models],
+        'EF': [m.error(years, 'ef') for m in models],
+        'D': [m.error(years, 'd') for m in models],
+    }, index=[m.name for m in models])
+    df.index.name = 'model'
+    print df
+    return df
+
+def export_single_summaries(indices, modelss, years, name):
+    dfs = [show_single_summary(models, years) for models in modelss]
+    df = pd.concat(dfs, keys=indices, names=['index'])
+    df.to_csv('{}_summary.csv'.format(name))
+
+    for k in df.columns:
+        df.reset_index().pivot(index='index', columns='model', values=k).plot(kind='box')
+        plt.savefig('{}_{}.png'.format(name, k))
+    return df
 
 ###############
 # Multi Model #
@@ -363,7 +366,13 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
     # populate available options from observation dataset
     observations = [observation_loc] if observation_loc else obsdf.index.levels[0]
     cultivars = [cultivar] if cultivar else obsdf.index.levels[1]
-    return [run_each(*oc) for oc in product(observations, cultivars)]
+    ocs = list(product(observations, cultivars))
+    modelss = [run_each(*oc) for oc in ocs]
+
+    indices = ['_'.join(str(oc)) for oc in ocs]
+    export_single_summaries(indices, modelss, calibrate_years, '{}_calibrate'.format(slugname(species, calibrate_years, stage)))
+    export_single_summaries(indices, modelss, validate_years, '{}_validate'.format(slugname(species, calibrate_years, validate_years, stage)))
+    return modelss
 
 def main2():
     # Cherry (DC)
