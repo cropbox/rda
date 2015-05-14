@@ -144,12 +144,12 @@ def show_single_summary(models, years):
 def export_single_summaries(indices, modelss, years, name):
     dfs = [show_single_summary(models, years) for models in modelss]
     df = pd.concat(dfs, keys=indices, names=['index'])
-    df.to_csv('result/{}_summary.csv'.format(name))
+    df.to_csv('results/current/{}_summary.csv'.format(name))
 
     for k in df.columns:
         plt.figure()
-        df.reset_index().pivot(index='index', columns='model', values=k).plot(kind='box')
-        plt.savefig('figures/{}_{}.png'.format(name, k))
+        df.reset_index().pivot(index='index', columns='model', values=k).astype(float).plot(kind='box')
+        plt.savefig('figures/current/{}_{}.png'.format(name, k))
         plt.close()
     return df
 
@@ -356,13 +356,13 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
 
         name = slugname(species, c, w, o, calibrate_years, stage)
         name2 = slugname(species, c, w, o, calibrate_years, validate_years, stage)
-        show_single_summary(models, calibrate_years).to_csv('result/{}_calibrate.csv'.format(name))
-        show_single_summary(models, validate_years).to_csv('result/{}_validate.csv'.format(name2))
-        export_single_model(models, export_years).to_csv('result/{}_single.csv'.format(name))
-        export_multi_model(models, export_years).to_csv('result/{}_multi.csv'.format(name))
-        plot_single_model(models, calibrate_years, True, 'figures/{}_calibrate.png'.format(name))
-        plot_single_model(models, validate_years, True, 'figures/{}_validate.png'.format(name))
-        plot_single_model(models, export_years, True, 'figures/{}_export.png'.format(name))
+        show_single_summary(models, calibrate_years).to_csv('results/current/{}_calibrate.csv'.format(name))
+        show_single_summary(models, validate_years).to_csv('results/current/{}_validate.csv'.format(name2))
+        export_single_model(models, export_years).to_csv('results/current/{}_single.csv'.format(name))
+        export_multi_model(models, export_years).to_csv('results/current/{}_multi.csv'.format(name))
+        plot_single_model(models, calibrate_years, True, 'figures/current/{}_calibrate.png'.format(name))
+        plot_single_model(models, validate_years, True, 'figures/current/{}_validate.png'.format(name))
+        plot_single_model(models, export_years, True, 'figures/current/{}_export.png'.format(name))
 
         return models
 
