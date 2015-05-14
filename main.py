@@ -147,8 +147,10 @@ def export_single_summaries(indices, modelss, years, name):
     df.to_csv('{}_summary.csv'.format(name))
 
     for k in df.columns:
+        plt.figure()
         df.reset_index().pivot(index='index', columns='model', values=k).plot(kind='box')
         plt.savefig('{}_{}.png'.format(name, k))
+        plt.close()
     return df
 
 ###############
