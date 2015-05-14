@@ -296,6 +296,18 @@ def main():
     export_multi_model(models, export_years).to_csv('cherry_jeju_multi.csv')
     plot_single_model(models, years, True, 'cherry_jeju.png')
 
+import string
+VALID_CHARS = frozenset("-_.() %s%s" % (string.ascii_letters, string.digits))
+def _slugify(v):
+    return ''.join(c for c in str(v) if c in VALID_CHARS)
+
+#def slugname(model, weather_loc, observation_loc, species, cultivar, stage, years):
+    #keys = [model.name, weather_loc, observation_loc, species, cultivar, stage, years]
+    #keys = [_slugify(k) for k in keys]
+    #return '_'.join(keys)
+def slugname(*args):
+    return '_'.join([_slugify(k) for k in args])
+
 def run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years, n=3, MODELS=DEFAULT_MODELS):
     metdf = pd.read_pickle(weather_filename)
     obsdf = pd.read_pickle(observation_filename)
@@ -319,7 +331,7 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
         for m in models:
             #m.calibrate(years)
             #multi.calibrate(m, years)
-            multi.preset(m, w, o, species, c, stage, years, n)
+            multi.preset(slugname(m.name, w, o, species, c, stage, years), m, years, n)
         # single model plot
         #plot_single_model(models, years)
         #plot_single_model(models, years, show_as_diff=True)
@@ -334,7 +346,7 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
 
         models = models + [e1, e2]
 
-        name = '{}_{}'.format(species, multi._slugify(c))
+        name = slugname(species, c, w, o, w, years, stage)
         show_single_summary(models, years)
         export_single_model(models, export_years).to_csv('{}.csv'.format(name))
         export_multi_model(models, export_years).to_csv('{}_multi.csv'.format(name))
