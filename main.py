@@ -340,10 +340,12 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
         export_multi_model(models, export_years).to_csv('{}_multi.csv'.format(name))
         #plot_single_model(models, years, True, '{}.png'.format(name))
 
+        return models
+
     # populate available options from observation dataset
     observations = [observation_loc] if observation_loc else obsdf.index.levels[0]
     cultivars = [cultivar] if cultivar else obsdf.index.levels[1]
-    [run_each(*oc) for oc in product(observations, cultivars)]
+    return [run_each(*oc) for oc in product(observations, cultivars)]
 
 def main2():
     # Cherry (DC)
