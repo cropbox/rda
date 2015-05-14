@@ -310,7 +310,7 @@ def _slugify(v):
 def slugname(*args):
     return '_'.join([_slugify(k) for k in args])
 
-def run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years, n=3, MODELS=DEFAULT_MODELS):
+def run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years, n=3, MODELS=DEFAULT_MODELS):
     metdf = pd.read_pickle(weather_filename)
     obsdf = pd.read_pickle(observation_filename)
 
@@ -331,12 +331,12 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
 
         # calibration
         for m in models:
-            #m.calibrate(years)
-            #multi.calibrate(m, years)
-            multi.preset(slugname(m.name, w, o, species, c, stage, years), m, years, n)
+            #m.calibrate(calibrate_years)
+            #multi.calibrate(m, calibrate_years)
+            multi.preset(slugname(m.name, w, o, species, c, stage, calibrate_years), m, calibrate_years, n)
         # single model plot
-        #plot_single_model(models, years)
-        #plot_single_model(models, years, show_as_diff=True)
+        #plot_single_model(models, calibrate_years)
+        #plot_single_model(models, calibrate_years, show_as_diff=True)
 
         # ensemble test
         e1 = Ensemble(mets, obss)
@@ -344,15 +344,19 @@ def run(weather_filename, weather_loc, observation_filename, observation_loc, sp
 
         e2 = Ensemble(mets, obss)
         e2.use(models, 'EnsembleW')
-        e2.calibrate(years)
+        e2.calibrate(calibrate_years)
 
         models = models + [e1, e2]
 
-        name = slugname(species, c, w, o, w, years, stage)
-        show_single_summary(models, years)
-        export_single_model(models, export_years).to_csv('{}.csv'.format(name))
+        name = slugname(species, c, w, o, calibrate_years, stage)
+        name2 = slugname(species, c, w, o, calibrate_years, validate_years, stage)
+        show_single_summary(models, calibrate_years).to_csv('{}_calibrate.csv'.format(name))
+        show_single_summary(models, validate_years).to_csv('{}_validate.csv'.format(name2))
+        export_single_model(models, export_years).to_csv('{}_single.csv'.format(name))
         export_multi_model(models, export_years).to_csv('{}_multi.csv'.format(name))
-        #plot_single_model(models, years, True, '{}.png'.format(name))
+        plot_single_model(models, calibrate_years, True, '{}_calibrate.png'.format(name))
+        plot_single_model(models, validate_years, True, '{}_validate.png'.format(name))
+        plot_single_model(models, export_years, True, '{}_export.png'.format(name))
 
         return models
 
@@ -373,13 +377,15 @@ def main2():
 
     # Cherry (DC) - Yoshino
     cultivar = 'Yoshino'
-    years = (1994, 2014)
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+    calibrate_years = (1994, 2014)
+    validate_years = (1946, 1993)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
 
     # Cherry (DC) - Kwanzan
     cultivar = 'Kwanzan'
-    years = (1991, 2011)
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+    calibrate_years = (1991, 2011)
+    validate_years = (1946, 1990)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
 
     # Apple
     weather_filename = 'data/martinsburg.pkl'
@@ -389,15 +395,22 @@ def main2():
     species = 'apple'
     cultivar = None
     stage = 'Full Bloom'
-    years = (1997, 2007)
+    calibrate_years = (1997, 2007)
+    validate_years = calibrate_years
     export_years = (1950, 2010)
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years)
+
+    calibrate_years = (2001, 2007)
+    validate_years = (1997, 2000)
+    export_years = (1950, 2010)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years)
 
     # Korea (from Dr. Jina Hur)
     weather_filename = 'data/korea_jina.pkl'
     weather_loc = None
     stage = 'FFD'
-    years = (1998, 2008)
+    calibrate_years = (1998, 2008)
+    validate_years = (1982, 1997)
     export_years = (1982, 2010)
 
     # Peach (Korean)
@@ -405,14 +418,14 @@ def main2():
     observation_loc = None
     species = 'peach'
     cultivar = 'Korean Peach'
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years)
 
     # Pear (Korean)
     observation_filename = 'data/pear_korea.pkl'
     observation_loc = None
     species = 'pear'
     cultivar = 'Korean Pear'
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years)
 
     # Cherry (Korean) (from Dr. Uran Chung)
     weather_filename = 'data/korea_uran.pkl'
@@ -422,9 +435,10 @@ def main2():
     species = 'cherry'
     cultivar = 'Korean Cherry'
     stage = 'Full Bloom'
-    years = (1984, 1994)
+    calibrate_years = (1984, 1994)
+    validate_years = (1955, 1983)
     export_years = (1955, 2004)
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, calibrate_years, validate_years, export_years)
 
 if __name__ == '__main__':
     main()
