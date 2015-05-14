@@ -373,11 +373,11 @@ def main2():
     observation_filename = 'data/apple_kearneysville.pkl'
     observation_loc = 'Kearneysville'
     species = 'apple'
-    cultivars = None
+    cultivar = None
     stage = 'Full Bloom'
     years = (1997, 2007)
     export_years = (1950, 2010)
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
 
     # Korea (from Dr. Jina Hur)
     weather_filename = 'data/korea_jina.pkl'
@@ -391,14 +391,14 @@ def main2():
     observation_loc = None
     species = 'peach'
     cultivar = 'Korean Peach'
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
 
     # Pear (Korean)
     observation_filename = 'data/pear_korea.pkl'
     observation_loc = None
     species = 'pear'
     cultivar = 'Korean Pear'
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
 
     # Cherry (Korean) (from Dr. Uran Chung)
     weather_filename = 'data/korea_uran.pkl'
@@ -409,8 +409,8 @@ def main2():
     cultivar = 'Korean Cherry'
     stage = 'Full Bloom'
     years = (1984, 1994)
-    export_years = (1984, 2004)
-    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivars, stage, years, export_years)
+    export_years = (1955, 2004)
+    run(weather_filename, weather_loc, observation_filename, observation_loc, species, cultivar, stage, years, export_years)
 
 if __name__ == '__main__':
     main()
