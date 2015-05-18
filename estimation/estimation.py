@@ -315,7 +315,7 @@ class Estimator(object):
         elif how == 'xe':
             return np.max(np.abs(e))
 
-        est_hat = np.mean(self.observes(years, julian=True))
+        est_hat = np.ma.masked_values(self.observes(years, julian=True), 0).mean()
         d_est = np.ma.masked_values(self.estimates(years, coeff, julian=True), 0) - est_hat
         d_obs = np.ma.masked_values(self.observes(years, julian=True), 0) - est_hat
 
