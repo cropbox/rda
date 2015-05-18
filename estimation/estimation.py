@@ -313,7 +313,7 @@ class Estimator(object):
         elif how == 'mae':
             return np.mean(np.abs(e))
         elif how == 'xe':
-            return np.max(e)
+            return np.max(np.abs(e))
 
         est_hat = np.mean(self.observes(years, julian=True))
         d_est = np.ma.masked_values(self.estimates(years, coeff, julian=True), 0) - est_hat
