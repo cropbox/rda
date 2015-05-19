@@ -58,7 +58,7 @@ def init(weather_filename, location, observation_filename, cultivar, stage, year
 # Single Model #
 ################
 
-def plot_single_model(models, years, show_as_diff=False, filename=None):
+def plot_single_model(models, years, residual=False, filename=None):
     #HACK use first model to populate observation data
     x = models[0]._years(years)
     obss = models[0]._obss
@@ -87,8 +87,8 @@ def plot_single_model(models, years, show_as_diff=False, filename=None):
     def plot_zero():
         plt.axhline(0, color='grey', ls=':')
 
-    def plot_diff(m):
-        y = y_est(m) - y_obs()
+    def plot_residual(m):
+        y = y_obs() - y_est(m)
         ls = '--' if m.__class__ is Ensemble else '-'
         lw = 3.0 if m.__class__ is Ensemble else 1.0
         marker = 'o' if m.__class__ is Ensemble else '.'
@@ -97,9 +97,9 @@ def plot_single_model(models, years, show_as_diff=False, filename=None):
 
     plt.figure()
 
-    if show_as_diff:
+    if residual:
         plot_zero()
-        [plot_diff(m) for m in models]
+        [plot_residual(m) for m in models]
     else:
         plot_obs()
         [plot_est(m) for m in models]
