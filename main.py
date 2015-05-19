@@ -332,6 +332,7 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
             #FIXME to be used with check_outlier()
             m.weather_loc = w
             m.observation_loc = o
+            m.cultivar = c
         # single model plot
         #plot_single_model(models, calibrate_years)
         #plot_single_model(models, calibrate_years, show_as_diff=True)
@@ -367,8 +368,10 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
     modelss = [run_each(*oc) for oc in ocs]
     if export:
         indices = ['_'.join([str(v) for v in oc]) for oc in ocs]
-        export_single_summaries(indices, modelss, calibrate_years, '{}_calibrate'.format(slugname(observation, calibrate_years, stage)))
-        export_single_summaries(indices, modelss, validate_years, '{}_validate'.format(slugname(observation, calibrate_years, validate_years, stage)))
+        o = observation_loc if observation_loc else 'all'
+        c = cultivar if cultivar else 'all'
+        export_single_summaries(indices, modelss, calibrate_years, '{}_calibrate'.format(slugname(observation, o, c, calibrate_years, stage)))
+        export_single_summaries(indices, modelss, validate_years, '{}_validate'.format(slugname(observation, o, c, calibrate_years, validate_years, stage)))
     return modelss
 
 def check_outlier(modelss, years, threshold=30):
@@ -377,7 +380,7 @@ def check_outlier(modelss, years, threshold=30):
             m = models[0]
         except:
             continue
-        print "* {} - {}".format(m.weather_loc, m.observation_loc)
+        print "* {} - {} - {}".format(m.weather_loc, m.observation_loc, m.cultivar)
         for m in models:
             print " - {}".format(m.name)
             y = np.array(m._years(years))
