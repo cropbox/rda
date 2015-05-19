@@ -422,6 +422,4 @@ def main2():
     run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years)
 
 if __name__ == '__main__':
-    main()
-    #df.xs('DegreeDays', level='model')
     pass
