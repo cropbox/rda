@@ -155,7 +155,7 @@ def export_single_summaries(indices, modelss, years, name):
 
 import json
 def export_single_param(models, name):
-    with open('results/current/{}_param.csv'.format(name), 'w') as f:
+    with open('results/current/{}_param.txt'.format(name), 'w') as f:
         for m in models:
             f.write('{} : {}\n'.format(m.name, json.dumps(m._coeff)))
 
