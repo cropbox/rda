@@ -153,6 +153,22 @@ def export_single_summaries(indices, modelss, years, name):
         plt.close()
     return df
 
+import json
+def export_single_param(models, name):
+    with open('results/current/{}_param.csv'.format(name), 'w') as f:
+        for m in models:
+            f.write('{} : {}\n'.format(m.name, json.dumps(m._coeff)))
+
+def export_single_param_stat(modelss, name):
+    models = sum(modelss, [])
+    names = list({m.name for m in models})
+    keys = np.array([m.name for m in models])
+    values = np.array([m._coeff for m in models])
+
+    for n in names:
+        df = pd.concat([pd.DataFrame(d, index=[0]) for d in values[keys == n]])
+        pd.DataFrame({'mean': df.mean(), 'std': df.std()}).to_csv('results/current/{}_{}.csv'.format(name, n))
+
 ###############
 # Multi Model #
 ###############
