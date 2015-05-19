@@ -351,7 +351,7 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
         export_single_summaries(indices, modelss, validate_years, '{}_validate'.format(slugname(observation, calibrate_years, validate_years, stage)))
     return modelss
 
-def main2():
+def main2(export=False):
     # Cherry (DC)
     weather = 'dc'
     weather_loc = 'USW00013743'
@@ -364,13 +364,15 @@ def main2():
     cultivar = 'Yoshino'
     calibrate_years = (1994, 2014)
     validate_years = (1946, 1993)
-    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+    #run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March], export=export)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
     # Cherry (DC) - Kwanzan
     cultivar = 'Kwanzan'
     calibrate_years = (1991, 2011)
     validate_years = (1946, 1990)
-    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March])
+    #run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March], export=export)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
     # Apple
     weather = 'martinsburg'
@@ -382,12 +384,12 @@ def main2():
     calibrate_years = (1997, 2007)
     validate_years = calibrate_years
     export_years = (1950, 2010)
-    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
     calibrate_years = (2001, 2007)
     validate_years = (1997, 2000)
     export_years = (1950, 2010)
-    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
     # Korea (from Dr. Jina Hur)
     weather = 'korea_jina'
@@ -401,13 +403,13 @@ def main2():
     observation = 'peach_korea'
     observation_loc = None
     cultivar = 'Korean Peach'
-    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
     # Pear (Korean)
     observation = 'pear_korea'
     observation_loc = None
     cultivar = 'Korean Pear'
-    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
     # Cherry (Korean) (from Dr. Uran Chung)
     weather = 'korea_uran'
@@ -419,7 +421,7 @@ def main2():
     calibrate_years = (1984, 1994)
     validate_years = (1955, 1983)
     export_years = (1955, 2004)
-    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
 if __name__ == '__main__':
     pass
