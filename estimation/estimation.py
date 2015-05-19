@@ -146,11 +146,16 @@ class Estimator(object):
         return [estimate_safely(y) for y in years]
 
     def estimate_multi(self, year, coeffs=None, julian=False):
+        def estimate_safely(c):
+            try:
+                return self.estimate(year, c, julian)
+            except:
+                return 0 if julian else None
         if coeffs is None:
             coeffs = self._coeffs
         else:
             coeffs = [self._normalize(c) for c in coeffs]
-        ests = [self.estimate(year, c, julian) for c in coeffs]
+        ests = [estimate_safely(c) for c in coeffs]
         return pd.Series(ests).dropna()
 
     # observation
