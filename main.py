@@ -163,11 +163,12 @@ def export_multi_model(models, years):
     def observation():
         return pd.DataFrame({
             'model': 'Obs',
-            'day': models[0]._obss[x].dropna().apply(lambda x: int(x.strftime('%j'))),
-        }).reset_index()
+            'year': x,
+            'day': models[0].observes(x, julian=True)
+        })
 
     def estimation(y):
-        df = pd.DataFrame({m.name: m.estimate_multi(y) for m in models})
+        df = pd.DataFrame({m.name: m.estimate_multi(y, julian=True) for m in models})
         df = pd.melt(df, var_name='model', value_name='day').dropna()
         df['year'] = y
         df['day'] = df['day'].astype(int)
@@ -182,38 +183,6 @@ def export_multi_model(models, years):
     }).sort_index()
     df.index.names = ['year', 'model', 'day']
     return df
-
-def export_multi_model2(models, years):
-    x = models[0]._years(years)
-
-    def observation():
-        s = models[0]._obss[x].value_counts()
-        df = pd.DataFrame(s).reset_index()
-        df.columns = ['day', 'count']
-        df['year'] = df['day'].apply(lambda x: int(x.strftime('%Y')))
-        df['day'] = df['day'].apply(lambda x: int(x.strftime('%j')))
-        df['model'] = 'Obs'
-        return df.set_index(['year', 'model', 'day'])
-
-    def estimation(m, y):
-        s = m.estimate_multi2(y)
-        s.index = [int(t.strftime('%j')) for t in s.index]
-        return s
-
-    def combine(ss, y):
-        df = pd.DataFrame(ss)
-        df.index.name = 'day'
-        df['year'] = y
-        return pd.melt(df.reset_index(),
-                     id_vars=['year', 'day'],
-                     var_name='model',
-                     value_name='count',
-        ).dropna().set_index(['year', 'model', 'day'])
-
-    return pd.concat(
-        [observation()] +
-        [combine({m.name: estimation(m, t) for m in models}, t) for t in x]
-    ).dropna().sort_index()
 
 def main():
     # Cherry

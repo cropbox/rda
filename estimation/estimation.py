@@ -145,33 +145,13 @@ class Estimator(object):
         years = self._years(years)
         return [estimate_safely(y) for y in years]
 
-    def estimate_multi(self, year, coeffs=None):
+    def estimate_multi(self, year, coeffs=None, julian=False):
         if coeffs is None:
             coeffs = self._coeffs
         else:
             coeffs = [self._normalize(c) for c in coeffs]
-
-        def estimate(c):
-            try:
-                return self._estimate(year, self._clip(year, c), c, julian=True).to_datetime()
-            except:
-                return None
-        ests = [estimate(c) for c in coeffs]
-        return pd.Series(ests).dropna().astype(int)
-
-    def estimate_multi2(self, year, coeffs=None):
-        if coeffs is None:
-            coeffs = self._coeffs
-        else:
-            coeffs = [self._normalize(c) for c in coeffs]
-
-        def estimate(c):
-            try:
-                return self._estimate(year, self._clip(year, c), c).to_datetime()
-            except:
-                return None
-        ests = [estimate(c) for c in coeffs]
-        return pd.Series(ests).value_counts().sort_index().resample('D', 'sum').dropna().astype(int)
+        ests = [self.estimate(year, c, julian) for c in coeffs]
+        return pd.Series(ests).dropna()
 
     # observation
     def observe(self, year, julian=False):
