@@ -312,6 +312,10 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
             #m.calibrate(calibrate_years)
             #multi.calibrate(m, calibrate_years)
             multi.preset(slugname(m.name, w, o, observation, c, stage, calibrate_years), m, calibrate_years, n)
+
+            #FIXME to be used with check_outlier()
+            m.weather_loc = w
+            m.observation_loc = o
         # single model plot
         #plot_single_model(models, calibrate_years)
         #plot_single_model(models, calibrate_years, show_as_diff=True)
@@ -350,6 +354,21 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
         export_single_summaries(indices, modelss, calibrate_years, '{}_calibrate'.format(slugname(observation, calibrate_years, stage)))
         export_single_summaries(indices, modelss, validate_years, '{}_validate'.format(slugname(observation, calibrate_years, validate_years, stage)))
     return modelss
+
+def check_outlier(modelss, years, threshold=30):
+    for models in modelss:
+        try:
+            m = models[0]
+        except:
+            continue
+        print "* {} - {}".format(m.weather_loc, m.observation_loc)
+        for m in models:
+            print " - {}".format(m.name)
+            y = np.array(m._years(years))
+            e = m.error(y)
+            i = np.where((np.abs(e) > threshold) == True)
+            print y[i]
+            print e[i]
 
 def main2(export=False):
     # Cherry (DC)
