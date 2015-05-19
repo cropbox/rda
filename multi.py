@@ -66,4 +66,8 @@ def preset(slugname, model, years, n=3, **kwargs):
         calibrate(model, years, n, **kwargs)
 
     load('_coeff', single_calibrate)
-    load('_coeffs', multi_calibrate)
+
+    #HACK no time for multi param calibration
+    model._coeffs = [model._coeff]
+
+    #load('_coeffs', multi_calibrate)
