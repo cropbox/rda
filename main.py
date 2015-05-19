@@ -301,7 +301,7 @@ def _slugify(v):
 def slugname(*args):
     return '_'.join([_slugify(k) for k in args])
 
-def run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, n=3, MODELS=DEFAULT_MODELS, export=True):
+def run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, n=1, MODELS=DEFAULT_MODELS, export=True):
     weather_filename = 'data/{}.pkl'.format(weather)
     metdf = pd.read_pickle(weather_filename)
 
