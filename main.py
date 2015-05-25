@@ -353,6 +353,7 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
             show_single_summary(models, validate_years).to_csv('results/current/{}_validate.csv'.format(name2))
             export_single_model(models, export_years).to_csv('results/current/{}_single.csv'.format(name))
             export_multi_model(models, export_years).to_csv('results/current/{}_multi.csv'.format(name))
+            export_single_param(models, name)
             plot_single_model(models, calibrate_years, False, 'figures/current/{}_calibrate_trend.png'.format(name))
             plot_single_model(models, calibrate_years, True, 'figures/current/{}_calibrate_residual.png'.format(name))
             plot_single_model(models, validate_years, False, 'figures/current/{}_validate_trend.png'.format(name))
@@ -372,6 +373,7 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
         c = cultivar if cultivar else 'all'
         export_single_summaries(indices, modelss, calibrate_years, '{}_calibrate'.format(slugname(observation, o, c, calibrate_years, stage)))
         export_single_summaries(indices, modelss, validate_years, '{}_validate'.format(slugname(observation, o, c, calibrate_years, validate_years, stage)))
+        export_single_param_stat(modelss, '{}_param'.format(slugname(observation, o, c, calibrate_years, stage)))
     return modelss
 
 def check_outlier(modelss, years, threshold=30):
