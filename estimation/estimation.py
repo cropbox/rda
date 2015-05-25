@@ -2,6 +2,7 @@ import numpy as np
 import scipy.optimize
 import pandas as pd
 import datetime
+import itertools
 
 class ObservationError(Exception):
     pass
@@ -310,3 +311,8 @@ class Estimator(object):
             return 1. - np.sum(e**2) / np.sum(d_obs**2)
         elif how == 'd':
             return 1. - np.sum(e**2) / np.sum((np.abs(d_est) + np.abs(d_obs))**2)
+
+    def crossvalidate(self, years, how='e', n=1):
+        years = self._years(years)
+        keys = list(itertools.combinations(years, len(years)-n))
+        return np.array([self.error(years, how, self._coeffs[k]) for k in keys])
