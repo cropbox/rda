@@ -30,6 +30,7 @@ class Ensemble(Estimator):
         self.estimators = estimators
         self.n = len(estimators)
         self._coeff = self.default_coeff()
+        self._coeffs = {'': self._coeff}
         self.nick = nick
 
     def default_coeff(self):

@@ -14,13 +14,17 @@ def _calibrate_func(x):
     return model.calibrate(*args, **kwargs)
 
 def calibrate(model, years, n=1, **kwargs):
-    pool = mp.Pool()
     years = model._years(years)
     #yearss = itertools.combinations(years, n)
-    yearss = sum([[list(x) for x in list(itertools.combinations(years, len(years)-i))] for i in range(n+1)], [])
-    argss = [(model, [years, False], kwargs) for years in yearss]
+    yearss = sum([list(itertools.combinations(years, len(years)-i)) for i in range(n+1)], [])
+    argss = [(model, [list(years), False], kwargs) for years in yearss]
+
+    pool = mp.Pool()
     coeffs = pool.map(_calibrate_func, argss)
-    model._coeffs = coeffs
+    pool.close()
+    pool.join()
+
+    model._coeffs = dict(zip(yearss, coeffs))
 
 ##############
 # Estimation #
@@ -31,9 +35,13 @@ def _estimate_func(x):
     return model.estimate_multi(year)
 
 def estimate(models, year):
-    pool = mp.Pool(len(models))
     argss = [(m, year) for m in models]
+
+    pool = mp.Pool(len(models))
     estms = pool.map(_estimate_func, argss)
+    pool.clsoe()
+    pool.join()
+
     names = [m.name for m in models]
     df = pd.concat(estms, keys=names, axis=1).fillna(0)
     #df['sum'] = df.sum(axis=1)
@@ -68,6 +76,6 @@ def preset(slugname, model, years, n=3, **kwargs):
     load('_coeff', single_calibrate)
 
     #HACK no time for multi param calibration
-    model._coeffs = [model._coeff]
+    model._coeffs = {'': model._coeff}
 
-    #load('_coeffs', multi_calibrate)
+    load('_coeffs', multi_calibrate)

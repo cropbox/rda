@@ -14,7 +14,7 @@ class Estimator(object):
         self._mets = mets
         self._obss = obss
         self._coeff = coeff
-        self._coeffs = [coeff]
+        self._coeffs = {'': coeff}
         self.setup()
 
     def setup(self):
@@ -153,6 +153,8 @@ class Estimator(object):
                 return 0 if julian else None
         if coeffs is None:
             coeffs = self._coeffs
+        if type(coeffs) is dict:
+            coeffs = [self._normalize(c) for c in coeffs.values()]
         else:
             coeffs = [self._normalize(c) for c in coeffs]
         ests = [estimate_safely(c) for c in coeffs]
@@ -259,7 +261,7 @@ class Estimator(object):
     def calibrate(self, years=None, disp=True, **kwargs):
         years = self._years(years)
         self._coeff = self._calibrate(years, disp, **kwargs)
-        self._coeffs = [self._coeff]
+        self._coeffs[''] = self._coeff
         return self._coeff
 
     # validation
