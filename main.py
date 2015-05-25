@@ -407,11 +407,19 @@ def main2(export=False):
     #run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March], export=export)
     run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
+    calibrate_years = (1991, 2010) # same as Chung et al. (2011)
+    validate_years = (1946, 1990)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
+
     # Cherry (DC) - Kwanzan
     cultivar = 'Kwanzan'
     calibrate_years = (1991, 2011)
     validate_years = (1946, 1990)
     #run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, MODELS=DEFAULT_MODELS+[DegreeDay, February, March], export=export)
+    run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
+
+    calibrate_years = (1991, 2010) # same as Chung et al. (2011)
+    validate_years = (1946, 1990)
     run(weather, weather_loc, observation, observation_loc, cultivar, stage, calibrate_years, validate_years, export_years, export=export)
 
     # Apple
