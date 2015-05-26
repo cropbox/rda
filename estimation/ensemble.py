@@ -47,7 +47,7 @@ class Ensemble(Estimator):
             else:
                 return 1.
         W = np.array([weight(m) for m in self.estimators])
-        W = W / sum(W)
+        W = (W / sum(W)).tolist()
         coeff = self._dictify([W, opts['C']])
         return coeff
 
