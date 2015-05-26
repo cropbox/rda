@@ -2,13 +2,12 @@ from estimation import Estimator
 
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
 import datetime
+import itertools
 
 class Ensemble(Estimator):
     def setup(self):
         self.estimators = []
-        self.n = 0
         self.nick = None
 
     @property
@@ -20,53 +19,61 @@ class Ensemble(Estimator):
 
     @property
     def coeff_names(self):
-        return ['w{}'.format(i) for i in range(self.n)]
+        return ['W', 'C']
 
     @property
     def default_options(self):
-        return {}
+        return {
+            'W': [1. / self.n] * self.n,
+            'C': [m._coeff for m in self.estimators],
+        }
 
-    def use(self, estimators, nick=None):
+    @property
+    def n(self):
+        return len(self.estimators)
+
+    def use(self, estimators, years, nick=None, weighted=True):
         self.estimators = estimators
-        self.n = len(estimators)
-        self._coeff = self.default_coeff()
-        self._coeffs = {'': self._coeff}
         self.nick = nick
-
-    def default_coeff(self):
-        return self._dictify(np.ones(self.n) / self.n)
+        self.weighted = weighted
+        self.calibrate(years)
 
     def _calibrate(self, years, disp=True, **kwargs):
-        w = [1. / m.error(years, 'rmse') for m in self.estimators]
-        w = w / sum(w)
-        coeff = self._dictify(w)
-        return coeff
-
-    #TODO just for testing
-    def _calibrate_ols(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)
 
-        def julian(t):
-            try:
-                return int(t.strftime('%j'))
-            except:
-                return np.nan
-
-        X = np.array([[julian(t) for t in m.estimates(years)] for m in self.estimators]).transpose()
-        X = sm.add_constant(X)
-        Y = np.array([julian(t) for t in self.observes(years)]).transpose()
-        lm = sm.OLS(Y, X)
-        res = lm.fit()
-
-        if disp:
-            print res.summary()
-
-        coeff = self._dictify(res.params)
+        def weight(m):
+            if self.weighted:
+                return 1. / m.error(years, 'rmse')
+            else:
+                return 1.
+        W = np.array([weight(m) for m in self.estimators])
+        W = W / sum(W)
+        coeff = self._dictify([W, opts['C']])
         return coeff
 
     def _estimate(self, year, met, coeff):
         o = datetime.datetime(year, 1, 1)
-        d = [(m.estimate(year) - o).total_seconds() for m in self.estimators]
-        w = np.array(self._listify(self._coeff))
-        t = o + datetime.timedelta(seconds=sum(w*d))
+        d = [m.estimate(year, c, julian=True) for (m, c) in zip(self.estimators, coeff['C'])]
+        w = np.array(coeff['W'])
+        t = o + datetime.timedelta(days=np.sum(w*d) - 1)
         return pd.Timestamp(t)
+
+    def error_with_calibration(self, calibrate_years, validate_years, how='e'):
+        coeff_backup = self._coeff.copy(), self._coeffs.copy()
+
+        calibrate_years = self._years(calibrate_years)
+        validate_years = self._years(validate_years)
+
+        key = tuple(calibrate_years)
+        C = [m._coeffs[key] for m in self.estimators]
+        self.calibrate(calibrate_years, C=C)
+
+        errors = self.error(validate_years, how)
+
+        self._coeff, self._coeffs = coeff_backup
+        return errors
+
+    def crossvalidate(self, years, how='e', n=1):
+        years = self._years(years)
+        calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
+        return np.array([self.error_with_calibration(y, years, how) for y in calibrate_yearss])

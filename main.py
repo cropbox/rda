@@ -339,11 +339,10 @@ def run(weather, weather_loc, observation, observation_loc, cultivar, stage, cal
 
         # ensemble test
         e1 = Ensemble(mets, obss)
-        e1.use(models, 'Ensemble')
+        e1.use(models, calibrate_years, nick='Ensemble', weighted=False)
 
         e2 = Ensemble(mets, obss)
-        e2.use(models, 'EnsembleW')
-        e2.calibrate(calibrate_years)
+        e2.use(models, calibrate_years, nick='EnsembleW', weighted=True)
 
         models = models + [e1, e2]
         if export:
