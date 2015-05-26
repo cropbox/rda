@@ -138,28 +138,24 @@ class Estimator(object):
         else:
             return t
 
+    def estimate_safely(self, years, coeff=None, julian=False):
+        try:
+            return self.estimate(years, coeff, julian)
+        except:
+            return 0 if julian else None
+
     def estimates(self, years, coeff=None, julian=False):
-        def estimate_safely(y):
-            try:
-                return self.estimate(y, coeff, julian)
-            except:
-                return 0 if julian else None
         years = self._years(years)
-        return [estimate_safely(y) for y in years]
+        return [self.estimate_safely(y, coeff, julian) for y in years]
 
     def estimate_multi(self, year, coeffs=None, julian=False):
-        def estimate_safely(c):
-            try:
-                return self.estimate(year, c, julian)
-            except:
-                return 0 if julian else None
         if coeffs is None:
             coeffs = self._coeffs
         if type(coeffs) is dict:
             coeffs = [self._normalize(c) for c in coeffs.values()]
         else:
             coeffs = [self._normalize(c) for c in coeffs]
-        ests = [estimate_safely(c) for c in coeffs]
+        ests = [self.estimate_safely(year, c, julian) for c in coeffs]
         return pd.Series(ests).dropna()
 
     # observation
@@ -173,14 +169,15 @@ class Estimator(object):
         else:
             return t
 
+    def observe_safely(self, year, julian=False):
+        try:
+            return self.observe(year, julian)
+        except:
+            return 0 if julian else None
+
     def observes(self, years, julian=False):
-        def observe_safely(y):
-            try:
-                return self.observe(y, julian)
-            except:
-                return 0 if julian else None
         years = self._years(years)
-        return [observe_safely(y) for y in years]
+        return [self.observe_safely(y, julian) for y in years]
 
     # calibration
     def _calibrate(self, years, disp=True, **kwargs):
