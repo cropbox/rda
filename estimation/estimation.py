@@ -14,6 +14,7 @@ class Estimator(object):
     def __init__(self, mets, obss, coeff=None):
         self._mets = mets
         self._obss = obss
+        self._calibrate_years = None
         self._coeff = coeff
         self._coeffs = {'': coeff}
         self.setup()
@@ -261,6 +262,7 @@ class Estimator(object):
 
     def calibrate(self, years=None, disp=True, **kwargs):
         years = self._years(years)
+        self._calibrate_years = years
         self._coeff = self._calibrate(years, disp, **kwargs)
         self._coeffs[''] = self._coeff
         return self._coeff

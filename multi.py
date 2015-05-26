@@ -73,6 +73,9 @@ def preset(slugname, model, years, n=3, **kwargs):
     def multi_calibrate():
         calibrate(model, years, n, **kwargs)
 
+    #HACK needed for error()
+    model._calibrate_years = years
+
     load('_coeff', single_calibrate)
 
     #HACK no time for multi param calibration
