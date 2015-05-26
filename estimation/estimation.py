@@ -294,9 +294,10 @@ class Estimator(object):
         elif how == 'xe':
             return np.max(np.abs(e))
 
-        est_hat = np.ma.masked_values(self.observes(years, julian=True), 0).mean()
-        d_est = np.ma.masked_values(self.estimates(years, coeff, julian=True), 0) - est_hat
-        d_obs = np.ma.masked_values(self.observes(years, julian=True), 0) - est_hat
+        #obs_hat = np.ma.masked_values(self.observes(years, julian=True), 0).mean()
+        obs_hat = np.ma.masked_values(self.observes(self._calibrate_years, julian=True), 0).mean()
+        d_est = np.ma.masked_values(self.estimates(years, coeff, julian=True), 0) - obs_hat
+        d_obs = np.ma.masked_values(self.observes(years, julian=True), 0) - obs_hat
 
         if how == 'ef':
             return 1. - np.sum(e**2) / np.sum(d_obs**2)
