@@ -265,20 +265,11 @@ class Estimator(object):
         return self._coeff
 
     # validation
-    def _diff(self, t0, t1, year):
-        def jday(t):
-            if type(t) is datetime.datetime:
-                sec_per_day = 60*60*24.
-                return (t - datetime.datetime(year, 1, 1)).total_seconds() / sec_per_day
-            else:
-                return t
-        return jday(t0) - jday(t1)
-
     def residual(self, year, coeff=None):
         try:
-            obs = self.observe(year)
-            est = self.estimate(year, coeff)
-            return self._diff(obs, est, year)
+            obs = self.observe(year, julian=True)
+            est = self.estimate(year, coeff, julian=True)
+            return obs - est
         except ObservationError:
             return -365.
         except EstimationError:
