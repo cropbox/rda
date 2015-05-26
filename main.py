@@ -153,6 +153,14 @@ def export_single_summaries(indices, modelss, years, name):
         plt.close()
     return df
 
+def export_crossvalidate_summaries(modelss, years, how):
+    def summary(models):
+        df = pd.DataFrame({
+            m.name: m.crossvalidate(years, how) for m in models
+        }, columns=[m.name for m in models])
+        return df
+    return pd.concat([summary(models) for models in modelss])
+
 import json
 def export_single_param(models, name):
     with open('results/current/{}_param.txt'.format(name), 'w') as f:
