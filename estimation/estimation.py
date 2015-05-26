@@ -315,4 +315,7 @@ class Estimator(object):
     def crossvalidate(self, years, how='e', n=1):
         years = self._years(years)
         keys = list(itertools.combinations(years, len(years)-n))
-        return np.array([self.error(years, how, self._coeffs[k]) for k in keys])
+        def error(k):
+            validate_years = sorted(set(years) - set(k))
+            return self.error(validate_years, how, self._coeffs[k])
+        return np.array([error(k) for k in keys])

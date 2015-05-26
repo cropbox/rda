@@ -76,4 +76,7 @@ class Ensemble(Estimator):
     def crossvalidate(self, years, how='e', n=1):
         years = self._years(years)
         calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
-        return np.array([self.error_with_calibration(y, years, how) for y in calibrate_yearss])
+        def error(y):
+            validate_years = sorted(set(years) - set(y))
+            return self.error_with_calibration(y, validate_years, how)
+        return np.array([error(y) for y in calibrate_yearss])
