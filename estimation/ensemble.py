@@ -58,6 +58,27 @@ class Ensemble(Estimator):
         t = o + datetime.timedelta(days=np.sum(w*d) - 1)
         return pd.Timestamp(t)
 
+    def _estimate_multi(self, calibrate_years, estimate_year, julian=False):
+        coeff_backup = self._coeff.copy(), self._coeffs.copy()
+
+        calibrate_years = self._years(calibrate_years)
+
+        key = tuple(calibrate_years)
+        C = [m._coeffs[key] for m in self.estimators]
+        self.calibrate(calibrate_years, C=C)
+
+        est = self.estimate_safely(estimate_year, julian=julian)
+
+        self._coeff, self._coeffs = coeff_backup
+        return est
+
+    def estimate_multi(self, year, coeffs=None, julian=False):
+        years = self._years(self._calibrate_years)
+        #calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
+        calibrate_yearss = [list(x) for x in self.estimators[0]._coeffs.keys()]
+        ests = [self._estimate_multi(y, year, julian) for y in calibrate_yearss]
+        return pd.Series(ests).dropna()
+
     def error_with_calibration(self, calibrate_years, validate_years, how='e'):
         coeff_backup = self._coeff.copy(), self._coeffs.copy()
 
