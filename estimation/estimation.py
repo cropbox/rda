@@ -105,7 +105,8 @@ class Estimator(object):
 
     # date conversion
     def _julian(self, t):
-        return int(t.strftime('%j'))
+        #return int(t.strftime('%j'))
+        return float(t.strftime('%j')) + t.hour/24. + t.minute/(24*60.) + t.second/(24*60*60.)
 
     # estimation
     def _match(self, ts, value):
