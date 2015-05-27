@@ -168,11 +168,11 @@ class Model(object):
 
         def y_obs():
             #return np.array([julian(t) for t in obss[x]])
-            return np.array(models[0].observes(x, julian=True))
+            return np.ma.masked_values(models[0].observes(x, julian=True), 0)
 
         def y_est(m):
             #return np.array([julian(t) for t in m.estimates(x)])
-            return np.array(m.estimates(x, julian=True))
+            return np.ma.masked_values(m.estimates(x, julian=True), 0)
 
         # for regular plot
         def plot_obs():
