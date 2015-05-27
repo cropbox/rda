@@ -120,5 +120,9 @@ if __name__ == '__main__':
 
     [m.create(export=True) for m in models]
 
-    #rmses = pd.concat([m.export_crossvalidate_summaries('rmse') for m in models])
-    #ds = pd.concat([m.export_crossvalidate_summaries('d') for m in models])
+    pd.concat([m.export_crossvalidate_summaries('rmse') for m in models]).to_csv('results/current/stat_rmse.csv')
+    pd.concat([m.export_crossvalidate_summaries('d') for m in models]).to_csv('results/current/stat_d.csv')
+    pd.concat([m.export_crossvalidate_summaries('me') for m in models]).to_csv('results/current/stat_me.csv')
+    pd.concat([m.export_crossvalidate_summaries('mae') for m in models]).to_csv('results/current/stat_mae.csv')
+    pd.concat([m.export_crossvalidate_summaries('xe') for m in models]).to_csv('results/current/stat_xe.csv')
+    pd.concat([m.export_crossvalidate_summaries('ef') for m in models]).to_csv('results/current/stat_ef.csv')
