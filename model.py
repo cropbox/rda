@@ -335,3 +335,18 @@ class Model(object):
                 i = np.where((np.abs(e) > threshold) == True)
                 print y[i]
                 print e[i]
+
+    def show_outlier_histogram(self, threshold=10, filename=None):
+        def outlier(m):
+            y = np.array(m._years(self.validate_years))
+            e = np.abs(m.error(y))
+            i = np.where((e > threshold) == True)
+            return e[i]
+
+        outliers = [[outlier(m) for m in models] for models in self._modelss]
+        outliers = np.concatenate(sum(outliers, [])).compressed()
+        plt.hist(outliers, bins=range(threshold, 40))
+        if filename:
+            plt.savefig(filename)
+        plt.show()
+        return outliers

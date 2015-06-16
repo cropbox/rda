@@ -118,6 +118,12 @@ if __name__ == '__main__':
     ]
     cherry_dc, apple_kearnesville, peach_korea, pear_korea, cherry_korea = models
 
+    cherry_dc.show_outlier_histogram(filename='figures/current/cherry_dc_outlier.png')
+    apple_kearnesville.show_outlier_histogram(filename='figures/current/apple_kearnesville_outlier.png')
+    peach_korea.show_outlier_histogram(filename='figures/current/peach_korea_outlier.png')
+    pear_korea.show_outlier_histogram(filename='figures/current/pear_korea_outlier.png')
+    cherry_korea.show_outlier_histogram(filename='figures/current/cherry_korea_outlier.png')
+
     [m.create(export=True) for m in models]
 
     pd.concat([m.export_crossvalidate_summaries('rmse') for m in models]).to_csv('results/current/stat_rmse.csv')
