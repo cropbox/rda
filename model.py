@@ -330,7 +330,7 @@ class Model(object):
             print "* {} - {} - {}".format(m.weather_loc, m.observation_loc, m.cultivar)
             for m in models:
                 print " - {}".format(m.name)
-                y = np.array(m._years(years))
+                y = np.array(m._years(self.validate_years))
                 e = m.error(y)
                 i = np.where((np.abs(e) > threshold) == True)
                 print y[i]
