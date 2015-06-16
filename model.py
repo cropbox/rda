@@ -148,9 +148,9 @@ class Model(object):
         cname = slugname(self.observation, c, w, o, self.calibrate_years, self.stage)
         vname = slugname(self.observation, c, w, o, self.calibrate_years, self.validate_years, self.stage)
 
-        self.export_single_summaries(indices, self._modelss, self.calibrate_years, '{}_calibrate'.format(cname))
-        self.export_single_summaries(indices, self._modelss, self.validate_years, '{}_validate'.format(vname))
-        self.export_single_param_stat(self._modelss, '{}_param'.format(cname))
+        self.export_single_summaries(indices, self.calibrate_years, '{}_calibrate'.format(cname))
+        self.export_single_summaries(indices, self.validate_years, '{}_validate'.format(vname))
+        self.export_single_param_stat('{}_param'.format(cname))
 
 
     ####
@@ -240,8 +240,8 @@ class Model(object):
         print df
         return df
 
-    def export_single_summaries(self, indices, modelss, years, name):
-        dfs = [self.show_single_summary(models, years) for models in modelss]
+    def export_single_summaries(self, indices, years, name):
+        dfs = [self.show_single_summary(models, years) for models in self._modelss]
         df = pd.concat(dfs, keys=indices, names=['index'])
         df.to_csv('results/current/{}_summary.csv'.format(name))
 
@@ -275,8 +275,8 @@ class Model(object):
             for m in models:
                 f.write('{} : {}\n'.format(m.name, json.dumps(m._coeff)))
 
-    def export_single_param_stat(self, modelss, name):
-        models = sum(modelss, [])
+    def export_single_param_stat(self, name):
+        models = sum(self._modelss, [])
         names = list({m.name for m in models})
         keys = np.array([m.name for m in models])
 
@@ -321,8 +321,8 @@ class Model(object):
         df.index.names = ['year', 'model', 'day']
         return df
 
-    def check_outlier(self, modelss, years, threshold=30):
-        for models in modelss:
+    def check_outlier(self, threshold=30):
+        for models in self._modelss:
             try:
                 m = models[0]
             except:
