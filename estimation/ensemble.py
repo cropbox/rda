@@ -53,8 +53,10 @@ class Ensemble(Estimator):
 
     def _estimate(self, year, met, coeff):
         o = datetime.datetime(year, 1, 1)
-        d = [m.estimate(year, c, julian=True) for (m, c) in zip(self.estimators, coeff['C'])]
-        w = np.array(coeff['W'])
+        d = [m.estimate_safely(year, c, julian=True) for (m, c) in zip(self.estimators, coeff['C'])]
+        d = np.ma.masked_values(d, 0)
+        w = np.ma.array(coeff['W'], mask=d.mask)
+        w = w / w.sum()
         t = o + datetime.timedelta(days=np.sum(w*d) - 1)
         return pd.Timestamp(t)
 
@@ -94,7 +96,7 @@ class Ensemble(Estimator):
         self._coeff, self._coeffs = coeff_backup
         return errors
 
-    def crossvalidate(self, years, how='e', n=1):
+    def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
         years = self._years(years)
         calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
         def error(y):

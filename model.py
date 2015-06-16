@@ -252,10 +252,10 @@ class Model(object):
             plt.close()
         return df
 
-    def export_crossvalidate_summaries(self, how='rmse'):
+    def export_crossvalidate_summaries(self, how='rmse', ignore_estimation_error=False):
         def summary(models):
             df = pd.DataFrame({
-                m.name: m.crossvalidate(self.calibrate_years, how) for m in models
+                m.name: m.crossvalidate(self.calibrate_years, how, ignore_estimation_error) for m in models
             }, columns=[m.name for m in models])
             return df
         df = pd.concat([summary(models) for models in self._modelss])

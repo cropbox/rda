@@ -277,10 +277,13 @@ class Estimator(object):
             return 365.
             #return np.inf
 
-    def error(self, years, how='e', coeff=None):
+    def error(self, years, how='e', coeff=None, ignore_estimation_error=False):
         years = self._years(years)
         #e = np.array([self.residual(y, coeff) for y in years])
         e = np.ma.masked_values([self.residual(y, coeff) for y in years], -365.)
+
+        if ignore_estimation_error:
+            e = np.ma.masked_where(e == 365., e)
 
         how = how.lower()
         if how == 'e':
@@ -304,10 +307,10 @@ class Estimator(object):
         elif how == 'd':
             return 1. - np.sum(e**2) / np.sum((np.abs(d_est) + np.abs(d_obs))**2)
 
-    def crossvalidate(self, years, how='e', n=1):
+    def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
         years = self._years(years)
         keys = list(itertools.combinations(years, len(years)-n))
         def error(k):
             validate_years = sorted(set(years) - set(k))
-            return self.error(validate_years, how, self._coeffs[k])
+            return self.error(validate_years, how, self._coeffs[k], ignore_estimation_error)
         return np.array([error(k) for k in keys])
