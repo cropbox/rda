@@ -10,7 +10,8 @@ import json
 from itertools import product
 
 DEFAULT_MODELS = [
-    GrowingDegreeDay,
+    #GrowingDegreeDay,
+    DegreeDay,
     ChillDay,
     BetaFunc,
     Dts,
