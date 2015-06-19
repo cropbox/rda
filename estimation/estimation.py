@@ -48,6 +48,7 @@ class Estimator(object):
     def start_date(self, year, coeff):
         try:
             #return datetime.datetime.strptime('{}-{}'.format(year, int(coeff['Ds'])), '%Y-%j')
+            #TODO use Ds as an offset (e.g. Ds = 0 indicates the first day of the year)
             jday = int(coeff['Ds']) - 1
             return datetime.date(year, 1, 1) + datetime.timedelta(days=jday)
         except:
