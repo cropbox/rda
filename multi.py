@@ -39,7 +39,7 @@ def estimate(models, year):
 
     pool = mp.Pool(len(models))
     estms = pool.map(_estimate_func, argss)
-    pool.clsoe()
+    pool.close()
     pool.join()
 
     names = [m.name for m in models]
