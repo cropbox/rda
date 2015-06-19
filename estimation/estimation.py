@@ -69,11 +69,11 @@ class Estimator(object):
         if years is None:
             start = int(max(self._mets.index[0].year, self._obss.index[0]))
             end = int(min(self._mets.index[-1].year, self._obss.index[-1]))
-            return range(start, end+1)
+            return list(range(start, end+1))
         #HACK support (start, end) tuple for convenience
         elif type(years) is tuple and len(years) == 2:
             start, end = years
-            return range(start, end+1)
+            return list(range(start, end+1))
         elif type(years) is int:
             return [years]
         else:
