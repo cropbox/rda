@@ -212,7 +212,7 @@ class Estimator(object):
             return self.error(years, 'rmse', coeff)
 
         # new default to 'differential evolution'
-        if not opts.has_key('method'):
+        if 'method' not in opts:
             opts['method'] = 'evolution'
 
         if 'nelder-mead'.startswith(opts['method']):
