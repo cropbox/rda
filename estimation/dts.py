@@ -1,4 +1,4 @@
-from estimation import Estimator
+from .estimation import Estimator
 
 import numpy as np
 import pandas as pd
