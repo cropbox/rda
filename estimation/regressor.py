@@ -32,7 +32,7 @@ class MonthlyRegressor(Estimator):
         m = sm.OLS(Y, X).fit()
 
         if disp:
-            print m.summary()
+            print(m.summary())
 
         coeff = self._dictify(m.params)
         return coeff

@@ -225,10 +225,10 @@ class Model(object):
         return df
 
     def show_single_summary(self, models, years):
-        print " * Years: {}".format(years)
-        print " * Parameters"
+        print(" * Years: {}".format(years))
+        print(" * Parameters")
         for m in models:
-            print "  - {}: {}".format(m.name, m._coeff)
+            print("  - {}: {}".format(m.name, m._coeff))
         df = pd.DataFrame({
             'RMSE': [m.error(years, 'rmse') for m in models],
             'ME': [m.error(years, 'me') for m in models],
@@ -238,7 +238,7 @@ class Model(object):
             'D': [m.error(years, 'd') for m in models],
         }, index=[m.name for m in models])
         df.index.name = 'model'
-        print df
+        print(df)
         return df
 
     def export_single_summaries(self, indices, years, name):
@@ -328,14 +328,14 @@ class Model(object):
                 m = models[0]
             except:
                 continue
-            print "* {} - {} - {}".format(m.weather_loc, m.observation_loc, m.cultivar)
+            print("* {} - {} - {}".format(m.weather_loc, m.observation_loc, m.cultivar))
             for m in models:
-                print " - {}".format(m.name)
+                print(" - {}".format(m.name))
                 y = np.array(m._years(self.validate_years))
                 e = m.error(y)
                 i = np.where((np.abs(e) > threshold) == True)
-                print y[i]
-                print e[i]
+                print(y[i])
+                print(e[i])
 
     def show_outlier_histogram(self, threshold=10, filename=None):
         def outlier(m):
