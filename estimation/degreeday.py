@@ -44,7 +44,7 @@ class DegreeDay(Estimator):
 
     def _preset_func(self, x):
         df, year, Dss, Tbs, Rd_max = x
-        obs = self.observe(year)
+        obs = self.observe(year, julian=True)
 
         def tab(sdf, Ds, Tb):
             Rd = 0.
@@ -52,7 +52,8 @@ class DegreeDay(Estimator):
                 if Rd_max and Rd >= Rd_max:
                     break
                 if v > Rd:
-                    yield {'Ds': Ds, 'Tb': Tb, 'Rd': int(Rd), 'year': year, 'est': i, 'obs': obs}
+                    est = self._julian(i, year)
+                    yield {'Ds': Ds, 'Tb': Tb, 'Rd': int(Rd), 'year': year, 'est': est, 'obs': obs}
                     Rd = v
         return pd.concat([pd.DataFrame(tab(df[Tb], Ds, Tb)) for Ds in Dss for Tb in Tbs])
 
