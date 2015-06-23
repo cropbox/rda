@@ -105,9 +105,9 @@ class Estimator(object):
             return self._dictify(coeff)
 
     # date conversion
-    def _julian(self, t):
+    def _julian(self, t, year):
         #return int(t.strftime('%j'))
-        return float(t.strftime('%j')) + t.hour/24. + t.minute/(24*60.) + t.second/(24*60*60.)
+        return (t.year - year)*365 + float(t.strftime('%j')) + t.hour/24. + t.minute/(24*60.) + t.second/(24*60*60.)
 
     # estimation
     def _match(self, ts, value):
@@ -136,7 +136,7 @@ class Estimator(object):
             raise ObservationError("weather cannot be clipped for '{}'".format(year))
         t = self._estimate(year, met, coeff).to_datetime()
         if julian:
-            return self._julian(t)
+            return self._julian(t, year)
         else:
             return t
 
@@ -167,7 +167,7 @@ class Estimator(object):
         except:
             raise ObservationError("observation is not available for '{}'".format(year))
         if julian:
-            return self._julian(t)
+            return self._julian(t, year)
         else:
             return t
 
