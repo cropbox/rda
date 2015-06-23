@@ -81,7 +81,7 @@ class DegreeDay(Estimator):
             end_date = datetime.date(year, 5, 31)
             df = Cds.loc[start_date:end_date]
             df = df - df.iloc[0]
-            df = df.apply(np.floor)
+            df = df.apply(np.floor).astype(int)
             return df
 
         argss = [(subdata(Cds, year, Dss[0]), year, Dss, Tbs, Rd_max) for year in years]
