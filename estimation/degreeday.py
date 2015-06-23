@@ -44,20 +44,16 @@ class DegreeDay(Estimator):
 
     def _preset_func(self, x):
         df, year, Dss, Tbs, Rd_max = x
-        obs = self.observe(year, julian=True)
 
-        def tab(sdf, Ds, Tb):
-            Rd = 0.
-            for i, v in sdf.iteritems():
-                if Rd_max and Rd >= Rd_max:
-                    break
-                if v > Rd:
-                    Rd = v
-                    est = self._julian(i, year)
-                    diff = obs - est
-                    sq = diff**2
-                    yield {'Ds': Ds, 'Tb': Tb, 'Rd': int(Rd), 'year': year, 'sq': sq}
-        return pd.concat([pd.DataFrame(tab(df[Tb], Ds, Tb)) for Ds in Dss for Tb in Tbs])
+        def tab(Ds, Tb):
+            s = df[Tb]
+            s = s[s <= Rd_max].drop_duplicates().reset_index()
+            est = s['timestamp'].apply(lambda t: self._julian(t, year))
+            obs = self.observe(year, julian=True)
+            diff = obs - est
+            sq = diff**2
+            return pd.DataFrame({'Ds': Ds, 'Tb': Tb, 'Rd': s[Tb], 'year': year, 'sq': sq})
+        return pd.concat([tab(Ds, Tb) for Ds in Dss for Tb in Tbs])
 
     def _preset(self, years, **kwargs):
         years = self._years(years)
