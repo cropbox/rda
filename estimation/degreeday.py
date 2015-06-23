@@ -78,7 +78,7 @@ class DegreeDay(Estimator):
 
         def subdata(Cds, year, Ds):
             start_date = datetime.date(year, 1, 1) + datetime.timedelta(days=Ds)
-            end_date = datetime.date(year+1, 5, 31)
+            end_date = datetime.date(year, 5, 31)
             df = Cds.loc[start_date:end_date]
             df = df - df.iloc[0]
             df = df.apply(np.floor)
