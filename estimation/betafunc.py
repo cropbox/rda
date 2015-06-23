@@ -1,3 +1,5 @@
+from __future__ import division
+
 from .estimation import Estimator
 
 import numpy as np
@@ -33,11 +35,11 @@ class BetaFunc(Estimator):
         Tx, To = coeff['Tx'], coeff['To']
         Rx = 1.
         Tn = 0.
-        Txu = (Tx - T)*1.
-        Txl = (Tx - To)*1.
-        Tnu = (T - Tn)*1.
-        Tnl = (To - Tn)*1.
-        c = (To - Tn) / ((Tx - To)*1.)
+        Txu = Tx - T
+        Txl = Tx - To
+        Tnu = T - Tn
+        Tnl = To - Tn
+        c = (To - Tn) / (Tx - To)
         r = Rx * (Txu/Txl)*(Tnu/Tnl).pow(c).fillna(0)
         g = r.clip(lower=0) * (1 / 24.)
 
