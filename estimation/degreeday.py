@@ -26,7 +26,7 @@ class DegreeDay(Estimator):
             #'grid': (slice(3, 8, 0.1), slice(500, 1000, 5)),
             'coeff0': (1, 4.5, 250),
             'bounds': ((-100, 100), (0, 10), (0, 1000)),
-            'grid': (slice(-100, 100, 1), slice(3, 8, 0.1), slice(500, 1000, 5)),
+            'grid': (slice(-100, 100, 1), slice(0, 10, 0.1), slice(0, 1000, 1)),
         }
 
     def _calculate(self, year, met, coeff):
