@@ -52,9 +52,11 @@ class DegreeDay(Estimator):
                 if Rd_max and Rd >= Rd_max:
                     break
                 if v > Rd:
-                    est = self._julian(i, year)
-                    yield {'Ds': Ds, 'Tb': Tb, 'Rd': int(Rd), 'year': year, 'est': est, 'obs': obs}
                     Rd = v
+                    est = self._julian(i, year)
+                    diff = obs - est
+                    sq = diff**2
+                    yield {'Ds': Ds, 'Tb': Tb, 'Rd': int(Rd), 'year': year, 'sq': sq}
         return pd.concat([pd.DataFrame(tab(df[Tb], Ds, Tb)) for Ds in Dss for Tb in Tbs])
 
     def _preset(self, years, **kwargs):
