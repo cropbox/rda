@@ -152,6 +152,7 @@ class Model(object):
         self.export_single_summaries(indices, self.calibrate_years, '{}_calibrate'.format(cname))
         self.export_single_summaries(indices, self.validate_years, '{}_validate'.format(vname))
         self.export_single_param_stat('{}_param'.format(cname))
+        self.show_outlier_histogram(filename='figures/current/{}_outlier.png'.format(vname))
 
 
     ####
