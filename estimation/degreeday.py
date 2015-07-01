@@ -45,8 +45,16 @@ class DegreeDay(Estimator):
     def _preset_func(self, x):
         df, year, Dss, Tbs, Rd_max = x
 
+        def series(year, Ds, Tb):
+            start_date = datetime.date(year, 1, 1) + datetime.timedelta(days=Ds)
+            end_date = datetime.date(year, 5, 31)
+            s = df.loc[start_date:end_date][Tb]
+            s = s - s.iloc[0]
+            s = s.apply(np.floor).astype(int)
+            return s
+
         def tab(Ds, Tb):
-            s = df[Tb]
+            s = series(year, Ds, Tb)
             s = s[s <= Rd_max].drop_duplicates().reset_index()
             est = s['timestamp'].apply(lambda t: self._julian(t, year))
             obs = self.observe(year, julian=True)
@@ -72,15 +80,10 @@ class DegreeDay(Estimator):
         Dds = pd.concat(tdds, axis=1)
         Cds = Dds.cumsum()
 
-        def subdata(Cds, year, Ds):
-            start_date = datetime.date(year, 1, 1) + datetime.timedelta(days=Ds)
-            end_date = datetime.date(year, 5, 31)
-            df = Cds.loc[start_date:end_date]
-            df = df - df.iloc[0]
-            df = df.apply(np.floor).astype(int)
-            return df
+        def subdata(df, year):
+            return df.loc[str(year-1):str(year+1)]
 
-        argss = [(subdata(Cds, year, Dss[0]), year, Dss, Tbs, Rd_max) for year in years]
+        argss = [(subdata(Cds, year), year, Dss, Tbs, Rd_max) for year in years]
         pool = mp.Pool()
         res = pool.map(self._preset_func, argss)
         pool.close()
