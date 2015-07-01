@@ -349,5 +349,6 @@ class Model(object):
         plt.hist(outliers, bins=range(threshold, 40))
         if filename:
             plt.savefig(filename)
-        plt.show()
+        #plt.show()
+        plt.close()
         return outliers
