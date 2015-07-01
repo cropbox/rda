@@ -182,7 +182,7 @@ class Estimator(object):
         return [self.observe_safely(y, julian) for y in years]
 
     # calibration
-    def _calibrate(self, years, disp=True, **kwargs):
+    def _calibrate(self, years, disp=True, seed=1, **kwargs):
         opts = self.options(**kwargs)
 
         try:
@@ -226,6 +226,7 @@ class Estimator(object):
                 },
             ).x
         elif 'basinhopping'.startswith(opts['method']):
+            np.random.seed(seed)
             res = scipy.optimize.basinhopping(
                 func=cost,
                 x0=x0,
@@ -243,6 +244,7 @@ class Estimator(object):
                 func=cost,
                 bounds=bounds,
                 args=args,
+                seed=seed,
                 disp=disp,
             ).x
         elif 'brute'.startswith(opts['method']):
