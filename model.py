@@ -286,8 +286,10 @@ class Model(object):
 
     def export_single_param_stat(self, name):
         models = sum(self._modelss, [])
-        names = list({m.name for m in models})
-        keys = np.array([m.name for m in models])
+        name_indices = np.array([m.name for m in models])
+        cultivar_indices = np.array([m.cultivar for m in models])
+        names = list(set(name_indices))
+        cultivars = list(set(cultivar_indices))
 
         #HACK for Ensemble estimators
         def extract_coeff(m):
@@ -297,9 +299,17 @@ class Model(object):
                 return m._coeff
         values = np.array([extract_coeff(m) for m in models])
 
+        def construct(n, c):
+            df = pd.concat([pd.DataFrame(d, index=[0]) for d in values[(name_indices == n) * (cultivar_indices == c)]])
+            df = pd.DataFrame({'mean': df.mean(), 'std': df.std()}, columns=['mean', 'std']).transpose()
+            df.index.name = 'type'
+            df['name'] = n
+            df['cultivar'] = c
+            return df.reset_index().set_index(['name', 'cultivar', 'type'])
+
         for n in names:
-            df = pd.concat([pd.DataFrame(d, index=[0]) for d in values[keys == n]])
-            pd.DataFrame({'mean': df.mean(), 'std': df.std()}).to_csv('results/current/{}_{}.csv'.format(name, n))
+            df = pd.concat([construct(n, c) for c in cultivars])
+            df.to_csv('results/current/{}_{}.csv'.format(name, n))
 
     def export_multi_model(self, models, years):
         x = models[0]._years(years)
