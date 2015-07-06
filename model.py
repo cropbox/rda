@@ -87,10 +87,10 @@ class Model(object):
 
         # ensemble test
         e1 = Ensemble(mets, obss)
-        e1.use(models, self.calibrate_years, nick='Ensemble', weighted=False)
+        e1.use(models, self.calibrate_years, w, o, c, nick='Ensemble', weighted=False)
 
         e2 = Ensemble(mets, obss)
-        e2.use(models, self.calibrate_years, nick='EnsembleW', weighted=True)
+        e2.use(models, self.calibrate_years, w, o, c, nick='EnsembleW', weighted=True)
 
         models = models + [e1, e2]
         return models

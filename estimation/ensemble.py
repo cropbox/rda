@@ -32,11 +32,16 @@ class Ensemble(Estimator):
     def n(self):
         return len(self.estimators)
 
-    def use(self, estimators, years, nick=None, weighted=True):
+    def use(self, estimators, years, weather_loc, observation_loc, cultivar, nick=None, weighted=True):
         self.estimators = estimators
         self.nick = nick
         self.weighted = weighted
         self.calibrate(years)
+
+        #FIXME to be used with check_outlier() and export() functions
+        self.weather_loc = weather_loc
+        self.observation_loc = observation_loc
+        self.cultivar = cultivar
 
     def _calibrate(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)
