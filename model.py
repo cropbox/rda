@@ -118,6 +118,12 @@ class Model(object):
         self.plot_single_model(models, self.export_years, False, 'figures/current/{}_export_trend.png'.format(cname))
         self.plot_single_model(models, self.export_years, True, 'figures/current/{}_export_residual.png'.format(cname))
 
+    def _observations(self):
+        return self.obsdf.index.levels[0]
+
+    def _cultivars(self):
+        return self.obsdf.index.levels[1]
+
     def create(self, export=False):
         def create_each(o, c):
             models = self._create_models(o, c)
@@ -126,8 +132,8 @@ class Model(object):
             return models
 
         # populate available options from observation dataset
-        observations = [self.observation_loc] if self.observation_loc else self.obsdf.index.levels[0]
-        cultivars = [self.cultivar] if self.cultivar else self.obsdf.index.levels[1]
+        observations = [self.observation_loc] if self.observation_loc else self._observations()
+        cultivars = [self.cultivar] if self.cultivar else self._cultivars()
         ocs = list(product(observations, cultivars))
         self._modelss = [create_each(*oc) for oc in ocs]
 
