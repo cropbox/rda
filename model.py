@@ -267,11 +267,12 @@ class Model(object):
             }, columns=[m.name for m in models])
             return df
         df = pd.concat([summary(models) for models in self._modelss])
-        #return df
+        higher_is_better = how in {'ef', 'd'}
         df = pd.DataFrame({
             'mean': df.mean(),
             'std': df.std(),
-        }, ).transpose()
+            'rank': df.rank(axis=1, ascending=not higher_is_better).mean(),
+        }, columns=['mean', 'std', 'rank']).transpose()
         df.index.name = 'type'
         df['name'] = self.observation
         df['how'] = how.upper()
