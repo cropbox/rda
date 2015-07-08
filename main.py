@@ -120,16 +120,18 @@ if __name__ == '__main__':
 
     [m.create(export=True) for m in models]
 
-    pd.concat([m.export_crossvalidate_summaries('rmse') for m in models]).to_csv('results/current/stat_rmse.csv')
-    pd.concat([m.export_crossvalidate_summaries('d') for m in models]).to_csv('results/current/stat_d.csv')
-    pd.concat([m.export_crossvalidate_summaries('me') for m in models]).to_csv('results/current/stat_me.csv')
-    pd.concat([m.export_crossvalidate_summaries('mae') for m in models]).to_csv('results/current/stat_mae.csv')
-    pd.concat([m.export_crossvalidate_summaries('xe') for m in models]).to_csv('results/current/stat_xe.csv')
-    pd.concat([m.export_crossvalidate_summaries('ef') for m in models]).to_csv('results/current/stat_ef.csv')
+    def crossvalidate(models, metrics=['rmse', 'd', 'd1', 'dr', 'me', 'mae', 'xe', 'ef']):
+        def export(how, ignore_estimation_error):
+            if ignore_estimation_error:
+                filename = 'results/current/stat_{}_ie.csv'.format(how)
+            else:
+                filename = 'results/current/stat_{}.csv'.format(how)
 
-    pd.concat([m.export_crossvalidate_summaries('rmse', True) for m in models]).to_csv('results/current/stat_rmse_ie.csv')
-    pd.concat([m.export_crossvalidate_summaries('d', True) for m in models]).to_csv('results/current/stat_d_ie.csv')
-    pd.concat([m.export_crossvalidate_summaries('me', True) for m in models]).to_csv('results/current/stat_me_ie.csv')
-    pd.concat([m.export_crossvalidate_summaries('mae', True) for m in models]).to_csv('results/current/stat_mae_ie.csv')
-    pd.concat([m.export_crossvalidate_summaries('xe', True) for m in models]).to_csv('results/current/stat_xe_ie.csv')
-    pd.concat([m.export_crossvalidate_summaries('ef', True) for m in models]).to_csv('results/current/stat_ef_ie.csv')
+            names = [m.observation for m in models] + ['total']
+            dfs = [m.export_crossvalidate(how, ignore_estimation_error) for m in models]
+            dfs = dfs + [pd.concat(dfs)]
+            pd.concat([Model.export_crossvalidate_summaries(n, d, how) for n, d in zip(names, dfs)]).to_csv(filename)
+
+        for how in metrics:
+            export(how, False)
+            export(how, True)

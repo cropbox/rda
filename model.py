@@ -271,24 +271,30 @@ class Model(object):
             plt.close()
         return df
 
-    def export_crossvalidate_summaries(self, how='rmse', ignore_estimation_error=False):
+    def export_crossvalidate(self, how='rmse', ignore_estimation_error=False):
         def summary(models):
             df = pd.DataFrame({
                 m.name: m.crossvalidate(self.calibrate_years, how, ignore_estimation_error) for m in models
             }, columns=[m.name for m in models])
             return df
-        df = pd.concat([summary(models) for models in self._modelss])
-        higher_is_better = how in {'ef', 'd'}
-        df = pd.DataFrame({
+        return pd.concat([summary(models) for models in self._modelss])
+
+    def export_crossvalidate_summaries(name, df, how='rmse'):
+        def rank(df):
+            if how == 'me':
+                df = df.abs()
+            higher_is_better = how in {'ef', 'd', 'd1', 'dr'}
+            return df.rank(axis=1, ascending=not higher_is_better).mean()
+
+        sdf = pd.DataFrame({
             'mean': df.mean(),
             'std': df.std(),
-            'rank': df.rank(axis=1, ascending=not higher_is_better).mean(),
+            'rank': rank(df),
         }, columns=['mean', 'std', 'rank']).transpose()
-        df.index.name = 'type'
-        df['name'] = self.observation
-        df['how'] = how.upper()
-        df = df.reset_index().set_index(['how', 'name', 'type'])
-        return df
+        sdf.index.name = 'type'
+        sdf['name'] = name #self.observation
+        sdf['how'] = how.upper()
+        return sdf.reset_index().set_index(['how', 'name', 'type'])
 
     def export_single_param(self, models, name):
         with open('results/current/{}_param.txt'.format(name), 'w') as f:
