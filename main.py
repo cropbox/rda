@@ -111,12 +111,12 @@ def create_cherry_korea():
 if __name__ == '__main__':
     models = [
         create_cherry_dc(),
-        create_apple_kearnesville(),
+        create_cherry_korea(),
         create_peach_korea(),
         create_pear_korea(),
-        create_cherry_korea(),
+        create_apple_kearnesville(),
     ]
-    cherry_dc, apple_kearnesville, peach_korea, pear_korea, cherry_korea = models
+    cherry_dc, cherry_korea, peach_korea, pear_korea, apple_kearnesville = models
 
     [m.create(export=True) for m in models]
 
