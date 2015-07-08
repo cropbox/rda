@@ -308,7 +308,20 @@ class Estimator(object):
         if how == 'ef':
             return 1. - np.sum(e**2) / np.sum(d_obs**2)
         elif how == 'd':
+            # Willmott's index of agreement (Willmott et al., 1980)
             return 1. - np.sum(e**2) / np.sum((np.abs(d_est) + np.abs(d_obs))**2)
+        elif how == 'd1':
+            # Willmott's another index of agreement (Willmott et al., 1985)
+            return 1. - np.sum(np.abs(e)) / np.sum(np.abs(d_est) + np.abs(d_obs))
+        elif how == 'dr':
+            # Willmott's refined index of agreement (Willmott et al., 2012)
+            c = 2
+            dru = np.sum(np.abs(e))
+            drl = c * np.sum(np.abs(d_obs))
+            if dru <= drl:
+                return 1. - dru / drl
+            else:
+                return drl / dru - 1.
 
     def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
         years = self._years(years)
