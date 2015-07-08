@@ -157,6 +157,7 @@ class Model(object):
 
         self.export_single_summaries(indices, self.calibrate_years, '{}_calibrate'.format(cname))
         self.export_single_summaries(indices, self.validate_years, '{}_validate'.format(vname))
+        self.export_single_models(self.export_years, '{}_singles'.format(cname), julian=True)
         self.export_single_param_stat('{}_param'.format(cname))
         self.show_outlier_histogram(filename='figures/current/{}_outlier.png'.format(vname))
 
@@ -219,16 +220,26 @@ class Model(object):
         #plt.show()
         plt.close()
 
-    def export_single_model(self, models, years):
-        x = models[0]._years(years)
+    def export_single_model(self, models, years, julian=False):
+        try:
+            m = models[0]
+        except:
+            return None
+        x = m._years(years)
         df = pd.concat(
             #[models[0]._obss[x]] +
-            [pd.Series(models[0].observes(x), index=x)] +
-            [pd.Series(m.estimates(x), index=x) for m in models],
+            [pd.Series(models[0].observes(x, julian=julian), index=x)] +
+            [pd.Series(m.estimates(x, julian=julian), index=x) for m in models],
             keys=['Obs'] + [m.name for m in models],
             axis=1
         )
         df.index.name = 'year'
+        return df
+
+    def export_single_models(self, years, name, julian=False):
+        # for Jennifer's plot
+        df = pd.concat([self.export_single_model(models, years, julian=julian) for models in self._modelss])
+        df.to_csv('results/current/{}.csv'.format(name))
         return df
 
     def show_single_summary(self, models, years):
