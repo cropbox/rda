@@ -273,7 +273,7 @@ class Estimator(object):
         try:
             obs = self.observe(year, julian=True)
             est = self.estimate(year, coeff, julian=True)
-            return obs - est
+            return est - obs
         except ObservationError:
             return -365.
         except EstimationError:
