@@ -59,7 +59,7 @@ class ModelGroup(base.Model):
 
         self.save_param_stat(name='{}_param'.format(cname))
 
-        self.plot_outlier_histogram(threshold=10, name='{}_outlier'.format(vname))
+        self.plot_outlier_histogram(lower=10, upper=40, name='{}_outlier'.format(vname))
 
     def _errors(self, years):
         return pd.concat(
@@ -124,7 +124,7 @@ class ModelGroup(base.Model):
             filename = self.output.filename('group/results', '{}_{}'.format(name, n), 'csv')
             df.to_csv(filename)
 
-    def _outlier(self, m):
+    def _outlier(self, m, threshold):
         y = np.array(m._years(self.validate_years))
         e = np.abs(m.error(y))
         i = np.where((e > threshold) == True)
@@ -136,19 +136,19 @@ class ModelGroup(base.Model):
             print("* {} - {} - {}".format(ds.met_station, ds.obs_station, ds.cultivar))
             for m in s.models:
                 print(" - {}".format(m.name))
-                y, e, i = self._outlier(m)
+                y, e, i = self._outlier(m, threshold)
                 print(y[i])
                 print(e[i])
 
-    def plot_outlier_histogram(self, threshold=10, name=None):
+    def plot_outlier_histogram(self, lower=10, upper=40, name=None):
         plt.figure()
 
         def outlier(m):
-            y, e, i = self._outlier(m)
+            y, e, i = self._outlier(m, lower)
             return e[i]
-        o = [outlier(m) for m in s.models for s in self.suites]
-        o = np.concatenate(o).compressed()
-        plt.hist(o, bins=range(threshold, 40))
+        o = [[outlier(m) for m in s.models] for s in self.suites]
+        o = np.concatenate(sum(o, [])).compressed()
+        plt.hist(o, bins=range(lower, upper))
 
         if name:
             filename = self.output.filename('group/figures', name, 'png')
