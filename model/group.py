@@ -50,6 +50,10 @@ class ModelGroup(base.Model):
         return [index(s.dataset) for s in self.suites]
 
     def export(self):
+        # export results for all model suites
+        [s.export() for s in self.suites]
+
+        # export group-level results
         cname = self._key_for_calibration()
         vname = self._key_for_validation()
 
