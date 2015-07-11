@@ -118,12 +118,12 @@ class ModelSuite(base.Model):
             return pd.DataFrame({
                 'model': 'Obs',
                 'year': x,
-                'day': np.ma.masked_values(m0.observes(x, julian=True), 0)
+                'day': m0.observes(x, julian=True)
             })
 
         def estimation(y):
             df = pd.DataFrame({
-                m.name: np.ma.masked_values(m.estimate_multi(y, julian=True), 0) for m in self.models
+                m.name: m.estimate_multi(y, julian=True) for m in self.models
             })
             df = pd.melt(df, var_name='model', value_name='day').dropna()
             df['year'] = y
@@ -157,10 +157,10 @@ class ModelSuite(base.Model):
                 return np.nan
 
         def y_obs():
-            return np.ma.masked_values(m0.observes(x, julian=True), 0)
+            return m0.observes(x, julian=True)
 
         def y_est(m):
-            return np.ma.masked_values(m.estimates(x, julian=True), 0)
+            return m.estimates(x, julian=True)
 
         # for regular plot
         def plot_obs():

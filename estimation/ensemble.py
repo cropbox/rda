@@ -60,7 +60,7 @@ class Ensemble(Estimator):
     def _estimate(self, year, met, coeff):
         o = datetime.datetime(year, 1, 1)
         d = [m.estimate_safely(year, c, julian=True) for (m, c) in zip(self.estimators, coeff['C'])]
-        d = np.ma.masked_values(d, 0)
+        d = np.ma.masked_values(d, self._mask(julian=True))
         w = np.ma.array(coeff['W'], mask=d.mask)
         w = w / w.sum()
         t = o + datetime.timedelta(days=np.sum(w*d) - 1)
@@ -84,7 +84,8 @@ class Ensemble(Estimator):
         years = self._years(self._calibrate_years)
         #calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
         calibrate_yearss = [list(x) for x in self.estimators[0]._coeffs.keys()]
-        ests = [self._estimate_multi(y, year, julian) for y in calibrate_yearss]
+        s = [self._estimate_multi(y, year, julian) for y in calibrate_yearss]
+        ests = np.ma.masked_values(s, self._mask(julian))
         return pd.Series(ests).dropna()
 
     def error_with_calibration(self, calibrate_years, validate_years, how='e'):

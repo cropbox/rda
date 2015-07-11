@@ -7,6 +7,9 @@ import datetime
 import itertools
 import collections
 
+MASK_DATETIME = None
+MASK_JULIAN = 0
+
 class ObservationError(Exception):
     pass
 
@@ -118,6 +121,9 @@ class Estimator(object):
         #return int(t.strftime('%j'))
         return (t.year - year)*365 + float(t.strftime('%j')) + t.hour/24. + t.minute/(24*60.) + t.second/(24*60*60.)
 
+    def _mask(self, julian=False):
+        return MASK_JULIAN if julian else MASK_DATETIME
+
     # estimation
     def _match(self, ts, value):
         i = ts.fillna(0).searchsorted(value)[0]
@@ -153,12 +159,11 @@ class Estimator(object):
         try:
             return self.estimate(years, coeff, julian)
         except:
-            return 0 if julian else None
+            return self._mask(julian)
 
     def estimates(self, years, coeff=None, julian=False):
-        #TODO: use np.ma when julian is True
-        years = self._years(years)
-        return [self.estimate_safely(y, coeff, julian) for y in years]
+        s = [self.estimate_safely(y, coeff, julian) for y in self._years(years)]
+        return np.ma.masked_values(s, self._mask(julian))
 
     def estimate_multi(self, year, coeffs=None, julian=False):
         if coeffs is None:
@@ -167,7 +172,8 @@ class Estimator(object):
             coeffs = [self._normalize(c) for c in coeffs.values()]
         else:
             coeffs = [self._normalize(c) for c in coeffs]
-        ests = [self.estimate_safely(year, c, julian) for c in coeffs]
+        s = [self.estimate_safely(year, c, julian) for c in coeffs]
+        ests = np.ma.masked_values(s, self._mask(julian))
         return pd.Series(ests).dropna()
 
     # observation
@@ -185,12 +191,11 @@ class Estimator(object):
         try:
             return self.observe(year, julian)
         except:
-            return 0 if julian else None
+            return self._mask(julian)
 
     def observes(self, years, julian=False):
-        #TODO: use np.ma when julian is True
-        years = self._years(years)
-        return [self.observe_safely(y, julian) for y in years]
+        s = [self.observe_safely(y, julian) for y in self._years(years)]
+        return np.ma.masked_values(s, self._mask(julian))
 
     # calibration
     def _calibrate(self, years, disp=True, seed=1, **kwargs):
@@ -311,10 +316,10 @@ class Estimator(object):
         elif how == 'xe':
             return np.max(np.abs(e))
 
-        #obs_hat = np.ma.masked_values(self.observes(years, julian=True), 0).mean()
-        obs_hat = np.ma.masked_values(self.observes(self._calibrate_years, julian=True), 0).mean()
-        d_est = np.ma.masked_values(self.estimates(years, coeff, julian=True), 0) - obs_hat
-        d_obs = np.ma.masked_values(self.observes(years, julian=True), 0) - obs_hat
+        # use calibrate_years, not input years
+        obs_hat = self.observes(self._calibrate_years, julian=True).mean()
+        d_est = self.estimates(years, coeff, julian=True) - obs_hat
+        d_obs = self.observes(years, julian=True) - obs_hat
 
         if how == 'ef':
             return 1. - np.sum(e**2) / np.sum(d_obs**2)
