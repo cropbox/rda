@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import datetime
 import itertools
+import collections
 
 class Ensemble(Estimator):
     def setup(self):
@@ -22,6 +23,11 @@ class Ensemble(Estimator):
         return ['W', 'C']
 
     @property
+    def coeff(self):
+        c = zip(['w{}'.format(i) for i in range(self.n)], self._coeff['W'])
+        return collections.OrderedDict(c)
+
+    @property
     def default_options(self):
         return {
             'W': [1. / self.n] * self.n,
@@ -32,16 +38,11 @@ class Ensemble(Estimator):
     def n(self):
         return len(self.estimators)
 
-    def use(self, estimators, years, weather_loc, observation_loc, cultivar, nick=None, weighted=True):
+    def use(self, estimators, years, nick=None, weighted=True):
         self.estimators = estimators
         self.nick = nick
         self.weighted = weighted
         self.calibrate(years)
-
-        #FIXME to be used with check_outlier() and export() functions
-        self.weather_loc = weather_loc
-        self.observation_loc = observation_loc
-        self.cultivar = cultivar
 
     def _calibrate(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)

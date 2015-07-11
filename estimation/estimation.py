@@ -1,8 +1,11 @@
+from model.dataset import DataSet
+
 import numpy as np
 import scipy.optimize
 import pandas as pd
 import datetime
 import itertools
+import collections
 
 class ObservationError(Exception):
     pass
@@ -11,9 +14,10 @@ class EstimationError(Exception):
     pass
 
 class Estimator(object):
-    def __init__(self, mets, obss, coeff=None):
-        self._mets = mets
-        self._obss = obss
+    def __init__(self, dataset, coeff=None):
+        self._dataset = dataset
+        self._mets = dataset.weather()
+        self._obss = dataset.observation()
         self._calibrate_years = None
         self._coeff = coeff
         self._coeffs = {'': coeff}
@@ -29,6 +33,11 @@ class Estimator(object):
     @property
     def coeff_names(self):
         return []
+
+    @property
+    def coeff(self):
+        c = sorted(self._coeff.items(), key=lambda k: self.coeff_names.index(k[0]))
+        return collections.OrderedDict(c)
 
     @property
     def default_options(self):
@@ -147,6 +156,7 @@ class Estimator(object):
             return 0 if julian else None
 
     def estimates(self, years, coeff=None, julian=False):
+        #TODO: use np.ma when julian is True
         years = self._years(years)
         return [self.estimate_safely(y, coeff, julian) for y in years]
 
@@ -178,6 +188,7 @@ class Estimator(object):
             return 0 if julian else None
 
     def observes(self, years, julian=False):
+        #TODO: use np.ma when julian is True
         years = self._years(years)
         return [self.observe_safely(y, julian) for y in years]
 
