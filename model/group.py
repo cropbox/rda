@@ -85,7 +85,7 @@ class ModelGroup(base.Model):
             df.reset_index().pivot(index='index', columns='model', values=k).astype(float).plot(kind='box')
             if name:
                 filename = self.output.filename('group/figures', '{}_{}'.format(name, k), 'png')
-                plt.savefig('figures/current/{}_{}.png'.format(name, k))
+                plt.savefig(filename)
             else:
                 plt.show()
             plt.close()
