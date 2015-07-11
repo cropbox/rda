@@ -9,6 +9,8 @@ import collections
 
 MASK_DATETIME = None
 MASK_JULIAN = 0
+RESIDUAL_OBSERVATION_ERROR = -365.
+RESIDUAL_ESTIMATION_ERROR = 365.
 
 class ObservationError(Exception):
     pass
@@ -291,18 +293,18 @@ class Estimator(object):
             est = self.estimate(year, coeff, julian=True)
             return est - obs
         except ObservationError:
-            return -365.
+            return RESIDUAL_OBSERVATION_ERROR
         except EstimationError:
-            return 365.
+            return RESIDUAL_ESTIMATION_ERROR
             #return np.inf
 
     def error(self, years, how='e', coeff=None, ignore_estimation_error=False):
         years = self._years(years)
         #e = np.array([self.residual(y, coeff) for y in years])
-        e = np.ma.masked_values([self.residual(y, coeff) for y in years], -365.)
+        e = np.ma.masked_values([self.residual(y, coeff) for y in years], RESIDUAL_OBSERVATION_ERROR)
 
         if ignore_estimation_error:
-            e = np.ma.masked_where(e == 365., e)
+            e = np.ma.masked_where(e == RESIDUAL_ESTIMATION_ERROR, e)
 
         how = how.lower()
         if how == 'e':
