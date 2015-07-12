@@ -151,12 +151,6 @@ class ModelSuite(base.Model):
         x = m0._years(years)
 
         # y
-        def julian(t):
-            try:
-                return int(t.strftime('%j'))
-            except:
-                return np.nan
-
         def y_obs():
             return m0.observes(x, julian=True)
 
