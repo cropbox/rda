@@ -91,7 +91,7 @@ class ModelSuite(base.Model):
         df.index.name = 'model'
 
         if name:
-            filename = self.output.filename('suite/results', name, 'csv')
+            filename = self.output.outfilename('suite/results', name, 'csv')
             df.to_csv(filename)
         return df
 
@@ -107,7 +107,7 @@ class ModelSuite(base.Model):
         df.index.name = 'year'
 
         if name:
-            filename = self.output.filename('suite/results', name, 'csv')
+            filename = self.output.outfilename('suite/results', name, 'csv')
             df.to_csv(filename)
         return df
 
@@ -141,7 +141,7 @@ class ModelSuite(base.Model):
         df.index.names = ['year', 'model', 'day']
 
         if name:
-            filename = self.output.filename('suite/results', name, 'csv')
+            filename = self.output.outfilename('suite/results', name, 'csv')
             df.to_csv(filename)
         return df
 
@@ -190,14 +190,14 @@ class ModelSuite(base.Model):
         plt.xlim(*years)
 
         if name:
-            filename = self.output.filename('suite/figures', name, 'png')
+            filename = self.output.outfilename('suite/figures', name, 'png')
             plt.savefig(filename)
         else:
             plt.show()
         plt.close()
 
     def save_param(self, name):
-        filename = self.output.filename('suite/results', name, 'txt')
+        filename = self.output.outfilename('suite/results', name, 'txt')
         with open(filename, 'w') as f:
             for m in self.models:
                 f.write('{} : {}\n'.format(m.name, json.dumps(m._coeff)))
@@ -208,6 +208,6 @@ class ModelSuite(base.Model):
         }, columns=self.names)
 
         if name:
-            filename = self.output.filename('suite/results', name, 'csv')
+            filename = self.output.outfilename('suite/results', name, 'csv')
             df.to_csv(filename)
         return df

@@ -62,6 +62,6 @@ class ModelCollection(object):
                 basename = '{}_{}_ie'.format(name, how)
             else:
                 basename = '{}_{}'.format(name, how)
-            filename = self.output.filename('collection/results', basename, 'csv')
+            filename = self.output.outfilename('collection/results', basename, 'csv')
             stat.to_csv(filename)
         return stat

@@ -77,7 +77,7 @@ class ModelGroup(base.Model):
         if df is None:
             df = self._errors(years)
         if name:
-            filename = self.output.filename('group/results', '{}_summary'.format(name), 'csv')
+            filename = self.output.outfilename('group/results', '{}_summary'.format(name), 'csv')
             df.to_csv(filename)
         return df
 
@@ -88,7 +88,7 @@ class ModelGroup(base.Model):
             plt.figure()
             df.reset_index().pivot(index='index', columns='model', values=k).astype(float).plot(kind='box')
             if name:
-                filename = self.output.filename('group/figures', '{}_{}'.format(name, k), 'png')
+                filename = self.output.outfilename('group/figures', '{}_{}'.format(name, k), 'png')
                 plt.savefig(filename)
             else:
                 plt.show()
@@ -104,7 +104,7 @@ class ModelGroup(base.Model):
         df = pd.concat([s.show_prediction(years, julian=julian) for s in self.suites])
 
         if name:
-            filename = self.output.filename('group/results', name, 'csv')
+            filename = self.output.outfilename('group/results', name, 'csv')
             df.to_csv(filename)
         return df
 
@@ -126,7 +126,7 @@ class ModelGroup(base.Model):
 
         for n in names:
             df = pd.concat([construct(n, c) for c in cultivars])
-            filename = self.output.filename('group/results', '{}_{}'.format(name, n), 'csv')
+            filename = self.output.outfilename('group/results', '{}_{}'.format(name, n), 'csv')
             df.to_csv(filename)
 
     def _outlier(self, m, threshold):
@@ -156,7 +156,7 @@ class ModelGroup(base.Model):
         plt.hist(o, bins=range(lower, upper))
 
         if name:
-            filename = self.output.filename('group/figures', name, 'png')
+            filename = self.output.outfilename('group/figures', name, 'png')
             plt.savefig(filename)
         else:
             plt.show()
@@ -167,6 +167,6 @@ class ModelGroup(base.Model):
         df = pd.concat([s.show_crossvalidation(how, ignore_estimation_error) for s in self.suites])
 
         if name:
-            filename = self.output.filename('group/results', name, 'csv')
+            filename = self.output.outfilename('group/results', name, 'csv')
             df.to_csv(filename)
         return df
