@@ -29,13 +29,14 @@ class ModelSuite(base.Model):
             multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years, self.crossvalidate_n)
 
         # add ensemble models
-        e1 = Ensemble(self.dataset)
-        e1.use(models, self.calibrate_years, nick='Ensemble', weighted=False)
-
-        e2 = Ensemble(self.dataset)
-        e2.use(models, self.calibrate_years, nick='EnsembleW', weighted=True)
-
-        return models + [e1, e2]
+        ensembles = [
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='Ensemble'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EnsembleRMSE', how='rmse'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EnsembleDr', how='dr'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EnsembleMAE', how='mae'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EnsembleXE', how='xe'),
+        ]
+        return models + ensembles
 
     @property
     def models(self):

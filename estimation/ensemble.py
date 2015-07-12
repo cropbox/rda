@@ -38,18 +38,23 @@ class Ensemble(Estimator):
     def n(self):
         return len(self.estimators)
 
-    def use(self, estimators, years, nick=None, weighted=True):
+    def use(self, estimators, years, nick=None, how=None):
         self.estimators = estimators
         self.nick = nick
-        self.weighted = weighted
+        self.how = how
         self.calibrate(years)
+        return self
 
     def _calibrate(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)
 
         def weight(m):
-            if self.weighted:
-                return 1. / m.error(years, 'rmse')
+            if self.how:
+                error = m.error(years, self.how)
+                if self._is_higher_better(self.how):
+                    return 1. * error
+                else:
+                    return 1. / error
             else:
                 return 1.
         W = np.array([weight(m) for m in self.estimators])
