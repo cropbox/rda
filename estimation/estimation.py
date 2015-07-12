@@ -298,6 +298,10 @@ class Estimator(object):
             return RESIDUAL_ESTIMATION_ERROR
             #return np.inf
 
+    @staticmethod
+    def _is_higher_better(how):
+        return how in {'ef', 'd', 'd1', 'dr'}
+
     def error(self, years, how='e', coeff=None, ignore_estimation_error=False):
         years = self._years(years)
         #e = np.array([self.residual(y, coeff) for y in years])

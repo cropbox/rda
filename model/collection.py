@@ -1,4 +1,5 @@
 from . import base
+from estimation import Estimator
 from util import path
 
 import pandas as pd
@@ -37,7 +38,7 @@ class ModelCollection(object):
         def rank(df):
             if how == 'me':
                 df = df.abs()
-            higher_is_better = how in {'ef', 'd', 'd1', 'dr'}
+            ascending = not Estimator._is_higher_better(how)
             return df.rank(axis=1, ascending=not higher_is_better).mean()
 
         sdf = pd.DataFrame({
