@@ -1,5 +1,5 @@
 from . import base
-from . import export
+from util import path
 
 import pandas as pd
 
@@ -9,7 +9,7 @@ class ModelCollectionError(Exception):
 class ModelCollection(object):
     def __init__(self, groups, output=None):
         self._groups = groups
-        self.output = export.output if output is None else output
+        self.output = path.output if output is None else output
 
     def create(self):
         raise NotImplementedError

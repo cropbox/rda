@@ -1,5 +1,5 @@
 from estimation import *
-from . import export
+from util import path
 
 import string
 
@@ -35,7 +35,7 @@ class Model(object):
         self.crossvalidate_n = crossvalidate_n
         self.ESTIMATORS = ESTIMATORS
 
-        self.output = export.output if output is None else output
+        self.output = path.output if output is None else output
 
         self.create()
 
