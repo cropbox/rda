@@ -108,6 +108,20 @@ class ModelGroup(base.Model):
             df.to_csv(filename)
         return df
 
+    def plot_obs_vs_est(self, years=None, exclude_ensembles=True, name=None):
+        if years is None:
+            years = self.dataset.validate_years
+        df = pd.melt(
+            self.show_predictions(years, julian=True, exclude_ensembles=exclude_ensembles).reset_index(),
+            id_vars=['year', 'Obs'], var_name='model', value_name='Est'
+        )
+        l = np.floor(min(min(df.Obs), min(df.Est)))
+        u = np.ceil(max(max(df.Obs), max(df.Est)))
+        sns.jointplot(x='Obs', y='Est', data=df, xlim=(l,u), ylim=(l,u), kind='reg')
+        sns.plt.plot([l,u], [l,u], '--')
+        sns.plt.show()
+        return df
+
     def save_param_stat(self, name):
         models = self.models
         name_indices = np.array([m.name for m in models])
