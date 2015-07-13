@@ -181,7 +181,7 @@ class ModelSuite(base.Model):
             alpha = 0.9 if m.__class__ is Ensemble else 0.5
             plt.plot(x, y, ls=ls, lw=lw, marker=marker, alpha=alpha, label=m.name)
 
-        plt.figure()
+        fig = plt.figure()
 
         if residual:
             plot_zero()
@@ -199,7 +199,7 @@ class ModelSuite(base.Model):
             plt.savefig(filename)
         else:
             plt.show()
-        plt.close()
+        plt.close(fig)
 
     def save_param(self, name):
         filename = self.output.outfilename('suite/results', name, 'txt')

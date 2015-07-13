@@ -85,14 +85,14 @@ class ModelGroup(base.Model):
         if df is None:
             df = self._metrics(years)
         for k in df.columns:
-            plt.figure()
+            fig = plt.figure()
             df.reset_index().pivot(index='index', columns='model', values=k).astype(float).plot(kind='box')
             if name:
                 filename = self.output.outfilename('group/figures', '{}_{}'.format(name, k), 'png')
                 plt.savefig(filename)
             else:
                 plt.show()
-            plt.close()
+            plt.close(fig)
         return df
 
     def save_metric_stat(self, years, name):
@@ -160,7 +160,7 @@ class ModelGroup(base.Model):
                 print(e[i])
 
     def plot_outlier_histogram(self, lower=10, upper=40, name=None):
-        plt.figure()
+        fig = plt.figure()
 
         def outlier(m):
             y, e, i = self._outlier(m, lower)
@@ -174,7 +174,7 @@ class ModelGroup(base.Model):
             plt.savefig(filename)
         else:
             plt.show()
-        plt.close()
+        plt.close(fig)
         return o
 
     def show_crossvalidation(self, how='rmse', ignore_estimation_error=False, name=None):
