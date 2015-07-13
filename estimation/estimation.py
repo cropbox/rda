@@ -80,14 +80,17 @@ class Estimator(object):
         return df
 
     def _years(self, years):
+        met_years = self._mets.reset_index().timestamp.dt.year.unique()
+        obs_years = self._obss.reset_index().year.unique()
+
         if years is None:
-            start = int(max(self._mets.index[0].year, self._obss.index[0]))
-            end = int(min(self._mets.index[-1].year, self._obss.index[-1]))
-            return list(range(start, end+1))
+            return np.intersect1d(met_years, obs_years, assume_unique=True).tolist()
         #HACK support (start, end) tuple for convenience
         elif type(years) is tuple and len(years) == 2:
             start, end = years
-            return list(range(start, end+1))
+            def f(df):
+                return np.extract(np.logical_and(start <= df, df <= end), df)
+            return np.intersect1d(f(met_years), f(obs_years), assume_unique=True).tolist()
         elif type(years) is int:
             return [years]
         else:
