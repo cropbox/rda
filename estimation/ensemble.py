@@ -50,11 +50,11 @@ class Ensemble(Estimator):
 
         def weight(m):
             if self.how:
-                error = m.error(years, self.how)
+                e = m.metric(years, self.how)
                 if self._is_higher_better(self.how):
-                    return 1. * error
+                    return e
                 else:
-                    return 1. / error
+                    return 1./e
             else:
                 return 1.
         W = np.array([weight(m) for m in self.estimators])
@@ -93,7 +93,7 @@ class Ensemble(Estimator):
         ests = np.ma.masked_values(s, self._mask(julian))
         return pd.Series(ests).dropna()
 
-    def error_with_calibration(self, calibrate_years, validate_years, how='e'):
+    def metric_with_calibration(self, calibrate_years, validate_years, how='e'):
         coeff_backup = self._coeff.copy(), self._coeffs.copy()
 
         calibrate_years = self._years(calibrate_years)
@@ -103,15 +103,15 @@ class Ensemble(Estimator):
         C = [m._coeffs[key] for m in self.estimators]
         self.calibrate(calibrate_years, C=C)
 
-        errors = self.error(validate_years, how)
+        metrics = self.metric(validate_years, how)
 
         self._coeff, self._coeffs = coeff_backup
-        return errors
+        return metrics
 
     def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
         years = self._years(years)
         calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
-        def error(y):
+        def metric(y):
             validate_years = sorted(set(years) - set(y))
-            return self.error_with_calibration(y, validate_years, how)
-        return np.array([error(y) for y in calibrate_yearss])
+            return self.metric_with_calibration(y, validate_years, how)
+        return np.array([metric(y) for y in calibrate_yearss])

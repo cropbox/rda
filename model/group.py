@@ -57,8 +57,8 @@ class ModelGroup(base.Model):
         cname = self._key_for_calibration()
         vname = self._key_for_validation()
 
-        self.save_error_stat(self.calibrate_years, name='{}_calibrate'.format(cname))
-        self.save_error_stat(self.validate_years, name='{}_validate'.format(vname))
+        self.save_metric_stat(self.calibrate_years, name='{}_calibrate'.format(cname))
+        self.save_metric_stat(self.validate_years, name='{}_validate'.format(vname))
 
         self.show_predictions(self.export_years, julian=True, name='{}_singles'.format(cname))
 
@@ -66,24 +66,24 @@ class ModelGroup(base.Model):
 
         self.plot_outlier_histogram(lower=10, upper=40, name='{}_outlier'.format(vname))
 
-    def _errors(self, years):
+    def _metrics(self, years):
         return pd.concat(
-            [s.show_error(years) for s in self.suites],
+            [s.show_metric(years) for s in self.suites],
             keys=self.indices,
             names=['index']
         )
 
-    def show_error_stat(self, years, name=None, df=None):
+    def show_metric_stat(self, years, name=None, df=None):
         if df is None:
-            df = self._errors(years)
+            df = self._metrics(years)
         if name:
             filename = self.output.outfilename('group/results', '{}_summary'.format(name), 'csv')
             df.to_csv(filename)
         return df
 
-    def plot_error_stat(self, years, name=None, df=None):
+    def plot_metric_stat(self, years, name=None, df=None):
         if df is None:
-            df = self._errors(years)
+            df = self._metrics(years)
         for k in df.columns:
             plt.figure()
             df.reset_index().pivot(index='index', columns='model', values=k).astype(float).plot(kind='box')
@@ -95,9 +95,9 @@ class ModelGroup(base.Model):
             plt.close()
         return df
 
-    def save_error_stat(self, years, name):
-        df = self.show_error_stat(years, name)
-        self.plot_error_stat(years, name, df)
+    def save_metric_stat(self, years, name):
+        df = self.show_metric_stat(years, name)
+        self.plot_metric_stat(years, name, df)
 
     def show_predictions(self, years, julian=False, name=None):
         # for Jennifer's plot
@@ -131,7 +131,7 @@ class ModelGroup(base.Model):
 
     def _outlier(self, m, threshold):
         y = np.array(m._years(self.validate_years))
-        e = np.abs(m.error(y))
+        e = np.abs(m.metric(y))
         i = np.where((e > threshold) == True)
         return y, e, i
 

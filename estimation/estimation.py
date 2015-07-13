@@ -227,7 +227,7 @@ class Estimator(object):
                 coeff.update(fixed_coeff)
             except:
                 coeff = x
-            return self.error(years, 'rmse', coeff)
+            return self.metric(years, 'rmse', coeff)
 
         # new default to 'differential evolution'
         if 'method' not in opts:
@@ -302,7 +302,7 @@ class Estimator(object):
     def _is_higher_better(how):
         return how in {'ef', 'd', 'd1', 'dr'}
 
-    def error(self, years, how='e', coeff=None, ignore_estimation_error=False):
+    def metric(self, years, how='e', coeff=None, ignore_estimation_error=False):
         years = self._years(years)
         #e = np.array([self.residual(y, coeff) for y in years])
         e = np.ma.masked_values([self.residual(y, coeff) for y in years], RESIDUAL_OBSERVATION_ERROR)
@@ -348,7 +348,7 @@ class Estimator(object):
     def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
         years = self._years(years)
         keys = list(itertools.combinations(years, len(years)-n))
-        def error(k):
+        def metric(k):
             validate_years = sorted(set(years) - set(k))
-            return self.error(validate_years, how, self._coeffs[k], ignore_estimation_error)
-        return np.array([error(k) for k in keys])
+            return self.metric(validate_years, how, self._coeffs[k], ignore_estimation_error)
+        return np.array([metric(k) for k in keys])

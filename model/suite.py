@@ -61,8 +61,8 @@ class ModelSuite(base.Model):
         cname = self._key_for_calibration()
         vname = self._key_for_validation()
 
-        self.show_error(self.calibrate_years, name='{}_calibrate'.format(cname))
-        self.show_error(self.validate_years, name='{}_validate'.format(vname))
+        self.show_metric(self.calibrate_years, name='{}_calibrate'.format(cname))
+        self.show_metric(self.validate_years, name='{}_validate'.format(vname))
 
         self.show_prediction(self.export_years, name='{}_single'.format(cname))
         self.show_prediction_multi(self.export_years, name='{}_multi'.format(cname))
@@ -76,18 +76,18 @@ class ModelSuite(base.Model):
 
         self.save_param(name='{}_param'.format(cname))
 
-    def show_error(self, years, name=None):
-        def errors(how):
-            return [m.error(years, how) for m in self.models]
+    def show_metric(self, years, name=None):
+        def metrics(how):
+            return [m.metric(years, how) for m in self.models]
         df = pd.DataFrame({
-            'RMSE': errors('rmse'),
-            'ME': errors('me'),
-            'MAE': errors('mae'),
-            'XE': errors('xe'),
-            'EF': errors('ef'),
-            'D': errors('d'),
-            'D1': errors('d1'),
-            'Dr': errors('dr'),
+            'RMSE': metrics('rmse'),
+            'ME': metrics('me'),
+            'MAE': metrics('mae'),
+            'XE': metrics('xe'),
+            'EF': metrics('ef'),
+            'D': metrics('d'),
+            'D1': metrics('d1'),
+            'Dr': metrics('dr'),
         }, index=self.names)
         df.index.name = 'model'
 
