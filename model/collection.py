@@ -2,7 +2,10 @@ from . import base
 from estimation import Estimator
 from util import path
 
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 class ModelCollectionError(Exception):
     pass
@@ -33,6 +36,10 @@ class ModelCollection(object):
         for how in metrics:
             self.show_crossvalidation_stat(how, ignore_estimation_error=False, name=name)
             self.show_crossvalidation_stat(how, ignore_estimation_error=True, name=name)
+
+        # export obs vs. est plots
+        self.plot_obs_vs_est('model', exclude_ensembles=False, name='obs_vs_est_by_model')
+        self.plot_obs_vs_est('dataset', exclude_ensembles=True, name='obs_vs_est_by_dataset')
 
     def _crossvalidation_stat(self, title, df, how):
         def rank(df):
@@ -66,3 +73,33 @@ class ModelCollection(object):
             filename = self.output.outfilename('collection/results', basename, 'csv')
             stat.to_csv(filename)
         return stat
+
+    # var = 'model' or 'dataset'
+    def plot_obs_vs_est(self, var='model', exclude_ensembles=True, name=None):
+        fig = plt.figure()
+
+        def predictions(g):
+            df = g.show_predictions(years=None, julian=True, exclude_ensembles=exclude_ensembles).reset_index()
+            df['dataset'] = g.dataset.name
+            return df
+        df = pd.melt(
+            pd.concat([predictions(g) for g in self.groups]),
+            id_vars=['dataset', 'year', 'Obs'], var_name='model', value_name='Est'
+        )
+        l = np.floor(min(min(df.Obs), min(df.Est)))
+        u = np.ceil(max(max(df.Obs), max(df.Est)))
+        p = sns.lmplot(
+            x='Obs', y='Est', col=var, data=df,
+            col_wrap=5, markers='.',
+            scatter_kws={
+                'alpha': 0.5,
+            },
+        )
+        [a.plot([l,u], [l,u], 'g--') for _, a in np.ndenumerate(p.axes)]
+
+        if name:
+            filename = self.output.outfilename('collections/figures', name, 'png')
+            plt.savefig(filename)
+        else:
+            plt.show()
+        plt.close(fig)
