@@ -99,9 +99,9 @@ class ModelGroup(base.Model):
         df = self.show_metric_stat(years, name)
         self.plot_metric_stat(years, name, df)
 
-    def show_predictions(self, years, julian=False, name=None):
+    def show_predictions(self, years, julian=False, exclude_ensembles=False, name=None):
         # for Jennifer's plot
-        df = pd.concat([s.show_prediction(years, julian=julian) for s in self.suites])
+        df = pd.concat([s.show_prediction(years, julian, exclude_ensembles) for s in self.suites])
 
         if name:
             filename = self.output.outfilename('group/results', name, 'csv')

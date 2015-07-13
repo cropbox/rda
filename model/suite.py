@@ -96,13 +96,17 @@ class ModelSuite(base.Model):
             df.to_csv(filename)
         return df
 
-    def show_prediction(self, years, julian=False, name=None):
-        m0 = self.models[0]
+    def show_prediction(self, years, julian=False, exclude_ensembles=False, name=None):
+        models = self.models
+        if exclude_ensembles:
+            models = [m for m in models if not isinstance(m, Ensemble)]
+
+        m0 = models[0]
         x = m0._years(years)
         df = pd.concat(
             [pd.Series(m0.observes(x, julian=julian), index=x)] +
-            [pd.Series(m.estimates(x, julian=julian), index=x) for m in self.models],
-            keys=['Obs'] + self.names,
+            [pd.Series(m.estimates(x, julian=julian), index=x) for m in models],
+            keys=['Obs'] + [m.name for m in models],
             axis=1
         )
         df.index.name = 'year'
