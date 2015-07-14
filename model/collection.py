@@ -98,7 +98,7 @@ class ModelCollection(object):
         [a.plot([l,u], [l,u], 'g--') for _, a in np.ndenumerate(p.axes)]
 
         if name:
-            filename = self.output.outfilename('collections/figures', name, 'png')
+            filename = self.output.outfilename('collection/figures', name, 'png')
             plt.savefig(filename)
         else:
             plt.show()
