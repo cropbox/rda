@@ -38,6 +38,9 @@ def time_range(timearg):
 def fahrenheit_to_celsius(t):
     return (t - 32) * 5 / 9.
 
+def celsius_to_fahrenheit(t):
+    return t * 9 / 5. + 32
+
 ################
 # NCAA Normals #
 ################
