@@ -46,7 +46,7 @@ class ModelCollection(object):
             if how == 'me':
                 df = df.abs()
             ascending = not Estimator._is_higher_better(how)
-            return df.rank(axis=1, ascending=not higher_is_better).mean()
+            return df.rank(axis=1, ascending=ascending).mean()
 
         sdf = pd.DataFrame({
             'mean': df.mean(),
