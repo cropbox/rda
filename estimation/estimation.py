@@ -348,7 +348,7 @@ class Estimator(object):
             else:
                 return drl / dru - 1.
 
-    def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
+    def crossvalidate(self, years, how, ignore_estimation_error=False, n=1):
         years = self._years(years)
         keys = list(itertools.combinations(years, len(years)-n))
         def metric(k):
