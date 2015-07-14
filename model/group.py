@@ -85,14 +85,13 @@ class ModelGroup(base.Model):
         if df is None:
             df = self._metrics(years)
         for k in df.columns:
-            fig = plt.figure()
-            df.reset_index().pivot(index='index', columns='model', values=k).astype(float).plot(kind='box')
+            ax = df.reset_index().pivot(index='index', columns='model', values=k).astype(float).plot(kind='box')
             if name:
                 filename = self.output.outfilename('group/figures', '{}_{}'.format(name, k), 'png')
                 plt.savefig(filename)
             else:
                 plt.show()
-            plt.close(fig)
+            plt.close(ax.get_figure())
         return df
 
     def save_metric_stat(self, years, name):
