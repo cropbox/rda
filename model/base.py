@@ -17,10 +17,6 @@ DEFAULT_ESTIMATORS = [
     Dts,
 ]
 
-RESULTS_PATH = 'results/current/'
-FIGURES_PATH = 'figures/current/'
-COEFFS_PATH = 'coeffs/current/'
-
 class Model(object):
     def __init__(self, dataset,
                  calibrate_years, validate_years, export_years,
