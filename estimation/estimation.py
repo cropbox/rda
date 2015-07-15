@@ -80,21 +80,24 @@ class Estimator(object):
         return df
 
     def _years(self, years):
-        met_years = self._mets.reset_index().timestamp.dt.year.unique()
-        obs_years = self._obss.reset_index().year.unique()
+        mety = self._mets.reset_index().timestamp.dt.year.unique()
+        obsy = self._obss.reset_index().year.unique()
+        defy = np.intersect1d(mety, obsy, assume_unique=True)
 
-        if years is None:
-            return np.intersect1d(met_years, obs_years, assume_unique=True).tolist()
-        #HACK support (start, end) tuple for convenience
-        elif type(years) is tuple and len(years) == 2:
-            start, end = years
-            def f(df):
-                return np.extract(np.logical_and(start <= df, df <= end), df)
-            return np.intersect1d(f(met_years), f(obs_years), assume_unique=True).tolist()
-        elif type(years) is int:
-            return [years]
-        else:
-            return years
+        def parse(y, allow_default=False):
+            if allow_default and y is None:
+                return defy.tolist()
+            elif isinstance(y, tuple) and len(y) == 2:
+                #HACK support (start, end) tuple for convenience
+                start, end = y
+                return np.intersect1d(defy, range(start, end+1)).tolist()
+            elif hasattr(y, '__iter__'):
+                return sorted(set(sum([parse(i) for i in y], [])))
+            elif isinstance(y, int):
+                return [y] if y in defy else []
+            else:
+                raise ValueError("unrecognized format: years={}".format(years))
+        return parse(years, allow_default=True)
 
     # coefficient
     def _listify(self, coeff, keys=None):
