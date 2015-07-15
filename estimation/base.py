@@ -141,8 +141,8 @@ class Estimator(object):
             raise EstimationError("requirement '{}' cannot be matched".format(value))
 
     def _estimate(self, year, met, coeff):
-        #FIXME: raise NotImplementedError?
-        return self._match(met.ix[:, -1], 1.0)
+        #return self._match(met.ix[:, -1], 1.0)
+        raise NotImplementedError
 
     def estimate(self, year, coeff=None, julian=False):
         if coeff is None:
