@@ -87,7 +87,7 @@ class Estimator(object):
             if allow_default and y is None:
                 return defy.tolist()
             elif isinstance(y, tuple) and len(y) == 2:
-                #HACK support (start, end) tuple for convenience
+                # support (start, end) tuple for convenience
                 start, end = y
                 return np.intersect1d(defy, range(start, end+1)).tolist()
             elif hasattr(y, '__iter__'):
