@@ -33,7 +33,6 @@ class ModelSuite(base.Model):
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN'),
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.RMSE', how='rmse'),
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.Dr', how='dr'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.MAE', how='mae'),
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.XE', how='xe'),
         ]
         return models + ensembles
