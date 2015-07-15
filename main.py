@@ -3,81 +3,71 @@ from model.group import ModelGroup
 from model.collection import ModelCollection
 
 def create_cherry_dc():
-    ds = DataSet('dc', 'cherry_dc', mapper={
-        'DC': 'USW00013743',
+    ds = DataSet('usa_ds3505', 'cherry_dc', mapper={
+        'DC': 724050,
     }).set(stage='Peak Bloom')
     return ModelGroup(ds,
-        calibrate_years=(1991, 2010), # same as Chung et al. (2011)
-        validate_years=(1946, 1990),
-        export_years=(1946, 2015),
+        calibrate_years=(1990, 2010), # close to (1991, 2010) from Chung et al. (2011)
+        validate_years=[(1946, 1989), (2011, 2014)],
+        export_years=(1937, 2015),
     )
 
 def create_cherry_dc_yoshino():
-    estimators = base.DEFAULT_ESTIMATORS + [DegreeDay, February, March]
-    ds = DataSet('dc', 'cherry_dc', mapper={
-        'DC': 'USW00013743',
+    estimators = base.DEFAULT_ESTIMATORS + [February, March]
+    ds = DataSet('usa_ds3505', 'cherry_dc', mapper={
+        'DC': 724050,
     }).set(cultivar='Yoshino', stage='Peak Bloom')
     return ModelSuite(ds,
-        calibrate_years=(1991, 2010),
-        validate_years=(1946, 1990),
-        export_years=(1946, 2015),
+        calibrate_years=(1990, 2010),
+        validate_years=[(1946, 1989), (2011, 2014)],
+        export_years=(1937, 2015),
         ESTIMATORS=estimators,
     )
 
 def create_cherry_dc_kwanzan():
-    estimators = base.DEFAULT_ESTIMATORS + [DegreeDay, February, March]
-    ds = DataSet('dc', 'cherry_dc', mapper={
-        'DC': 'USW00013743',
+    estimators = base.DEFAULT_ESTIMATORS + [February, March]
+    ds = DataSet('usa_ds3505', 'cherry_dc', mapper={
+        'DC': 724050,
     }).set(cultivar='Kwanzan', stage='Peak Bloom')
     return ModelSuite(ds,
-        calibrate_years=(1991, 2010),
-        validate_years=(1946, 1990),
-        export_years=(1946, 2015),
+        calibrate_years=(1990, 2010),
+        validate_years=[(1946, 1989), (2011, 2014)],
+        export_years=(1937, 2015),
         ESTIMATORS=estimators,
     )
 
 def create_apple_kearnesville():
-    ds = DataSet('martinsburg', 'apple_kearneysville', mapper={
-        'Kearneysville': 'Martinsburg',
-    }).set(stage='Full Bloom')
-    return ModelGroup(ds,
-        calibrate_years=(2001, 2007),
-        validate_years=(1997, 2000),
-        export_years=(1950, 2010),
-    )
-
-def create_apple_kearnesville_self():
-    ds = DataSet('martinsburg', 'apple_kearneysville', mapper={
-        'Kearneysville': 'Martinsburg',
+    ds = DataSet('usa_ds3505', 'apple_kearneysville', mapper={
+        'Kearneysville': 724177,
     }).set(stage='Full Bloom')
     return ModelGroup(ds,
         calibrate_years=(1997, 2007),
         validate_years=(1997, 2007),
-        export_years=(1950, 2010),
+        export_years=(1974, 2015),
     )
 
 def create_peach_korea():
-    ds = DataSet('korea_jina', 'peach_korea').set(stage='FFD')
+    ds = DataSet('korea_shk060', 'peach_korea').set(stage='FFD')
     return ModelGroup(ds,
-        calibrate_years=(1998, 2008),
-        validate_years=(1982, 1997),
-        export_years=(1982, 2010),
+        calibrate_years=(1988, 2008),
+        validate_years=(1974, 1987),
+        export_years=(1974, 2010),
     )
 
 def create_pear_korea():
-    ds = DataSet('korea_jina', 'pear_korea').set(stage='FFD')
+    ds = DataSet('korea_shk060', 'pear_korea').set(stage='FFD')
     return ModelGroup(ds,
-        calibrate_years=(1998, 2008),
-        validate_years=(1982, 1997),
-        export_years=(1982, 2010),
+        calibrate_years=(1988, 2008),
+        validate_years=(1974, 1987),
+        export_years=(1974, 2010),
     )
 
 def create_cherry_korea():
-    ds = DataSet('korea_uran', 'cherry_korea').set(stage='Full Bloom')
+    ds = DataSet('korea_shk060', 'cherry_korea').set(stage='Full Bloom')
     return ModelGroup(ds,
-        calibrate_years=(1984, 1994),
-        validate_years=(1955, 1983),
-        export_years=(1955, 2004),
+        calibrate_years=(1988, 2008),
+        validate_years=(1974, 1987),
+        export_years=(1974, 2010),
     )
 
 if __name__ == '__main__':
