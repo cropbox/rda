@@ -120,3 +120,4 @@ def conv():
 
     outname = path.input.outfilename('pkl/met', 'martinsburg', 'pkl')
     martinsburg2.to_pickle(outname)
+    return martinsburg2

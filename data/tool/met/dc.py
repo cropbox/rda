@@ -232,3 +232,4 @@ def conv():
 
     outname = path.input.outfilename('pkl/met', 'dc', 'pkl')
     dc_hourly.to_pickle(outname)
+    return dc_hourly

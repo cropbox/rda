@@ -148,3 +148,4 @@ def conv():
     # pandas (.pkl)
     outname = path.input.outfilename('pkl/met', 'gunwi', 'pkl')
     weather.to_pickle(outname)
+    return weather

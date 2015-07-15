@@ -129,3 +129,4 @@ def conv():
 
     outname = path.input.outfilename('pkl/met', 'korea_jina', 'pkl')
     korea2.to_pickle(outname)
+    return korea2
