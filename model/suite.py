@@ -1,6 +1,6 @@
 from . import base
 from . import multi
-from estimation import Ensemble
+from estimation.ensemble import Ensemble
 
 import numpy as np
 import pandas as pd

@@ -1,4 +1,6 @@
-from model import *
+from model.dataset import DataSet
+from model.group import ModelGroup
+from model.collection import ModelCollection
 
 def create_cherry_dc():
     ds = DataSet('dc', 'cherry_dc', mapper={

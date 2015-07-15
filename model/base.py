@@ -1,4 +1,3 @@
-from estimation import *
 from util import path
 
 import string
@@ -9,6 +8,11 @@ def _slugify(v):
 
 def slugname(*args):
     return '_'.join([_slugify(k) for k in args])
+
+from estimation.degreeday import DegreeDay
+from estimation.chillday import ChillDay
+from estimation.betafunc import BetaFunc
+from estimation.dts import Dts
 
 DEFAULT_ESTIMATORS = [
     DegreeDay,

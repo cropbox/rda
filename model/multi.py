@@ -1,4 +1,4 @@
-from estimation import Estimator
+from estimation.estimation import Estimator
 
 import itertools
 import multiprocessing as mp
