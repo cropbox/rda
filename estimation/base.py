@@ -153,7 +153,6 @@ class Estimator(object):
             met = self._clip(year, coeff)
         except:
             #HACK: allow masking for exceptions on missing data
-            #raise EstimationError("weather cannot be clipped for '{}'".format(year))
             raise ObservationError("weather cannot be clipped for '{}'".format(year))
         t = self._estimate(year, met, coeff).to_datetime()
         if julian:
