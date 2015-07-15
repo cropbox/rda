@@ -1,4 +1,4 @@
-from estimation.base import Estimator
+from ..estimation.base import Estimator
 
 import itertools
 import multiprocessing as mp

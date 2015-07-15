@@ -1,4 +1,4 @@
-from model.dataset import DataSet
+from ..model.dataset import DataSet
 
 import numpy as np
 import scipy.optimize
