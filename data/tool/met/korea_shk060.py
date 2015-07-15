@@ -81,7 +81,7 @@ def extract(df, key):
     #df = df.ix[:, 0:24]
     df = df.filter(regex=key).rename(columns=lambda x: int(x.split('_')[-1]))
     df.columns.name = 'hour'
-    df = df.stack()
+    df = df.stack(dropna=False)
     df.name = key
     df = df.reset_index()
     df.timestamp = df.apply(lambda x: x.timestamp + datetime.timedelta(hours=x.hour), axis=1)
