@@ -88,7 +88,7 @@ def extract(df, key):
     return df.drop(['hour'], axis=1).set_index(['station', 'timestamp'])
 
 def interpolate(df):
-    return df.unstack('station').interpolate().stack('station').swaplevel(0, 1).sortlevel()
+    return df.unstack('station').interpolate('time').stack('station').swaplevel(0, 1).sortlevel()
 
 def conv():
     df = pd.concat([interpolate(extract(read(n), 'tavg')) for n in NAMES])
