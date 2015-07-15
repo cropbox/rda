@@ -152,8 +152,6 @@ class Estimator(object):
         try:
             met = self._clip(year, coeff)
         except:
-            #FIXME DC weather data missing for 2007-02
-            #return None
             #HACK: allow masking for exceptions on missing data
             #raise EstimationError("weather cannot be clipped for '{}'".format(year))
             raise ObservationError("weather cannot be clipped for '{}'".format(year))
