@@ -1,4 +1,4 @@
-from .estimation import Estimator
+from .base import Estimator
 
 import datetime
 import numpy as np

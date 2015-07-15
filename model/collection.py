@@ -1,5 +1,5 @@
 from . import base
-from estimation.estimation import Estimator
+from estimation.base import Estimator
 from util import path
 
 import numpy as np

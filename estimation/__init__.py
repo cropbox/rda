@@ -1,6 +1,6 @@
-# __all__ = ['estimation', 'degreeday', 'chillday', 'betafunc', 'dts', 'regressor', 'ensemble']
+# __all__ = ['base', 'degreeday', 'chillday', 'betafunc', 'dts', 'regressor', 'ensemble']
 
-# from .estimation import Estimator
+# from .base import Estimator
 # from .degreeday import DegreeDay, GrowingDegreeDay
 # from .chillday import ChillDay
 # from .betafunc import BetaFunc
