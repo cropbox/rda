@@ -20,9 +20,6 @@ class StandardTemperature(Estimator):
     @property
     def default_options(self):
         return {
-            #'coeff0': (20, 200),
-            #'bounds': ((0, 100), (0, 500)),
-            #'grid': (slice(10, 100, 1), slice(100, 300, 1)),
             'coeff0': (1, 15, 20, 200),
             'bounds': ((-100, 100), (-10, 30), (0, 200), (0, 500)),
             'grid': (slice(-100, 100, 1), slice(-10, 30, 1), slice(0, 200, 1), slice(0, 500, 1)),
