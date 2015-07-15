@@ -8,7 +8,7 @@ import pandas as pd
 class BetaFunc(Estimator):
     @property
     def name(self):
-        return 'BetaFunc'
+        return 'Beta'
 
     @property
     def coeff_names(self):

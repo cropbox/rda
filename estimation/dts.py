@@ -3,7 +3,7 @@ from .base import Estimator
 import numpy as np
 import pandas as pd
 
-class Dts(Estimator):
+class StandardTemperature(Estimator):
     @property
     def name(self):
         return 'DTS'

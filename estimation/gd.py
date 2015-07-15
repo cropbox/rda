@@ -5,10 +5,10 @@ import numpy as np
 import pandas as pd
 import multiprocessing as mp
 
-class DegreeDay(Estimator):
+class GrowingDegree(Estimator):
     @property
     def name(self):
-        return 'DegreeDay'
+        return 'GD'
 
     @property
     def coeff_names(self):
@@ -91,7 +91,7 @@ class DegreeDay(Estimator):
         return pd.concat(res)
 
 
-class GrowingDegreeDay(DegreeDay):
+class GrowingDegreeDay(GrowingDegree):
     @property
     def name(self):
         return 'GDD'

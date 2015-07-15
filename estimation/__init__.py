@@ -1,9 +1,9 @@
-# __all__ = ['base', 'degreeday', 'chillday', 'betafunc', 'dts', 'regressor', 'ensemble']
+# __all__ = ['base', 'gd', 'cf', 'beta', 'dts', 'reg', 'ensemble']
 
 # from .base import Estimator
-# from .degreeday import DegreeDay, GrowingDegreeDay
-# from .chillday import ChillDay
-# from .betafunc import BetaFunc
-# from .dts import Dts
-# from .regressor import February, March
+# from .gd import GrowingDegree, GrowingDegreeDay
+# from .cf import ChillingForce
+# from .beta import BetaFunc
+# from .dts import StandardTemperature
+# from .reg import February, March
 # from .ensemble import Ensemble

@@ -9,16 +9,16 @@ def _slugify(v):
 def slugname(*args):
     return '_'.join([_slugify(k) for k in args])
 
-from estimation.degreeday import DegreeDay
-from estimation.chillday import ChillDay
-from estimation.betafunc import BetaFunc
-from estimation.dts import Dts
+from estimation.gd import GrowingDegree
+from estimation.cf import ChillingForce
+from estimation.beta import BetaFunc
+from estimation.dts import StandardTemperature
 
 DEFAULT_ESTIMATORS = [
-    DegreeDay,
-    ChillDay,
+    GrowingDegree,
+    ChillingForce,
     BetaFunc,
-    Dts,
+    StandardTemperature,
 ]
 
 class Model(object):
