@@ -1,4 +1,3 @@
-from . import base
 from ..estimation.base import Estimator
 from ..util import path
 
