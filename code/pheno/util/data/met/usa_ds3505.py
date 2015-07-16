@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import pandas as pd
 import datetime
@@ -39,6 +40,4 @@ def read(name):
 
 def conv():
     df = pd.concat([read(n) for n in NAMES])
-    filename = path.input.outfilename('pkl/met', 'usa_ds3505', 'pkl')
-    df.to_pickle(filename)
-    return df
+    return Store().write(df, 'met', 'usa_ds3505')

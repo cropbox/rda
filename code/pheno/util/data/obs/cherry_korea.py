@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -46,5 +47,4 @@ def conv():
     # remove outliers
     cherry.loc[165, 'Korean Cherry', 1967]['Full Bloom'] = None
 
-    outname = path.input.outfilename('pkl/obs', 'cherry_korea', 'pkl')
-    cherry.to_pickle(outname)
+    return Store().write(cherry, 'obs', 'cherry_korea')

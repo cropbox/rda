@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -28,7 +29,7 @@ def load_fuji():
         'Harvest maturity': fuji_hm,
     }, index=years)
     update_date(fuji)
-    #fuji.to_pickle('fuji.pkl')
+    #Store().write(fuji, 'obs', 'fuji')
     return fuji
 
 ###########
@@ -42,7 +43,7 @@ def load_tsugaru():
         'Harvest maturity': ['8/30', '8/16', '8/20', '8/18', '8/23', '8/23', '8/23', '8/16', '8/19', '8/15'],
     }, index=years)
     update_date(tsugaru)
-    #tsugaru.to_pickle('tsugaru.pkl')
+    #Store().write(tsugaru, 'obs', 'tsugaru')
     return tsugaru
 
 ##########
@@ -56,7 +57,7 @@ def load_hongro():
         'Harvest maturity': ['9/05', '8/28', '8/27', '9/04', '9/10', '9/10', '9/10', '8/29', '9/05', '8/27'],
     }, index=years)
     update_date(hongro)
-    #hongro.to_pickle('hongro.pkl')
+    #Store().write(hongro, 'obs', 'hongro')
     return hongro
 
 ########################
@@ -73,5 +74,4 @@ def conv():
     apple.set_index('station', append=True, inplace=True)
     apple = apple.reorder_levels(['station', 'cultivar', 'year'])
 
-    outname = path.input.outfilename('pkl/obs', 'apple_gunwi', 'pkl')
-    apple.to_pickle(outname)
+    return Store().write(apple, 'obs', 'apple_gunwi')

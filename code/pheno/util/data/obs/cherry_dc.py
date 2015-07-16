@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import pandas as pd
 import datetime
@@ -71,5 +72,4 @@ def conv():
     cherry = pbd.combine_first(obs)
     cherry = obs.combine_first(cherry)
 
-    outname = path.input.outfilename('pkl/obs', 'cherry_dc', 'pkl')
-    cherry.to_pickle(outname)
+    return Store().write(cherry, 'obs', 'cherry_dc')

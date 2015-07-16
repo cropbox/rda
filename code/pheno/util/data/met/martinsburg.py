@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -118,6 +119,4 @@ def conv():
     martinsburg2.set_index('station', append=True, inplace=True)
     martinsburg2 = martinsburg2.reorder_levels(['station', 'timestamp'])
 
-    outname = path.input.outfilename('pkl/met', 'martinsburg', 'pkl')
-    martinsburg2.to_pickle(outname)
-    return martinsburg2
+    return Store().write(martinsburg2, 'met', 'martinsburg')

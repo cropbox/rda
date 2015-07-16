@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -48,5 +49,4 @@ def conv():
     inname = path.input.filename('raw/obs/apple_kearneysville', 'Apple Tree Phenology1997-2007', 'xlsx')
     observation = read(inname, station='Kearneysville')
 
-    outname = path.input.outfilename('pkl/obs', 'apple_kearneysville', 'pkl')
-    observation.to_pickle(outname)
+    return Store().write(observation, 'obs', 'apple_kearneysville')

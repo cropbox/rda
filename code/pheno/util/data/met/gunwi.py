@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -145,7 +146,5 @@ def conv():
     # CIPRA (.bru)
     #[export(823, y, weather) for y in range(2005, 2012+1)]
 
-    # pandas (.pkl)
-    outname = path.input.outfilename('pkl/met', 'gunwi', 'pkl')
-    weather.to_pickle(outname)
-    return weather
+    # pandas (.h5/.pkl)
+    return Store().write(weather, 'met', 'gunwi')

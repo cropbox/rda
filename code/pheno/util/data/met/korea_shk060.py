@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import pandas as pd
 import datetime
@@ -92,6 +93,4 @@ def interpolate(df):
 
 def conv():
     df = pd.concat([interpolate(extract(read(n), 'tavg')) for n in NAMES])
-    outname = path.input.outfilename('pkl/met', 'korea_shk060', 'pkl')
-    df.to_pickle(outname)
-    return df
+    return Store().write(df, 'met', 'korea_shk060')

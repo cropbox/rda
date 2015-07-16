@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -120,13 +121,11 @@ def interpolate_korea(korea, korea_stations, station):
 def conv():
     korea_stations_name = path.input.filename('raw/met/korea_jina', 'Location information', 'xlsx')
     korea_stations = read_stations(korea_stations_name)
-    #korea_stations.to_pickle('korea_stations.pkl')
+    #Store().write(korea_stations, 'met', 'korea_stations')
 
     inname = path.input.filename('raw/met/korea_jina', 'Day Max_Min_Avg Temp_ 1981-2010', 'txt')
     korea = read_temperature(inname)
     stations = korea.index.levels[0]
     korea2 = pd.concat([interpolate_korea(korea, korea_stations, s) for s in stations])
 
-    outname = path.input.outfilename('pkl/met', 'korea_jina', 'pkl')
-    korea2.to_pickle(outname)
-    return korea2
+    return Store().write(korea2, 'met', 'korea_jina')

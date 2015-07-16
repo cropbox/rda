@@ -1,11 +1,11 @@
-from ..util import path
+from ..util.data.store import Store
 
 import pandas as pd
 import copy
 
 class DataSet(object):
     def __init__(self, met_name, obs_name, name=None, mapper=None, pather=None):
-        self.pather = path.input if pather is None else pather
+        self.store = Store(pather)
         self.load(met_name, obs_name, name)
         self.setup(mapper)
         self.reset()
@@ -20,12 +20,10 @@ class DataSet(object):
 
     def load(self, met_name, obs_name, name=None):
         self.met_name = met_name
-        met_filename = self.pather.filename('pkl/met', met_name, 'pkl')
-        self.metdf = pd.read_pickle(met_filename)
+        self.metdf = self.store.read('met', met_name)
 
         self.obs_name = obs_name
-        obs_filename = self.pather.filename('pkl/obs', obs_name, 'pkl')
-        self.obsdf = pd.read_pickle(obs_filename)
+        self.obsdf = self.store.read('obs', obs_name)
 
         self.name = obs_name if name is None else name
 

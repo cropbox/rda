@@ -1,4 +1,4 @@
-from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -230,6 +230,4 @@ def conv():
     dc_hourly.set_index('station', append=True, inplace=True)
     dc_hourly = dc_hourly.reorder_levels(['station', 'timestamp'])
 
-    outname = path.input.outfilename('pkl/met', 'dc', 'pkl')
-    dc_hourly.to_pickle(outname)
-    return dc_hourly
+    return Store().write(dc_hourly, 'met', 'dc')

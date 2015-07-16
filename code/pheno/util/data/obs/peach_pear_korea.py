@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import pandas as pd
 import datetime
@@ -45,15 +46,11 @@ def conv():
     def peach():
         inname = path.input.filename('raw/obs/peach_korea', 'Peach FFD', 'txt')
         df = load_peach(inname, cultivar='Korean Peach')
-
-        outname = path.input.outfilename('pkl/obs', 'peach_korea', 'pkl')
-        df.to_pickle(outname)
+        return Store().write(df, 'obs', 'peach_korea')
     peach()
 
     def pear():
         inname = path.input.filename('raw/obs/pear_korea', 'Pear FFD', 'txt')
         df = load_pear(inname, cultivar='Korean Pear')
-
-        outname = path.input.outfilename('pkl/obs', 'pear_korea', 'pkl')
-        df.to_pickle(outname)
+        return Store().write(df, 'obs', 'pear_korea')
     pear()

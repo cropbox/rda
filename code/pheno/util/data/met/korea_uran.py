@@ -1,4 +1,5 @@
 from ... import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -133,13 +134,11 @@ def conv():
     korea = read_temperature(inname)
 
     #TODO better way to share stations file (currently from korea_jina dataset)
-    #korea_stations = pd.read_pickle('korea_stations.pkl')
+    #korea_stations = store.read('met', 'korea_stations')
     from . import korea_jina
     korea_stations_name = path.input.filename('raw/met/korea_jina', 'Location information', 'xlsx')
     korea_stations = korea_jina.read_stations(korea_stations_name)
 
     korea2 = interpolate_korea_all(korea, korea_stations)
 
-    outname = path.input.outfilename('pkl/met', 'korea_uran', 'pkl')
-    korea2.to_pickle(outname)
-    return korea2
+    return Store().write(korea2, 'met', 'korea_uran')
