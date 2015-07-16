@@ -1,9 +1,10 @@
-from model.dataset import DataSet
-from model.group import ModelGroup
-from model.collection import ModelCollection
+from pheno.model.dataset import DataSet
+from pheno.model.group import ModelGroup
+from pheno.model.collection import ModelCollection
+from pheno.model.base import DEFAULT_ESTIMATORS
 
 def create_cherry_dc():
-    ds = DataSet('usa_ds3505', 'cherry_dc', mapper={
+    ds = DataSet('usa_ds3505', 'cherry_dc', translator={
         'DC': 724050,
     }).set(stage='Peak Bloom')
     return ModelGroup(ds,
@@ -13,8 +14,8 @@ def create_cherry_dc():
     )
 
 def create_cherry_dc_yoshino():
-    estimators = base.DEFAULT_ESTIMATORS + [February, March]
-    ds = DataSet('usa_ds3505', 'cherry_dc', mapper={
+    estimators = DEFAULT_ESTIMATORS + [February, March]
+    ds = DataSet('usa_ds3505', 'cherry_dc', translator={
         'DC': 724050,
     }).set(cultivar='Yoshino', stage='Peak Bloom')
     return ModelSuite(ds,
@@ -25,8 +26,8 @@ def create_cherry_dc_yoshino():
     )
 
 def create_cherry_dc_kwanzan():
-    estimators = base.DEFAULT_ESTIMATORS + [February, March]
-    ds = DataSet('usa_ds3505', 'cherry_dc', mapper={
+    estimators = DEFAULT_ESTIMATORS + [February, March]
+    ds = DataSet('usa_ds3505', 'cherry_dc', translator={
         'DC': 724050,
     }).set(cultivar='Kwanzan', stage='Peak Bloom')
     return ModelSuite(ds,
@@ -37,7 +38,7 @@ def create_cherry_dc_kwanzan():
     )
 
 def create_apple_kearneysville():
-    ds = DataSet('usa_ds3505', 'apple_kearneysville', mapper={
+    ds = DataSet('usa_ds3505', 'apple_kearneysville', translator={
         'Kearneysville': 724177,
     }).set(stage='Full Bloom')
     return ModelGroup(ds,
