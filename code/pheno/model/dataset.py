@@ -4,10 +4,10 @@ import pandas as pd
 import copy
 
 class DataSet(object):
-    def __init__(self, met_name, obs_name, name=None, mapper=None, pather=None):
+    def __init__(self, met_name, obs_name, name=None, translator=None, pather=None):
+        self.translator = translator
         self.store = Store(pather)
         self.load(met_name, obs_name, name)
-        self.setup(mapper)
         self.reset()
 
     def __str__(self):
@@ -27,24 +27,16 @@ class DataSet(object):
 
         self.name = obs_name if name is None else name
 
-    def setup(self, mapper):
-        def create_dict_mapper(mapper):
-            def f(x):
-                try:
-                    return mapper[x]
-                except:
-                    return None
-            return f
-
-        if mapper is None:
-            self.mapper = lambda x: x
-        elif type(mapper) is dict:
-            self.mapper = create_dict_mapper(mapper)
-        else:
-            self.mapper = mapper
-
     def copy(self):
         return copy.copy(self)
+
+    def translate(self, station):
+        if self.translator is None:
+            return station
+        elif isinstance(self.translator, dict):
+            return self.translator[station]
+        else:
+            return self.translator(station)
 
     # (re)set a specific dataset
 
@@ -52,7 +44,7 @@ class DataSet(object):
         def pick(l):
             return l[0] if len(l) == 1 else None
         self.obs_station = pick(self.obs_stations())
-        met_station = self.mapper(self.obs_station)
+        met_station = self.translate(self.obs_station)
         self.met_station = pick(self.met_stations()) if met_station is None else met_station
         self.cultivar = pick(self.cultivars())
         self.stage = pick(self.stages())
@@ -61,7 +53,7 @@ class DataSet(object):
     def set(self, met_station=None, obs_station=None, cultivar=None, stage=None):
         if obs_station is not None:
             self.obs_station = obs_station
-            self.met_station = self.mapper(obs_station)
+            self.met_station = self.translate(obs_station)
         if met_station is not None:
             self.met_station = met_station
         if cultivar is not None:
