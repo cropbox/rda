@@ -36,7 +36,7 @@ def create_cherry_dc_kwanzan():
         ESTIMATORS=estimators,
     )
 
-def create_apple_kearnesville():
+def create_apple_kearneysville():
     ds = DataSet('usa_ds3505', 'apple_kearneysville', mapper={
         'Kearneysville': 724177,
     }).set(stage='Full Bloom')
@@ -76,9 +76,9 @@ if __name__ == '__main__':
         create_cherry_korea(),
         create_peach_korea(),
         create_pear_korea(),
-        create_apple_kearnesville(),
+        create_apple_kearneysville(),
     ]
-    cherry_dc, cherry_korea, peach_korea, pear_korea, apple_kearnesville = collection
+    cherry_dc, cherry_korea, peach_korea, pear_korea, apple_kearneysville = collection
 
     mc = ModelCollection(collection)
     mc.export()
