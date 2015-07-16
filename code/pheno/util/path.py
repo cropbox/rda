@@ -1,9 +1,13 @@
 import os
 
-class Path(object):
+class Pather(object):
     def __init__(self, basepath, timestamp):
+        self.setup(basepath, timestamp)
+
+    def setup(self, basepath, timestamp):
         self.basepath = os.path.abspath(os.path.expanduser(basepath))
         self.timestamp = timestamp
+        return self
 
     def path(self, kind, timestamp=None, makedirs=False):
         if timestamp is None:
@@ -21,13 +25,13 @@ class Path(object):
         return self.filename(kind, basename, ext, timestamp, makedirs)
 
 
-class Input(Path):
+class Input(Pather):
     def __init__(self, basepath):
         super(Input, self).__init__(basepath, timestamp='')
 input = Input(basepath='../input')
 
 
-class Output(Path):
+class Output(Pather):
     def __init__(self, basepath, timestamp):
         super(Output, self).__init__(basepath, timestamp)
 output = Output(basepath='../output', timestamp='current')
