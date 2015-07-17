@@ -78,10 +78,13 @@ class Estimator(object):
         assert df.index[-1] == t1, "end date '{}' != '{}'".format(df.index[-1], t1)
         return df
 
-    def _years(self, years):
+    def _years(self, years, skip_observation_check=False):
         mety = self._mets.reset_index().timestamp.dt.year.unique()
-        obsy = self._obss.reset_index().year.unique()
-        defy = np.intersect1d(mety, obsy, assume_unique=True)
+        if skip_observation_check:
+            defy = mety
+        else:
+            obsy = self._obss.reset_index().year.unique()
+            defy = np.intersect1d(mety, obsy, assume_unique=True)
 
         def parse(y, allow_default=False):
             if allow_default and y is None:
@@ -166,7 +169,7 @@ class Estimator(object):
             return self._mask(julian)
 
     def estimates(self, years, coeff=None, julian=False):
-        s = [self.estimate_safely(y, coeff, julian) for y in self._years(years)]
+        s = [self.estimate_safely(y, coeff, julian) for y in self._years(years, skip_observation_check=True)]
         return np.ma.masked_values(s, self._mask(julian))
 
     def estimate_multi(self, year, coeffs=None, julian=False):
