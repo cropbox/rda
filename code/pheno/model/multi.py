@@ -75,7 +75,7 @@ def preset(output, slugname, model, years, n=3, **kwargs):
 
     #HACK needed for metric()
     #FIXME is it still needed?
-    model._calibrate_years = years
+    model._calibrate_years = model._years(years)
 
     load('_coeff', single_calibrate)
 
