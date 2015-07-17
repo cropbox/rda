@@ -86,6 +86,7 @@ class Ensemble(Estimator):
     def estimate_multi(self, year, coeffs=None, julian=False):
         #years = self._years(self._calibrate_years)
         #calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
+        #TODO avoid self.estimators[0]... use self._coeffs to hold keys?
         calibrate_yearss = [list(x) for x in self.estimators[0]._coeffs.keys()]
         s = [self._estimate_multi(y, year, julian) for y in calibrate_yearss]
         ests = np.ma.masked_values(s, self._mask(julian))
