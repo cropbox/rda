@@ -1,5 +1,5 @@
 from ..estimation.base import Estimator
-from ..util import path
+from ..data import path
 
 import numpy as np
 import pandas as pd

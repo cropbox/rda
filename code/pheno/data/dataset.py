@@ -1,4 +1,4 @@
-from ..util.data.store import Store
+from .store import Store
 
 import pandas as pd
 import copy

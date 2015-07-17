@@ -1,4 +1,4 @@
-from ..util import path
+from ..data import path
 
 import string
 

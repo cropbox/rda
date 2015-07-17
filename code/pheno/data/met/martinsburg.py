@@ -1,4 +1,4 @@
-from ... import path
+from .. import path
 from ..store import Store
 
 import numpy as np

@@ -1,4 +1,4 @@
-from .. import path
+from . import path
 
 import pandas as pd
 
