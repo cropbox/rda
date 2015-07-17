@@ -74,8 +74,6 @@ class Ensemble(Estimator):
     def _estimate_multi(self, calibrate_years, estimate_year, julian=False):
         coeff_backup = self._coeff.copy(), self._coeffs.copy()
 
-        calibrate_years = self._years(calibrate_years)
-
         key = tuple(calibrate_years)
         C = [m._coeffs[key] for m in self.estimators]
         self.calibrate(calibrate_years, C=C)
@@ -95,9 +93,6 @@ class Ensemble(Estimator):
 
     def metric_with_calibration(self, calibrate_years, validate_years, how='e'):
         coeff_backup = self._coeff.copy(), self._coeffs.copy()
-
-        calibrate_years = self._years(calibrate_years)
-        validate_years = self._years(validate_years)
 
         key = tuple(calibrate_years)
         C = [m._coeffs[key] for m in self.estimators]
