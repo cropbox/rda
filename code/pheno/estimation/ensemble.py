@@ -86,7 +86,7 @@ class Ensemble(Estimator):
         return est
 
     def estimate_multi(self, year, coeffs=None, julian=False):
-        years = self._years(self._calibrate_years)
+        #years = self._years(self._calibrate_years)
         #calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
         calibrate_yearss = [list(x) for x in self.estimators[0]._coeffs.keys()]
         s = [self._estimate_multi(y, year, julian) for y in calibrate_yearss]
