@@ -48,4 +48,4 @@ Copy the contents of `input` into your local repository. Make sure you have the 
 
 
 ## Get Started
-Run `IPython` on `code` directory to access `pheno` package. You may also want to read example notebooks.
+Run `IPython` on `code` directory to access `pheno` package. You may also want to read [the tutorial](code/Tutorial.ipynb) written in IPython notebook.
