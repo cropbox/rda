@@ -328,6 +328,7 @@ class Estimator(object):
             return np.max(np.abs(e))
 
         # use calibrate_years, not input years
+        #TODO how to replace self._calibrate_years with ModelSuite.calibrate_years?
         obs_hat = self.observes(self._calibrate_years, julian=True).mean()
         d_est = self.estimates(years, coeff, julian=True) - obs_hat
         d_obs = self.observes(years, julian=True) - obs_hat
