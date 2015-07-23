@@ -88,6 +88,9 @@ def extract(df, key):
     df.timestamp = df.apply(lambda x: x.timestamp + datetime.timedelta(hours=x.hour), axis=1)
     return df.drop(['hour'], axis=1).set_index(['station', 'timestamp'])
 
+def interval(df):
+    return len(df) / df.count()
+
 def interpolate(df):
     return df.unstack('station').interpolate('time').stack('station').swaplevel(0, 1).sortlevel()
 
