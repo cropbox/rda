@@ -64,7 +64,7 @@ class ModelSuite(base.Model):
         self.show_metric(self.validate_years, name='{}_validate'.format(vname))
 
         self.show_prediction(self.export_years, name='{}_single'.format(cname))
-        self.show_prediction_multi(self.export_years, name='{}_multi'.format(cname))
+        #self.show_prediction_multi(self.export_years, name='{}_multi'.format(cname))
 
         self.plot_prediction(self.calibrate_years, residual=False, name='{}_calibrate_trend'.format(cname))
         self.plot_prediction(self.calibrate_years, residual=True, name='{}_calibrate_residual'.format(cname))
