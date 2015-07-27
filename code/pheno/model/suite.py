@@ -191,7 +191,7 @@ class ModelSuite(base.Model):
 
         #plt.legend(loc=9, bbox_to_anchor=(0.5, -0.1))
         plt.legend()
-        plt.xlim(*years)
+        #plt.xlim(min(x), max(x))
 
         if name:
             filename = self.output.outfilename('suite/figures', name, 'png')
