@@ -95,10 +95,12 @@ class Estimator(object):
                 return np.intersect1d(defy, range(start, end+1)).tolist()
             elif hasattr(y, '__iter__'):
                 return sorted(set(sum([parse(i) for i in y], [])))
-            elif isinstance(y, int):
-                return [y] if y in defy else []
             else:
-                raise ValueError("unrecognized format: years={}".format(years))
+                try:
+                    iy = int(y)
+                except:
+                    raise ValueError("unrecognized format: y={}, years={}".format(y, years))
+                return [iy] if iy in defy else []
         return parse(years, allow_default=True)
 
     # coefficient
