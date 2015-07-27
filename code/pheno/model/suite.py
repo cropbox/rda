@@ -68,8 +68,8 @@ class ModelSuite(base.Model):
 
         self.plot_prediction(self.calibrate_years, residual=False, name='{}_calibrate_trend'.format(cname))
         self.plot_prediction(self.calibrate_years, residual=True, name='{}_calibrate_residual'.format(cname))
-        self.plot_prediction(self.validate_years, residual=False, name='{}_validate_trend'.format(cname))
-        self.plot_prediction(self.validate_years, residual=True, name='{}_validate_residual'.format(cname))
+        self.plot_prediction(self.validate_years, residual=False, name='{}_validate_trend'.format(vname))
+        self.plot_prediction(self.validate_years, residual=True, name='{}_validate_residual'.format(vname))
         self.plot_prediction(self.export_years, residual=False, name='{}_export_trend'.format(cname))
         self.plot_prediction(self.export_years, residual=True, name='{}_export_residual'.format(cname))
 
