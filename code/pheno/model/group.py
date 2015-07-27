@@ -64,7 +64,7 @@ class ModelGroup(base.Model):
 
         self.save_param_stat(name='{}_param'.format(cname))
 
-        self.plot_outlier_histogram(lower=10, upper=40, name='{}_outlier'.format(vname))
+        #self.plot_outlier_histogram(lower=10, upper=40, name='{}_outlier'.format(vname))
 
     def _metrics(self, years):
         return pd.concat(
