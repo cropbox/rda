@@ -101,9 +101,9 @@ class ModelSuite(base.Model):
             models = [m for m in models if not isinstance(m, Ensemble)]
 
         m0 = models[0]
-        x = m0._years(years, skip_observation_check=True)
+        x = m0._years(years)
         df = pd.concat(
-            [pd.Series(m0.observes(x, julian=julian), index=x)] +
+            [pd.Series(m0.observes(x, julian=julian, skip_observation_check=True), index=x)] +
             [pd.Series(m.estimates(x, julian=julian), index=x) for m in models],
             keys=['Obs'] + [m.name for m in models],
             axis=1
@@ -117,13 +117,13 @@ class ModelSuite(base.Model):
 
     def show_prediction_multi(self, years, name=None):
         m0 = self.models[0]
-        x = m0._years(years, skip_observation_check=True)
+        x = m0._years(years)
 
         def observation():
             return pd.DataFrame({
                 'model': 'Obs',
                 'year': x,
-                'day': m0.observes(x, julian=True)
+                'day': m0.observes(x, julian=True, skip_observation_check=True)
             })
 
         def estimation(y):
@@ -152,11 +152,11 @@ class ModelSuite(base.Model):
     def plot_prediction(self, years, residual=False, name=None):
         #HACK use first model to populate observation data
         m0 = self.models[0]
-        x = m0._years(years, skip_observation_check=True)
+        x = m0._years(years)
 
         # y
         def y_obs():
-            return m0.observes(x, julian=True)
+            return m0.observes(x, julian=True, skip_observation_check=True)
 
         def y_est(m):
             return m.estimates(x, julian=True)

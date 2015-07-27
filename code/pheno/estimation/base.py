@@ -168,8 +168,8 @@ class Estimator(object):
         except:
             return self._mask(julian)
 
-    def estimates(self, years, coeff=None, julian=False):
-        s = [self.estimate_safely(y, coeff, julian) for y in self._years(years, skip_observation_check=True)]
+    def estimates(self, years, coeff=None, julian=False, skip_observation_check=True):
+        s = [self.estimate_safely(y, coeff, julian) for y in self._years(years, skip_observation_check)]
         return np.ma.masked_values(s, self._mask(julian))
 
     def estimate_multi(self, year, coeffs=None, julian=False):
@@ -200,8 +200,8 @@ class Estimator(object):
         except:
             return self._mask(julian)
 
-    def observes(self, years, julian=False):
-        s = [self.observe_safely(y, julian) for y in self._years(years)]
+    def observes(self, years, julian=False, skip_observation_check=False):
+        s = [self.observe_safely(y, julian) for y in self._years(years, skip_observation_check)]
         return np.ma.masked_values(s, self._mask(julian))
 
     # calibration
