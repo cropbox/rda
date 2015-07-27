@@ -327,7 +327,10 @@ class Estimator(object):
         elif how == 'mae':
             return np.mean(np.abs(e))
         elif how == 'xe':
-            return np.max(np.abs(e))
+            try:
+                return np.nanmax(np.abs(e))
+            except:
+                return np.nan
 
         # use calibrate_years, not input years
         #TODO how to replace self._calibrate_years with ModelSuite.calibrate_years?
