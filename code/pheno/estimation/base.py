@@ -162,9 +162,9 @@ class Estimator(object):
         else:
             return t
 
-    def estimate_safely(self, years, coeff=None, julian=False):
+    def estimate_safely(self, year, coeff=None, julian=False):
         try:
-            return self.estimate(years, coeff, julian)
+            return self.estimate(year, coeff, julian)
         except:
             return self._mask(julian)
 
