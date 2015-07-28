@@ -177,7 +177,7 @@ class ModelGroup(base.Model):
         return o
 
     def show_crossvalidation(self, how='rmse', ignore_estimation_error=False, name=None):
-        df = pd.concat([s.show_crossvalidation(how, ignore_estimation_error) for s in self.suites])
+        df = pd.concat([s.show_crossvalidation(how, ignore_estimation_error, name) for s in self.suites])
 
         if name:
             filename = self.output.outfilename('group/results', name, 'csv')
