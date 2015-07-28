@@ -10,13 +10,14 @@ def slugname(*args):
     return '_'.join([_slugify(k) for k in args])
 
 from ..estimation.gd import GrowingDegree
-from ..estimation.cf import ChillingForce
+from ..estimation.cf import ChillingForce, ChillingForceDay
 from ..estimation.beta import BetaFunc
 from ..estimation.dts import StandardTemperature
 
 DEFAULT_ESTIMATORS = [
     GrowingDegree,
     ChillingForce,
+    ChillingForceDay,
     BetaFunc,
     StandardTemperature,
 ]
