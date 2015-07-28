@@ -31,26 +31,34 @@ class ModelCollection(object):
 
         # export crossvalidation results
         metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'd', 'd1', 'dr']
-        name = 'crossvalidation_stat'
+        name = 'crossvalidation'
         for how in metrics:
-            self.show_crossvalidation_stat(how, ignore_estimation_error=False, name=name)
-            self.show_crossvalidation_stat(how, ignore_estimation_error=True, name=name)
+            self.show_crossvalidation(how, ignore_estimation_error=False, name=name)
+            self.show_crossvalidation(how, ignore_estimation_error=True, name=name)
 
         # export obs vs. est plots
         self.plot_obs_vs_est('model', exclude_ensembles=False, name='obs_vs_est_by_model')
         self.plot_obs_vs_est('dataset', exclude_ensembles=True, name='obs_vs_est_by_dataset')
 
-    def _crossvalidation_stat(self, title, df, how):
-        def rank(df):
-            if how == 'me':
-                df = df.abs()
-            ascending = not Estimator._is_higher_better(how)
-            return df.rank(axis=1, ascending=ascending).mean()
+    def _rank(self, df, how):
+        if how == 'me':
+            df = df.abs()
+        ascending = not Estimator._is_higher_better(how)
+        return df.rank(axis=1, ascending=ascending)
 
+    def _crossvalidation_rank(self, title, df, how):
+        sdf = self._rank(df, how)
+        sdf.index.name = 'seq'
+        sdf['title'] = title if title else self.dataset.name
+        sdf['how'] = how.upper()
+        sdf = sdf.reset_index().set_index(['how', 'title', 'seq'])
+        return sdf
+
+    def _crossvalidation_stat(self, title, df, how):
         sdf = pd.DataFrame({
             'mean': df.mean(),
             'std': df.std(),
-            'rank': rank(df),
+            'rank': self._rank(df, how).mean(),
         }, columns=['mean', 'std', 'rank']).transpose()
         sdf.index.name = 'type'
         sdf['title'] = title if title else self.dataset.name
@@ -58,19 +66,25 @@ class ModelCollection(object):
         sdf = sdf.reset_index().set_index(['how', 'title', 'type'])
         return sdf
 
-    def show_crossvalidation_stat(self, how='rmse', ignore_estimation_error=False, name=None):
-        titles = self.names + ['total']
-        dfs = [g.show_crossvalidation(how, ignore_estimation_error) for g in self.groups]
+    def show_crossvalidation(self, how='rmse', ignore_estimation_error=False, name=None):
+        def save(cdfs, kind):
+            if not name:
+                return
+            basename = '{}_{}_{}'.format(name, how, kind)
+            if ignore_estimation_error:
+                basename = basename + '_ie'
+            filename = self.output.outfilename('collection/results', basename, 'csv')
+            cdfs.to_csv(filename)
+
+        titles = self.names
+        dfs = [g.show_crossvalidation(how, ignore_estimation_error, name) for g in self.groups]
+        rank = pd.concat([self._crossvalidation_rank(t, d, how) for t, d in zip(titles, dfs)])
+        save(rank, 'rank')
+
+        titles = titles + ['total']
         dfs = dfs + [pd.concat(dfs)]
         stat = pd.concat([self._crossvalidation_stat(t, d, how) for t, d in zip(titles, dfs)])
-
-        if name:
-            if ignore_estimation_error:
-                basename = '{}_{}_ie'.format(name, how)
-            else:
-                basename = '{}_{}'.format(name, how)
-            filename = self.output.outfilename('collection/results', basename, 'csv')
-            stat.to_csv(filename)
+        save(stat, 'stat')
         return stat
 
     # var = 'model' or 'dataset'
