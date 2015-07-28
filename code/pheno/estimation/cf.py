@@ -54,3 +54,54 @@ class ChillingForce(Estimator):
         # flower development
         aux['FD'] = aux[awakening:]['Dh'].cumsum() / coeff['Rh']
         return self._match(aux['FD'], 1.0)
+
+
+class ChillingForceDay(ChillingForce):
+    @property
+    def name(self):
+        return 'CFD'
+
+    def _aux(self, year, met, coeff):
+        T = met.tavg.resample('D', how={
+            'x': np.max,
+            'n': np.min,
+            'M': np.mean,
+        })
+        Tc = coeff['Tc']
+
+        def chill(t):
+            Cd = 0
+            if 0 <= Tc <= t.n <= t.x:
+                Cd = 0
+            elif 0 <= t.n <= Tc < t.x:
+                Cd = -((t.M - t.n) - (t.x - Tc)**2 / (2*(t.x - t.n)))
+            elif 0 <= t.n <= t.x <= Tc:
+                Cd = -(t.M - t.n)
+            elif t.n < 0 <= t.x <= Tc:
+                Cd = -(t.x**2 / (2*(t.x - t.n)))
+            elif t.n < 0 < Tc <= t.x:
+                Cd = -(t.x**2 / (2*(t.x - t.n))) - (t.x - Tc)**2 / (2*(t.x - t.n))
+            return Cd
+
+        def anti_chill(t):
+            Ca = 0
+            if 0 <= Tc <= t.n <= t.x:
+                Ca = t.M - Tc
+            elif 0 <= t.n <= Tc < t.x:
+                Ca = (t.x - Tc)**2 / (2*(t.x - t.n))
+            elif 0 <= t.n <= t.x <= Tc:
+                Ca = 0
+            elif t.n < 0 <= t.x <= Tc:
+                Ca = 0
+            elif t.n < 0 < Tc <= t.x:
+                Ca = (t.x - Tc)**2 / (2*(t.x - t.n))
+            return Ca
+
+        def unit(f):
+            return T.apply(f, axis=1).resample('H', fill_method='ffill') / 24.
+
+        # daily chill / heat (anti-chill) units
+        return pd.concat({
+            'Dc': unit(chill),
+            'Dh': unit(anti_chill),
+        }, axis=1)
