@@ -1,7 +1,8 @@
-from .base import Estimator
+from .base import Estimator, EstimationError
 
 import numpy as np
 import pandas as pd
+import datetime
 
 class ChillingForce(Estimator):
     @property
@@ -11,7 +12,6 @@ class ChillingForce(Estimator):
     @property
     def coeff_names(self):
         return [
-            'Ds', # start date (Julian)
             'Tc', # base temperature (C)
             'Rc', # chilling requirement
             'Rh', # heating requirement
@@ -20,25 +20,36 @@ class ChillingForce(Estimator):
     @property
     def default_options(self):
         return {
-            'coeff0': (-92, 4.5, -200, 300),
-            'bounds': ((-100, 0), (0, 10), (-400, -0), (0, 400)),
-            'grid': (slice(-100, 0, 1), slice(0, 10, 0.1), slice(-400, -0, 1), slice(0, 400, 1)),
+            'coeff0': (4.5, -200, 300),
+            'bounds': ((0, 10), (-400, -0), (0, 400)),
+            'grid': (slice(0, 10, 0.1), slice(-400, -0, 1), slice(0, 400, 1)),
         }
 
-    def _estimate(self, year, met, coeff):
+    def start_date(self, year, coeff):
+        # fix the start date as June 1st
+        return datetime.date(year-1, 6, 1)
+
+    def _aux(self, year, met, coeff):
+        T = met.tavg
         Tc = coeff['Tc']
-        tdd = (met.tavg - Tc).clip(lower=-Tc) / 24.
+        tdd = (T - Tc).clip(lower=-Tc) / 24.
 
         # daily chill / heat (anti-chill) units
-        aux = pd.concat({
+        return pd.concat({
             'Dc': tdd.clip(upper=0),
             'Dh': tdd.clip(lower=0),
         }, axis=1)
 
+    def _estimate(self, year, met, coeff):
+        aux = self._aux(year, met, coeff)
+
         # dormancy release
-        # no forced dormancy break even when spring comes
         aux['DR'] = aux['Dc'].cumsum() / coeff['Rc']
-        awakening = self._match(aux['DR'], 1.0)
+        try:
+            awakening = self._match(aux['DR'], 1.0)
+        except EstimationError:
+            # force dormancy break when spring comes
+            awakening = pd.to_datetime(pd.datetime(year, 3, 1))
 
         # flower development
         aux['FD'] = aux[awakening:]['Dh'].cumsum() / coeff['Rh']
