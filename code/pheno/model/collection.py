@@ -44,7 +44,7 @@ class ModelCollection(object):
         if how == 'me':
             df = df.abs()
         ascending = not Estimator._is_higher_better(how)
-        return df.rank(axis=1, ascending=ascending)
+        return df.rank(axis=1, ascending=ascending).astype(int)
 
     def _crossvalidation_rank(self, title, df, how):
         sdf = self._rank(df, how)
