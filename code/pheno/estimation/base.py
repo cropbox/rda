@@ -6,6 +6,7 @@ import pandas as pd
 import datetime
 import itertools
 import collections
+import copy
 
 MASK_DATETIME = None
 MASK_JULIAN = 0
@@ -57,6 +58,9 @@ class Estimator(object):
         opts = self.default_options.copy()
         opts.update(kwargs)
         return opts
+
+    def copy(self):
+        return copy.copy(self)
 
     # date range
     def start_date(self, year, coeff):
