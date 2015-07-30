@@ -40,7 +40,10 @@ class ModelCollection(object):
         self.plot_obs_vs_est('model', exclude_ensembles=False, name='obs_vs_est_by_model')
         self.plot_obs_vs_est('dataset', exclude_ensembles=True, name='obs_vs_est_by_dataset')
 
-    def _rank(self, df, how):
+    def _rank(self, df, how, dropna=True):
+        if dropna:
+            #HACK remove NaN before converting integer ranks
+            df = df.dropna()
         if how == 'me':
             df = df.abs()
         ascending = not Estimator._is_higher_better(how)
