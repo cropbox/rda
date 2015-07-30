@@ -47,8 +47,12 @@ class ModelCollection(object):
         return df.rank(axis=1, ascending=ascending).astype(int)
 
     def _crossvalidation_rank(self, title, df, how):
+        #HACK keep the original index
+        df = df.copy()
+        df.index = range(len(df))
+        df.index.name = 'seq'
+
         sdf = self._rank(df, how)
-        sdf.index.name = 'seq'
         sdf['title'] = title if title else self.dataset.name
         sdf['how'] = how.upper()
         sdf = sdf.reset_index().set_index(['how', 'title', 'seq'])
