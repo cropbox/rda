@@ -30,9 +30,9 @@ class ChillingForce(Estimator):
         return datetime.date(year-1, 6, 1)
 
     def _aux(self, year, met, coeff):
-        T = met.tavg
+        T = met.tavg.clip(lower=0)
         Tc = coeff['Tc']
-        tdd = (T - Tc).clip(lower=-Tc) / 24.
+        tdd = (T - Tc) / 24.
 
         # daily chill / heat (anti-chill) units
         return pd.concat({
