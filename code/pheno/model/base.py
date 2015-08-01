@@ -17,7 +17,6 @@ from ..estimation.dts import StandardTemperature
 DEFAULT_ESTIMATORS = [
     GrowingDegree,
     ChillingForce,
-    ChillingForceDay,
     BetaFunc,
     StandardTemperature,
 ]
