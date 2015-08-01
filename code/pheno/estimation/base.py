@@ -141,7 +141,10 @@ class Estimator(object):
         return MASK_JULIAN if julian else MASK_DATETIME
 
     # estimation
-    def _match(self, ts, value):
+    def _match(self, ts, value, descending=False):
+        if descending:
+            ts = -ts
+            value = -value
         i = ts.fillna(0).searchsorted(value)[0]
         try:
             return ts.index[i]

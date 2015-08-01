@@ -14,46 +14,57 @@ class ChillingForce(Estimator):
         return [
             'Tc', # base temperature (C)
             'Rc', # chilling requirement
-            'Rh', # heating requirement
+            'Rd', # adjustment for heating requirement (Rh = -Rc + Rd)
         ]
 
     @property
     def default_options(self):
         return {
-            'coeff0': (4.5, -200, 300),
-            'bounds': ((0, 10), (-400, -0), (0, 400)),
-            'grid': (slice(0, 10, 0.1), slice(-400, -0, 1), slice(0, 400, 1)),
+            'coeff0': (4.5, -200, 100),
+            'bounds': ((0, 10), (-350, -50), (0, 200)),
+            'grid': (slice(0, 10, 0.1), slice(-350, -50, 1), slice(0, 200, 1)),
         }
 
     def start_date(self, year, coeff):
         # fix the start date as June 1st
         return datetime.date(year-1, 6, 1)
 
-    def _aux(self, year, met, coeff):
+    def _degrees(self, year, met, coeff):
         T = met.tavg.clip(lower=0)
         Tc = coeff['Tc']
-        tdd = (T - Tc) / 24.
+        units = (T - Tc) / 24.
 
         # daily chill / heat (anti-chill) units
         return pd.concat({
-            'Dc': tdd.clip(upper=0),
-            'Dh': tdd.clip(lower=0),
+            'Dc': units.clip(upper=0),
+            'Dh': units.clip(lower=0),
         }, axis=1)
 
     def _estimate(self, year, met, coeff):
-        aux = self._aux(year, met, coeff)
+        D = self._degrees(year, met, coeff)
+        chill = D['Dc']
+        heat = D['Dh']
 
-        # dormancy release
-        aux['DR'] = aux['Dc'].cumsum() / coeff['Rc']
+        # rest & quiescence ends = dormancy release = bud burst
+        Rc = coeff['Rc']
         try:
-            awakening = self._match(aux['DR'], 1.0)
-        except EstimationError:
-            # force dormancy break when spring comes
-            awakening = pd.to_datetime(pd.datetime(year, 3, 1))
+            rest = chill.cumsum()
+            #HACK _match() assumes pre-sorted ascending order
+            awakening = self._match(rest, Rc, descending=True)
+            quiescence = heat.loc[awakening:].cumsum()
+            budding = self._match(quiescence, -Rc)
+        except EstimationError as e:
+            #HACK immature calibration with forced dormancy break
+            # force dormancy release when spring comes
+            #awakening = pd.NaT
+            #budding = pd.to_datetime(pd.datetime(year, 3, 1))
+            raise e
 
-        # flower development
-        aux['FD'] = aux[awakening:]['Dh'].cumsum() / coeff['Rh']
-        return self._match(aux['FD'], 1.0)
+        # development after bud burst
+        Rd = coeff['Rd']
+        development = heat.loc[budding:].cumsum()
+        flowering = self._match(development, Rd)
+        return flowering
 
 
 class ChillingForceDay(ChillingForce):
@@ -61,7 +72,7 @@ class ChillingForceDay(ChillingForce):
     def name(self):
         return 'CFD'
 
-    def _aux(self, year, met, coeff):
+    def _degrees(self, year, met, coeff):
         T = met.tavg.resample('D', how={
             'x': np.max,
             'n': np.min,
