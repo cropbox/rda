@@ -83,11 +83,11 @@ class Estimator(object):
         return df
 
     def _years(self, years, skip_observation_check=False):
-        mety = self._mets.reset_index().timestamp.dt.year.unique()
+        mety = self._mets.dropna().reset_index().timestamp.dt.year.unique()
         if skip_observation_check:
             defy = mety
         else:
-            obsy = self._obss.reset_index().year.unique()
+            obsy = self._obss.dropna().reset_index().year.unique()
             defy = np.intersect1d(mety, obsy, assume_unique=True)
 
         def parse(y, allow_default=False):
