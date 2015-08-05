@@ -83,21 +83,4 @@ def preset(output, slugname, model, years, n=3, **kwargs):
     #HACK no time for multi param calibration
     model._coeffs = {'': model._coeff}
 
-    def load2(var, callback):
-        fn = filename(var)
-        print('preset.load2: ' + fn)
-        Y = model._years(years)
-        n = 1
-        yearss = sum([list(itertools.combinations(Y, len(Y)-i)) for i in range(n+1)], [])
-        try:
-            d = np.load(fn).tolist()
-            if set(d.keys()) == set(yearss):
-                setattr(model, var, d)
-            else:
-                print('found: {} : {} != {}'.format(fn, d.keys(), yearss))
-                raise Exception()
-        except:
-            callback()
-            np.save(fn, getattr(model, var))
-
-    load2('_coeffs', multi_calibrate)
+    load('_coeffs', multi_calibrate)
