@@ -66,9 +66,17 @@ def create_pear_korea():
 def create_cherry_korea():
     ds = DataSet('korea_shk060', 'cherry_korea').set(stage='Full Bloom')
     return ModelGroup(ds,
+        calibrate_years=(1974, 1994),
+        validate_years=(1964, 1973),
+        export_years=(1964, 2010),
+    )
+
+def create_cherry_korea_bloom():
+    ds = DataSet('korea_shk060', 'cherry_korea').set(stage='Bloom')
+    return ModelGroup(ds,
         calibrate_years=(1984, 2004),
         validate_years=(1974, 1983),
-        export_years=(1974, 2010),
+        export_years=(1964, 2010),
     )
 
 if __name__ == '__main__':
