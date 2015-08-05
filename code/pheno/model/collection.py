@@ -49,6 +49,18 @@ class ModelCollection(object):
         ascending = not Estimator._is_higher_better(how)
         return df.rank(axis=1, ascending=ascending)
 
+    def _crossvalidation_raw(self, title, df, how):
+        #HACK keep the original index
+        df = df.copy()
+        df.index = range(len(df))
+        df.index.name = 'seq'
+
+        sdf = df
+        sdf['title'] = title if title else self.dataset.name
+        sdf['how'] = how.upper()
+        sdf = sdf.reset_index().set_index(['how', 'title', 'seq'])
+        return sdf
+
     def _crossvalidation_rank(self, title, df, how):
         #HACK keep the original index
         df = df.copy()
@@ -85,6 +97,9 @@ class ModelCollection(object):
 
         titles = self.names
         dfs = [g.show_crossvalidation(how, ignore_estimation_error, name) for g in self.groups]
+        raw = pd.concat([self._crossvalidation_raw(t, d, how) for t, d in zip(titles, dfs)])
+        save(raw, 'raw')
+
         rank = pd.concat([self._crossvalidation_rank(t, d, how) for t, d in zip(titles, dfs)])
         save(rank, 'rank')
 
