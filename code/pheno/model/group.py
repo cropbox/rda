@@ -180,6 +180,10 @@ class ModelGroup(base.Model):
         df = pd.concat([s.show_crossvalidation(how, ignore_estimation_error, name) for s in self.suites])
 
         if name:
-            filename = self.output.outfilename('group/results', name, 'csv')
+            cname = self._key_for_calibration()
+            basename = '{}_{}'.format(name, cname)
+            if ignore_estimation_error:
+                basename = basename + '_ie'
+            filename = self.output.outfilename('group/results', basename, 'csv')
             df.to_csv(filename)
         return df

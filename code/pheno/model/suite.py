@@ -212,6 +212,10 @@ class ModelSuite(base.Model):
         }, columns=self.names)
 
         if name:
-            filename = self.output.outfilename('suite/results', name, 'csv')
+            cname = self._key_for_calibration()
+            basename = '{}_{}'.format(name, cname)
+            if ignore_estimation_error:
+                basename = basename + '_ie'
+            filename = self.output.outfilename('suite/results', basename, 'csv')
             df.to_csv(filename)
         return df

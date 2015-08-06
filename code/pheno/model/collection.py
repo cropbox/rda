@@ -96,7 +96,7 @@ class ModelCollection(object):
             cdfs.to_csv(filename)
 
         titles = self.names
-        dfs = [g.show_crossvalidation(how, ignore_estimation_error, name) for g in self.groups]
+        dfs = [g.show_crossvalidation(how, ignore_estimation_error, '{}_{}'.format(name, how)) for g in self.groups]
         raw = pd.concat([self._crossvalidation_raw(t, d, how) for t, d in zip(titles, dfs)])
         save(raw, 'raw')
 
