@@ -293,12 +293,14 @@ class Estimator(object):
         coeff = self._dictify(res, coeff_names, fixed_coeff)
         return coeff
 
-    def calibrate(self, years=None, disp=True, **kwargs):
+    def calibrate(self, years=None, disp=True, save=True, **kwargs):
         years = self._years(years)
-        self._calibrate_years = years
-        self._coeff = self._calibrate(years, disp, **kwargs)
-        self._coeffs[''] = self._coeff
-        return self._coeff
+        coeff = self._calibrate(years, disp, **kwargs)
+        if save:
+            self._calibrate_years = years
+            self._coeff = coeff
+            self._coeffs[''] = coeff
+        return coeff
 
     # validation
     def residual(self, year, coeff=None):

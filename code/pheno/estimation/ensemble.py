@@ -62,6 +62,11 @@ class Ensemble(Estimator):
         coeff = self._dictify([W, opts['C']])
         return coeff
 
+    def _calibrated_coeff(self, years):
+        key = tuple(years)
+        C = [m._coeffs[key] for m in self.estimators]
+        return self.calibrate(years, save=False, C=C)
+
     def _estimate(self, year, met, coeff):
         o = datetime.datetime(year, 1, 1)
         d = [m.estimate_safely(year, c, julian=True) for (m, c) in zip(self.estimators, coeff['C'])]
@@ -72,16 +77,8 @@ class Ensemble(Estimator):
         return pd.Timestamp(t)
 
     def _estimate_multi(self, calibrate_years, estimate_year, julian=False):
-        coeff_backup = self._coeff.copy(), self._coeffs.copy()
-
-        key = tuple(calibrate_years)
-        C = [m._coeffs[key] for m in self.estimators]
-        self.calibrate(calibrate_years, C=C)
-
-        est = self.estimate_safely(estimate_year, julian=julian)
-
-        self._coeff, self._coeffs = coeff_backup
-        return est
+        coeff = self._calibrated_coeff(calibrate_years)
+        return self.estimate_safely(estimate_year, coeff, julian)
 
     def estimate_multi(self, year, coeffs=None, julian=False):
         #years = self._years(self._calibrate_years)
@@ -93,16 +90,8 @@ class Ensemble(Estimator):
         return pd.Series(ests).dropna()
 
     def metric_with_calibration(self, calibrate_years, validate_years, how='e'):
-        coeff_backup = self._coeff.copy(), self._coeffs.copy()
-
-        key = tuple(calibrate_years)
-        C = [m._coeffs[key] for m in self.estimators]
-        self.calibrate(calibrate_years, C=C)
-
-        metrics = self.metric(validate_years, how)
-
-        self._coeff, self._coeffs = coeff_backup
-        return metrics
+        coeff = self._calibrated_coeff(calibrate_years)
+        return self.metric(validate_years, how, coeff)
 
     def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
         years = self._years(years)
