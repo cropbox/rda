@@ -13,7 +13,7 @@ class GrowingDegree(Estimator):
     @property
     def coeff_names(self):
         return [
-            'Ds', # start date (Julian)
+            'Ds', # start date (days offset)
             'Tb', # base temperature (C)
             'Rd', # accumulation requirement
         ]

@@ -11,7 +11,7 @@ class StandardTemperature(Estimator):
     @property
     def coeff_names(self):
         return [
-            'Ds', # start date (Julian)
+            'Ds', # start date (days offset)
             'Ts', # standard temperature (C)
             'Ea', # temperature sensitivity rate (kJ mol-1)
             'Rd', # standard temperature accumulation requirement
