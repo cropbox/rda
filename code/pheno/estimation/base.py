@@ -370,5 +370,9 @@ class Estimator(object):
         keys = list(itertools.combinations(years, len(years)-n))
         def metric(k):
             validate_years = sorted(set(years) - set(k))
-            return self.metric(validate_years, how, self._coeffs[k], ignore_estimation_error)
+            try:
+                coeff = self._coeffs[k]
+            except:
+                coeff = self.calibrate(list(k), save=False)
+            return self.metric(validate_years, how, coeff, ignore_estimation_error)
         return np.array([metric(k) for k in keys])
