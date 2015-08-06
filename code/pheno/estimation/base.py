@@ -375,4 +375,4 @@ class Estimator(object):
             except:
                 coeff = self.calibrate(list(k), save=False)
             return self.metric(validate_years, how, coeff, ignore_estimation_error)
-        return np.array([metric(k) for k in keys])
+        return np.ma.array([metric(k) for k in keys])

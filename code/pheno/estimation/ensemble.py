@@ -99,4 +99,4 @@ class Ensemble(Estimator):
         def metric(y):
             validate_years = sorted(set(years) - set(y))
             return self.metric_with_calibration(y, validate_years, how)
-        return np.array([metric(y) for y in calibrate_yearss])
+        return np.ma.array([metric(y) for y in calibrate_yearss])
