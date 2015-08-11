@@ -13,18 +13,20 @@ def _calibrate_func(x):
     model, args, kwargs = x
     return model.calibrate(*args, **kwargs)
 
-def calibrate(model, years, n=1, **kwargs):
+def calibrate(model, years, splitter_name, **kwargs):
     years = model._years(years)
-    #yearss = itertools.combinations(years, n)
-    yearss = sum([list(itertools.combinations(years, len(years)-i)) for i in range(n+1)], [])
-    argss = [(model, [list(years), False], kwargs) for years in yearss]
+    splitter = getattr(model, splitter_name)
+    validate_years_list = splitter(years)
+    calibrate_years_list = [sorted(set(years) - set(validate_years)) for validate_years in validate_years_list]
+    args_list = [(model, [calibrate_years, False], kwargs) for calibrate_years in calibrate_years_list]
 
     pool = mp.Pool()
-    coeffs = pool.map(_calibrate_func, argss)
+    coeffs = pool.map(_calibrate_func, args_list)
     pool.close()
     pool.join()
 
-    model._coeffs = dict(zip(yearss, coeffs))
+    keys = [tuple(k) for k in calibrate_years_list]
+    model._coeffs = dict(zip(keys, coeffs))
 
 ##############
 # Estimation #
@@ -55,7 +57,7 @@ def estimate(models, year):
 # Caahe #
 #########
 
-def preset(output, slugname, model, years, n=3, **kwargs):
+def preset(output, slugname, model, years, **kwargs):
     def filename(var):
         return output.outfilename('coeffs', '{}_{}'.format(slugname, var), 'npy')
 
@@ -72,7 +74,7 @@ def preset(output, slugname, model, years, n=3, **kwargs):
         model.calibrate(years)
 
     def multi_calibrate():
-        calibrate(model, years, n, **kwargs)
+        calibrate(model, years, '_splitter_k_fold', **kwargs)
 
     #HACK needed for metric()
     #FIXME is it still needed?

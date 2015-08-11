@@ -26,7 +26,7 @@ class ModelSuite(base.Model):
         for m in models:
             #m.calibrate(self.calibrate_years)
             #multi.calibrate(m, self.calibrate_years)
-            multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years, self.crossvalidate_n)
+            multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years)
 
         # add ensemble models
         ensembles = [
