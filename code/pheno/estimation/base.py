@@ -7,6 +7,7 @@ import datetime
 import itertools
 import collections
 import copy
+import random
 
 MASK_DATETIME = None
 MASK_JULIAN = 0
@@ -365,14 +366,27 @@ class Estimator(object):
             else:
                 return drl / dru - 1.
 
-    def crossvalidate(self, years, how, ignore_estimation_error=False, n=1):
+    def _splitter_leave_n_out(self, years, n=1):
+        return [list(y) for y in itertools.combinations(years, n)]
+
+    def _splitter_k_fold(self, years, k=5, seed=1):
+        random.seed(seed)
+        random.shuffle(years)
+        return [sorted(years[i::k]) for i in range(k)]
+
+    def crossvalidate(self, years, how, ignore_estimation_error=False, splitter=None, **kwargs):
         years = self._years(years)
-        keys = list(itertools.combinations(years, len(years)-n))
-        def metric(k):
-            validate_years = sorted(set(years) - set(k))
+        if not splitter:
+            #splitter = self._splitter_leave_n_out
+            splitter = self._splitter_k_fold
+            #splitter = lambda years: self._splitter_k_fold(years, k=5)
+        validate_years_list = splitter(years)
+
+        def metric(validate_years):
+            calibrate_years = sorted(set(years) - set(validate_years))
             try:
-                coeff = self._coeffs[k]
+                coeff = self._coeffs[tuple(calibrate_years)]
             except:
-                coeff = self.calibrate(list(k), save=False)
+                coeff = self.calibrate(calibrate_years, save=False, **kwargs)
             return self.metric(validate_years, how, coeff, ignore_estimation_error)
-        return np.ma.array([metric(k) for k in keys], fill_value=np.nan)
+        return np.ma.array([metric(v) for v in validate_years_list], fill_value=np.nan)
