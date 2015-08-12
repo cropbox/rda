@@ -93,10 +93,12 @@ class Ensemble(Estimator):
         coeff = self._calibrated_coeff(calibrate_years)
         return self.metric(validate_years, how, coeff)
 
-    def crossvalidate(self, years, how='e', ignore_estimation_error=False, n=1):
+    def crossvalidate(self, years, how='e', ignore_estimation_error=False, splitter=None):
         years = self._years(years)
-        calibrate_yearss = [list(x) for x in itertools.combinations(years, len(years)-n)]
-        def metric(y):
-            validate_years = sorted(set(years) - set(y))
-            return self.metric_with_calibration(y, validate_years, how)
-        return np.ma.array([metric(y) for y in calibrate_yearss], fill_value=np.nan)
+        if not splitter:
+            splitter = self._splitter_k_fold
+        validate_years_list = splitter(years)
+        calibrate_years_list = [sorted(set(years) - set(y)) for y in validate_years_list]
+        return np.ma.array([
+            self.metric_with_calibration(c, v, how) for c, v in zip(calibrate_years_list, validate_years_list)
+        ], fill_value=np.nan)
