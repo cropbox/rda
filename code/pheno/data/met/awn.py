@@ -79,7 +79,7 @@ class Scraper:
 
     def _fetch_station_detail(self, station):
         self.b.open('{}&UNIT_ID={}'.format(self.STATION_URL, station))
-        m = re.search('latitude (?P<lat>-?\d+\.\d+)&deg, longitude (?P<lon>-?\d+\.\d+)°, elevation (?P<elev>\d+)', self.b.parsed.text)
+        m = re.search('latitude (?P<lat>-?\d+\.?\d*)&deg, longitude (?P<lon>-?\d+\.?\d*)°, elevation (?P<elev>\d+)', self.b.parsed.text)
         return {
             'lat': float(m.group('lat')),
             'lon': float(m.group('lon')),
