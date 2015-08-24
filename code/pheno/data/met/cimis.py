@@ -3,10 +3,10 @@ from ..store import Store
 
 import numpy as np
 import pandas as pd
+import datetime
 import os
 import glob
 import re
-import datetime
 
 def read_station_details():
     filename = path.input.filename('raw/met/cimis', 'CIMIS Stations List (May 2015)', 'xlsx')
@@ -16,13 +16,34 @@ def read_weather(filename):
     def date_parser(d, t):
         h, m = int(t[:2]), int(t[2:])
         return datetime.datetime.strptime(d, '%m/%d/%Y') + datetime.timedelta(hours=h, minutes=m)
-    try:
-        return pd.read_csv(filename, header=None, names=[
+
+    # handle revised format since 2014
+    year = int(re.search(r'hourlyStns(?P<year>\d{4})', filename).group('year'))
+    if year < 2014:
+        columns = [
             'station', 'date', 'hour', 'jdate',
             'eto_qc', 'eto', 'prcp_qc', 'prcp', 'srad_qc', 'srad', 'vp_qc', 'vp',
             't_air_qc', 't_air', 'rh_qc', 'rh', 'dp_qc', 'dp',
             'ws_qc', 'ws', 'wd_qc', 'wd', 't_soil_qc', 't_soil',
-        ], skipinitialspace=True, na_values=['--'], parse_dates=[[1,2]], date_parser=date_parser).rename(columns={
+        ]
+    else:
+        columns = [
+            'station', 'date', 'hour', 'jdate',
+            'eto', 'eto_qc', 'prcp', 'prcp_qc', 'srad', 'srad_qc', 'vp', 'vp_qc',
+            't_air', 't_air_qc', 'rh', 'rh_qc', 'dp', 'dp_qc',
+            'ws', 'ws_qc', 'wd', 'wd_qc', 't_soil', 't_soil_qc',
+        ]
+
+    try:
+        return pd.read_csv(
+            filename,
+            header=None,
+            names=columns,
+            skipinitialspace=True,
+            na_values=['--'],
+            parse_dates=[[1,2]],
+            date_parser=date_parser
+        ).rename(columns={
             'date_hour': 'timestamp',
         }).set_index(['station', 'timestamp'])
     except:
