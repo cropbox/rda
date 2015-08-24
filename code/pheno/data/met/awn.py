@@ -1,4 +1,5 @@
-#from ..store import Store
+from .. import path
+from ..store import Store
 
 import numpy as np
 import pandas as pd
@@ -77,11 +78,11 @@ class Scraper:
 
     def _fetch_station_detail(self, station):
         self.b.open('{}&UNIT_ID={}'.format(self.STATION_URL, station))
-        m = re.search('latitude (?P<lat>-?\d+\.\d+)&deg, longitude (?P<lon>-?\d+\.\d+)°, elevation (?P<elev>\d+)', s.b.parsed.text)
+        m = re.search('latitude (?P<lat>-?\d+\.\d+)&deg, longitude (?P<lon>-?\d+\.\d+)°, elevation (?P<elev>\d+)', self.b.parsed.text)
         return {
-            'lat': m.group('lat'),
-            'lon': m.group('lon'),
-            'elev': m.group('elev'),
+            'lat': float(m.group('lat')),
+            'lon': float(m.group('lon')),
+            'elev': float(m.group('elev')) * 0.3048, # feet to meters
         }
 
     def select_station(self, station):
@@ -147,12 +148,7 @@ class Scraper:
         self.select_station(station)
         return self._request_entire_period()
 
-    def _export_dataframe(self, df):
-        station = df.index.levels[0].item()
-        years = sorted(set(df.index.levels[1].year))
-        [self._write_dataframe(df, station, y) for y in years]
-
-    def _write_dataframe(self, df, station, year):
+    def _export(self, df, station, year, state='CA'):
         name = self.stations[station]
         header = self._fetch_station_detail(station)
         header.update({
@@ -161,14 +157,21 @@ class Scraper:
         })
         sdf = df.loc[station].loc[str(year)]
 
-        filename = 'WA_{name}_{year}.wea'.format(name=name.replace(' ', ''), year=year)
+        basename = '{state}_{name}_{year}.wea'.format(
+            state=state,
+            name=name.replace(' ', ''),
+            year=year
+        )
+        pathname = os.path.join(path.input.basepath, 'raw/met/awn/wea')
+        os.makedirs(pathname, exist_ok=True)
+        filename = os.path.join(pathname, basename)
         print(filename)
         with open(filename, 'w') as f:
             f.write("""\
 station {name}
-latitude {lat}
-longitude {lon}
-elevation {elev} m
+latitude {lat:.2f}
+longitude {lon:.2f}
+elevation {elev:.0f} m
 Year {year}
 Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
 """.format(**header))
@@ -190,19 +193,21 @@ Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
     co2=400,
 ))
 
-    def export(self, station):
+    def export_station(self, station):
         df = self.request(station)
-        self._export_dataframe(df)
+        #station = df.index.levels[0].item()
+        years = sorted(set(df.index.levels[1].year))
+        [self._export(df, station, y) for y in years]
 
-    def export_all(self):
-        [self.export(s) for s in self.stations]
+    def export(self):
+        [self.export_station(s) for s in self.stations]
 
 
 # for MAIZSIM
 def export():
     s = Scraper()
     s.login()
-    s.export_all()
+    s.export()
 
-def conv()
+def conv():
     pass
