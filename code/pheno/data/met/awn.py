@@ -3,10 +3,11 @@ from ..store import Store
 
 import numpy as np
 import pandas as pd
-from robobrowser import RoboBrowser
 import datetime
 import calendar
+import os
 import re
+from robobrowser import RoboBrowser
 from urllib.parse import urlencode
 from io import StringIO
 
