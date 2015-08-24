@@ -149,7 +149,7 @@ class Scraper:
         self.select_station(station)
         return self._request_entire_period()
 
-    def _export(self, df, station, year, state='CA'):
+    def _export(self, df, station, year, state='WA'):
         name = self.stations[station]
         header = self._fetch_station_detail(station)
         header.update({

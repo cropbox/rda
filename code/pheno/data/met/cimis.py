@@ -33,7 +33,7 @@ def read_weathers():
     filenames = glob.glob(pathname)
     return pd.concat([read_weather(f) for f in filenames])
 
-def _export(df, station, year, state='WA'):
+def _export(df, station, year, state='CA'):
     details = read_station_details()
     detail = details.loc[station]
     name = detail['Name / Location']
