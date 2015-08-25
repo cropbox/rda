@@ -259,6 +259,27 @@ class Summary:
         )
 
 
+class JulianDateFixer:
+    def __init__(self):
+        self.pathname = os.path.join(path.input.basepath, 'raw/met/awn/wea')
+
+    def fix(self):
+        weas = glob.glob(os.path.join(self.pathname, '*.wea'))
+        [self._fix(w) for w in weas]
+
+    def _fix(self, filename):
+        s = ''
+        with open(filename) as f:
+            for _ in range(6):
+                s += f.readline()
+            for l in f:
+                v = l.split()
+                v[1] = '{:.5f}'.format(float(v[1]) + 1)
+                s += '{:>4} {:>9} {:>6} {:>5} {:>5} {:>5} {:>5} {:>6} {:>5}\n'.format(*v)
+        with open(filename, 'w') as f:
+            f.write(s)
+
+
 # for MAIZSIM
 def export():
     s = Scraper()
