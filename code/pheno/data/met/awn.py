@@ -227,6 +227,8 @@ class Summary:
             [f.write(self.summary(w)) for w in weas]
 
     def summary(self, filename):
+        print(filename)
+
         basename = os.path.splitext(os.path.basename(filename))[0]
         state = re.match(r'([a-zA-Z0-9]+)_', basename).group(1)
         with open(filename) as f:
