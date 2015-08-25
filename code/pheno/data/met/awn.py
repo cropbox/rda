@@ -74,6 +74,7 @@ class Scraper:
         l = self.b.select('a[href^="awn.php?page=hourlydata"]')
         self.b.follow_link(l[0])
         self._fetch_stations()
+        return self
 
     def _fetch_stations(self):
         rs = self.b.find_all('option', title='Public Station')
@@ -105,6 +106,7 @@ class Scraper:
         if not station in selected:
             toggle(station)
         [toggle(s) for s in selected - {station}]
+        return self
 
     def _request_one_period(self, date):
         self.b.open(self.DATA_URL)
