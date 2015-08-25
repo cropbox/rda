@@ -85,7 +85,7 @@ Year {year}
 Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
 """.format(**header))
         for k, v in df.iterrows():
-            daytime = (k - datetime.datetime(year, 1, 1)).total_seconds() / (60*60*24)
+            daytime = (k - datetime.datetime(year, 1, 1)).total_seconds() / (60*60*24) + 1
             srad = np.fmax(0, v.srad) # prevent negative solar radiation
             f.write("""\
 {year:4d} {daytime:9.5f} {par:6.1f} {t_air:5.1f} {rain:5.2f} {rh:5.1f} {wind:5.2f} {sol_rad:6.1f} {co2:5.1f}

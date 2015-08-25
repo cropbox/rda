@@ -178,7 +178,7 @@ Year {year}
 Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
 """.format(**header))
             for k, v in sdf.iterrows():
-                daytime = (k - datetime.datetime(year, 1, 1)).total_seconds() / (60*60*24)
+                daytime = (k - datetime.datetime(year, 1, 1)).total_seconds() / (60*60*24) + 1
                 sol_rad = v[11]
                 par = 2.3 * sol_rad
                 f.write("""\
