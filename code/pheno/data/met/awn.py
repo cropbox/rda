@@ -14,6 +14,8 @@ from io import StringIO
 
 # CAUTION: default station must be set to the last item (e.g. Woodburn South)
 
+input = path.Input(basepath='../input/raw/met/awn')
+
 class Date:
     FORMAT = '%b %d, %Y'
 
@@ -159,14 +161,14 @@ class Scraper:
         })
         sdf = df.loc[station].loc[str(year)]
 
-        basename = '{state}_{name}_{year}.wea'.format(
+        basefilename = '{state}_{name}_{year}.wea'.format(
             state=state,
             name=name.replace(' ', ''),
             year=year
         )
-        pathname = os.path.join(path.input.basepath, 'raw/met/awn/wea')
+        pathname = os.path.join(input.basepath, 'wea')
         os.makedirs(pathname, exist_ok=True)
-        filename = os.path.join(pathname, basename)
+        filename = os.path.join(pathname, basefilename)
         print(filename)
         with open(filename, 'w') as f:
             f.write("""\
