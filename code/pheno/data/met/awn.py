@@ -217,8 +217,8 @@ Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
 
 
 class Summary:
-    def __init__(self):
-        self.pathname = os.path.join(path.input.basepath, 'raw/met/awn/wea')
+    def __init__(self, name='awn'):
+        self.pathname = os.path.join(path.input.basepath, 'raw/met/{}/wea'.format(name))
 
     def export(self, filename='station_summary.txt'):
         weas = glob.glob(os.path.join(self.pathname, '*.wea'))
