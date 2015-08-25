@@ -237,7 +237,7 @@ class Summary:
             station = extract('station', r'\w+')
             lat = float(extract('latitude', r'-?\d+\.\d*'))
             lon = float(extract('longitude', r'-?\d+\.\d*'))
-            elev = int(extract('elevation', r'\d+'))
+            elev = int(extract('elevation', r'-?\d+'))
             year = int(extract('Year', r'\d+'))
 
         df = pd.read_csv(filename, skiprows=5, delim_whitespace=True)
