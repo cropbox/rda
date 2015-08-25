@@ -292,10 +292,18 @@ class JulianDateFixer:
 
 
 # for MAIZSIM
-def export():
+#HACK resource limitaiton when using only one instance
+def export_with_one_instance():
     s = Scraper()
     s.login()
     s.export()
+
+def export():
+    stations = Scraper().login().stations
+    #FIXME remove slice
+    # last (21) should be Touchet
+    stations = list(stations)[22:]
+    [Scraper().login().export_station(s) for s in stations]
 
 def conv():
     pass
