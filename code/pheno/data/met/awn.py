@@ -152,7 +152,7 @@ class Scraper:
         self.select_station(station)
         return self._request_entire_period()
 
-    def _export(self, df, station, year, state='WA'):
+    def _export(self, df, station, year, state):
         name = self.stations[station]
         header = self._fetch_station_detail(station)
         header.update({
@@ -200,8 +200,15 @@ Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
     def export_station(self, station):
         df = self.request(station)
         #station = df.index.levels[0].item()
+
+        # save original dataset for each station in HDF5 format
+        state = 'WA'
+        name = self.stations[station]
+        Store(input).write(df, '', '{}_{}'.format(state, name))
+
+        # export yearly dataset for each station in MAIZSIM .wea format
         years = sorted(set(df.index.levels[1].year))
-        [self._export(df, station, y) for y in years]
+        [self._export(df, station, y, state) for y in years]
 
     def export(self):
         [self.export_station(s) for s in self.stations]
