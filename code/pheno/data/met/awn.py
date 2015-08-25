@@ -6,6 +6,7 @@ import pandas as pd
 import datetime
 import calendar
 import os
+import glob
 import re
 from robobrowser import RoboBrowser
 from urllib.parse import urlencode
@@ -202,6 +203,60 @@ Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
 
     def export(self):
         [self.export_station(s) for s in self.stations]
+
+
+class Summary:
+    def __init__(self):
+        self.pathname = os.path.join(path.input.basepath, 'raw/met/awn/wea')
+
+    def export(self, filename='station_summary.txt'):
+        weas = glob.glob(os.path.join(self.pathname, '*.wea'))
+        with open(os.path.join(self.pathname, filename), 'w') as f:
+            f.write("State\tCity\tStation\tLatitude\tLongitude\tElevation\tYear\tGSMT\tfilename\tNote\n")
+            [f.write(self.summary(w)) for w in weas]
+
+    def summary(self, filename):
+        basename = os.path.splitext(os.path.basename(filename))[0]
+        state = re.match(r'([a-zA-Z0-9]+)_', basename).group(1)
+        with open(filename) as f:
+            def extract(key, pattern):
+                return re.match('{} ({})'.format(key, pattern), f.readline()).group(1)
+            station = extract('station', r'\w+')
+            lat = float(extract('latitude', r'-?\d+\.\d*'))
+            lon = float(extract('longitude', r'-?\d+\.\d*'))
+            elev = int(extract('elevation', r'\d+'))
+            year = int(extract('Year', r'\d+'))
+
+        df = pd.read_csv(filename, skiprows=5, delim_whitespace=True)
+        def daytime_parser(d):
+            return datetime.datetime(year, 1, 1) + datetime.timedelta(days=d-1)
+        def calc_growing_season_mean_temperature():
+            ts = df['daytime'].apply(daytime_parser)
+            sd = ts.iloc[0].date()
+            ed = ts.iloc[-1].date()
+            gsd = datetime.date(year, 4, 1)
+            ged = datetime.date(year, 9, 30)
+            if sd > gsd or ed < ged:
+                return '-99'
+            t = df[ts.dt.month.isin(range(4, 9+1))].Tair.mean()
+            if np.isnan(t):
+                return '-99'
+            else:
+                return '{:.2f}'.format(t)
+        gsmt = calc_growing_season_mean_temperature()
+        note = 'None'
+        return "{state}\t{city}\t{station}\t{lat:.2f}\t{lon:.2f}\t{elev:.0f}\t{year}\t{gsmt}\t{basename}\t{note}\n".format(
+            state=state,
+            city=station,
+            station=station,
+            lat=lat,
+            lon=lon,
+            elev=elev,
+            year=year,
+            gsmt=gsmt,
+            basename=basename,
+            note=note
+        )
 
 
 # for MAIZSIM
