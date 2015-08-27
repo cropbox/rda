@@ -303,7 +303,9 @@ def export():
     stations = Scraper().login().stations
     #FIXME remove slice
     # last (21) should be Touchet
-    stations = list(stations)[22:]
+    #stations = list(stations)[22:]
+    # last (80) should be Grandview NE
+    stations = list(stations)[81:]
     [Scraper().login().export_station(s) for s in stations]
 
 def conv():
