@@ -17,7 +17,8 @@ from io import StringIO
 input = path.Input(basepath='../input/raw/met/awn')
 
 class Date:
-    FORMAT = '%b %d, %Y'
+    REQUEST_FORMAT = '%b %d, %Y'
+    STATION_FORMAT = '%B %d, %Y'
 
     def __init__(self, year=1989, month=1, day=1):
         self.set(year, month, day)
@@ -28,13 +29,13 @@ class Date:
 
     def set_as_format(self, datestr, fmt=None):
         if fmt is None:
-            fmt = Date.FORMAT
+            fmt = Date.REQUEST_FORMAT
         self.t = datetime.datetime.strptime(datestr, fmt).date()
         return self
 
     @property
     def start(self):
-        return self.t.strftime(self.FORMAT)
+        return self.t.strftime(self.REQUEST_FORMAT)
 
     @property
     def last_day(self):
@@ -42,7 +43,7 @@ class Date:
 
     @property
     def end(self):
-        return self.t.replace(day=self.last_day).strftime(self.FORMAT)
+        return self.t.replace(day=self.last_day).strftime(self.REQUEST_FORMAT)
 
     def advance(self):
         self.t = (self.t + datetime.timedelta(days=31)).replace(day=1)
