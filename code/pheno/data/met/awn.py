@@ -84,11 +84,12 @@ class Scraper:
 
     def _fetch_station_detail(self, station):
         self.b.open('{}&UNIT_ID={}'.format(self.STATION_URL, station))
-        m = re.search('latitude (?P<lat>-?\d+\.?\d*)&deg, longitude (?P<lon>-?\d+\.?\d*)°, elevation (?P<elev>\d+)', self.b.parsed.text)
+        m = re.search('latitude (?P<lat>-?\d+\.?\d*)&deg, longitude (?P<lon>-?\d+\.?\d*)°, elevation (?P<elev>\d+) .+ installed on (?P<date>\D+ \d+, \d+)', self.b.parsed.text)
         return {
             'lat': float(m.group('lat')),
             'lon': float(m.group('lon')),
             'elev': float(m.group('elev')) * 0.3048, # feet to meters
+            'date': Date().set_as_format(m.group('date'), Date.STATION_FORMAT)
         }
 
     def select_station(self, station):
@@ -139,8 +140,9 @@ class Scraper:
             'UNIT_ID': 'station',
         }).set_index(['station', 'timestamp'])
 
-    def _request_entire_period(self):
-        date = Date()
+    def request(self, station):
+        self.select_station(station)
+        date = self._fetch_station_detail(station)['date']
         dfs = []
         while date.over():
             print(date)
@@ -150,10 +152,6 @@ class Scraper:
             dfs.append(self._parse())
             date.advance()
         return pd.concat(dfs)
-
-    def request(self, station):
-        self.select_station(station)
-        return self._request_entire_period()
 
     def _export(self, df, station, year, state):
         name = self.stations[station]
