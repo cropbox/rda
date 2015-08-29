@@ -181,21 +181,36 @@ Year {year}
 Year   daytime    PAR  Tair  Rain    RH  Wind SolRad   CO2
 """.format(**header))
             for k, v in sdf.iterrows():
+                def extract(key):
+                    try:
+                        return v[key]
+                    except:
+                        return np.nan
+                def format(val, digits=1, precision=0):
+                    if np.isnan(val):
+                        return '{0:>{1}}'.format('-99', digits)
+                    else:
+                        return '{0:{1}.{2}f}'.format(val, digits, precision)
                 daytime = (k - datetime.datetime(year, 1, 1)).total_seconds() / (60*60*24) + 1
-                sol_rad = v[11]
+                sol_rad = extract('Solar Rad W/m²')
                 par = 2.3 * sol_rad
+                t_air = extract('Avg Air Temp °C')
+                rain = extract('Tot Prec mm')
+                rh = extract('Rel Hum %')
+                wind = extract('Speed m/s')
+                co2 = 400
                 f.write("""\
-{year:4d} {daytime:9.5f} {par:6.1f} {t_air:5.1f} {rain:5.2f} {rh:5.1f} {wind:5.2f} {sol_rad:6.1f} {co2:5.1f}
+{year:4d} {daytime:9.5f} {par} {t_air} {rain} {rh} {wind} {sol_rad} {co2}
 """.format(
     year=year,
     daytime=daytime,
-    par=par,
-    t_air=v[1],
-    rain=v[10],
-    rh=v[4],
-    wind=v[7],
-    sol_rad=sol_rad,
-    co2=400,
+    par=format(par, 6, 1),
+    t_air=format(t_air, 5, 1),
+    rain=format(rain, 5, 2),
+    rh=format(rh, 5, 1),
+    wind=format(wind, 5, 2),
+    sol_rad=format(sol_rad, 6, 1),
+    co2=format(co2, 5, 1),
 ))
 
     def export_station(self, station):
