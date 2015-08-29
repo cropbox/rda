@@ -244,8 +244,11 @@ class Summary:
             return datetime.datetime(year, 1, 1) + datetime.timedelta(days=d-1)
         def calc_growing_season_mean_temperature():
             ts = df['daytime'].apply(daytime_parser)
-            sd = ts.iloc[0].date()
-            ed = ts.iloc[-1].date()
+            try:
+                sd = ts.iloc[0].date()
+                ed = ts.iloc[-1].date()
+            except:
+                return '-99'
             gsd = datetime.date(year, 4, 1)
             ged = datetime.date(year, 9, 30)
             if sd > gsd or ed < ged:
