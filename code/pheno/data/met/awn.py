@@ -247,8 +247,8 @@ class Summary:
         state = re.match(r'([a-zA-Z0-9]+)_', basename).group(1)
         with open(filename) as f:
             def extract(key, pattern):
-                return re.match('{} ({})'.format(key, pattern), f.readline()).group(1)
-            station = extract('station', r'\w+')
+                return re.match(r'{} ({})'.format(key, pattern), f.readline()).group(1)
+            station = extract('station', r'.+')
             lat = float(extract('latitude', r'-?\d+\.\d*'))
             lon = float(extract('longitude', r'-?\d+\.\d*'))
             elev = int(extract('elevation', r'-?\d+'))
