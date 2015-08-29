@@ -16,6 +16,12 @@ from io import StringIO
 
 input = path.Input(basepath='../input/raw/met/awn')
 
+# HACK more restricted set
+import string
+VALID_CHARS = frozenset("-()%s%s" % (string.ascii_letters, string.digits))
+def _slugify(v):
+    return ''.join(c for c in str(v) if c in VALID_CHARS)
+
 class Date:
     REQUEST_FORMAT = '%b %d, %Y'
     STATION_FORMAT = '%B %d, %Y'
@@ -164,7 +170,7 @@ class Scraper:
 
         basefilename = '{state}_{name}_{year}.wea'.format(
             state=state,
-            name=name.replace(' ', ''),
+            name=_slugify(name),
             year=year
         )
         pathname = os.path.join(input.basepath, 'wea')
