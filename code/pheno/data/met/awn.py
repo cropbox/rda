@@ -329,7 +329,9 @@ def export():
     # last (21) should be Touchet
     #stations = list(stations)[22:]
     # last (80) should be Grandview NE
-    stations = list(stations)[81:]
+    #stations = list(stations)[81:]
+    # last (144) should be Carlson
+    #stations = list(stations)[145:]
     [Scraper().login().export_station(s) for s in stations]
 
 def conv():
