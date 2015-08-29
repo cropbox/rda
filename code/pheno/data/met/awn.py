@@ -135,7 +135,7 @@ class Scraper:
         sio = StringIO(text)
         def date_parser(d, t):
             return datetime.datetime.strptime(d, '%B %d, %Y') + datetime.timedelta(hours=int(t[:2])-1)
-        return pd.read_csv(sio, skiprows=2, parse_dates=[[1,2]], date_parser=date_parser).rename(columns={
+        return pd.read_csv(sio, skiprows=2, skipinitialspace=True, parse_dates=[[1,2]], date_parser=date_parser).rename(columns={
             'Date_Hour PDT': 'timestamp',
             'UNIT_ID': 'station',
         }).set_index(['station', 'timestamp'])
