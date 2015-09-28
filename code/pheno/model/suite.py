@@ -84,9 +84,12 @@ class ModelSuite(base.Model):
             'MAE': metrics('mae'),
             'XE': metrics('xe'),
             'EF': metrics('ef'),
+            'EF1': metrics('ef1'),
             'D': metrics('d'),
             'D1': metrics('d1'),
             'Dr': metrics('dr'),
+            'R': metrics('m'),
+            'M': metrics('r'),
         }, index=self.names)
         df.index.name = 'model'
 
