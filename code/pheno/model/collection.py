@@ -30,7 +30,7 @@ class ModelCollection(object):
         [g.export() for g in self.groups]
 
         # export crossvalidation results
-        metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'd', 'd1', 'dr']
+        metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'ef1', 'd', 'd1', 'dr', 'm', 'r']
         name = 'crossvalidation'
         for how in metrics:
             self.show_crossvalidation(how, ignore_estimation_error=False, name=name)
