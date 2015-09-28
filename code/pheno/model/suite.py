@@ -31,9 +31,15 @@ class ModelSuite(base.Model):
         # add ensemble models
         ensembles = [
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.RMSE', how='rmse'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.Dr', how='dr'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.XE', how='xe'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.rmse', how='rmse'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.xe', how='xe'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef', how='ef'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef1', how='ef1'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d', how='d'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d1', how='d1'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.dr', how='dr'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.m', how='m'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.r', how='r'),
         ]
         return models + ensembles
 
