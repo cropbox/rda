@@ -317,7 +317,7 @@ class Estimator(object):
 
     @staticmethod
     def _is_higher_better(how):
-        return how in {'ef', 'd', 'd1', 'dr'}
+        return how in {'ef', 'ef1', 'd', 'd1', 'dr', 'm', 'r'}
 
     def metric(self, years, how='e', coeff=None, ignore_estimation_error=False):
         years = self._years(years)
@@ -342,14 +342,21 @@ class Estimator(object):
             except:
                 return np.nan
 
+        o = self.observes(years, julian=True)
+        p = self.estimates(years, coeff, julian=True)
         # use calibrate_years, not input years
         #TODO how to replace self._calibrate_years with ModelSuite.calibrate_years?
-        obs_hat = self.observes(self._calibrate_years, julian=True).mean()
-        d_est = self.estimates(years, coeff, julian=True) - obs_hat
-        d_obs = self.observes(years, julian=True) - obs_hat
+        #o_hat = self.observes(self._calibrate_years, julian=True).mean()
+        o_hat = o.mean()
+        d_est = p - o_hat
+        d_obs = o - o_hat
 
         if how == 'ef':
+            # Nash-Sutcliffe's coefficient of efficiency (Nash et al., 1970)
             return 1. - np.sum(e**2) / np.sum(d_obs**2)
+        elif how == 'ef1':
+            # Legates-McCabe's index (Legates et al., 1999)
+            return 1. - np.sum(np.abs(e)) / np.sum(np.abs(d_obs))
         elif how == 'd':
             # Willmott's index of agreement (Willmott et al., 1980)
             return 1. - np.sum(e**2) / np.sum((np.abs(d_est) + np.abs(d_obs))**2)
@@ -365,6 +372,18 @@ class Estimator(object):
                 return 1. - dru / drl
             else:
                 return drl / dru - 1.
+        elif how == 'm':
+            # Watterson's M (Watterson et al., 1996)
+            mse = np.mean(e**2)
+            p_hat = p.mean()
+            return 2. / np.pi * np.arcsin(1. - mse / (p.var() + o.var() + (p_hat - o_hat)**2))
+        elif how == 'r':
+            # Mielke-Berry's R (Mielke et al., 2001)
+            mae = np.mean(np.abs(e))
+            n = len(years)
+            pp = np.repeat(p, n)
+            oo = np.tile(o, n)
+            return 1. - mae / ((np.sum(np.abs(pp - oo))) / n**2)
 
     def _splitter_leave_n_out(self, years, n=1):
         return [list(y) for y in itertools.combinations(years, n)]
