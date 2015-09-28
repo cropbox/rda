@@ -108,6 +108,8 @@ class ModelSuite(base.Model):
         models = self.models
         if exclude_ensembles:
             models = [m for m in models if not isinstance(m, Ensemble)]
+        if len(models) == 0:
+            return None
 
         m0 = models[0]
         x = m0._years(years)
