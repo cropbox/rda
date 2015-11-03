@@ -28,6 +28,15 @@ def read_weathers():
     filenames = glob.glob(pathname)
     return pd.concat([read_weather(f) for f in filenames])
 
+def hack(df):
+    #HACK: duplicate 2013~2015 with 2113~2115
+    rdf = df.reset_index()
+    rdf.timestamp = rdf.timestamp.apply(lambda x: x.replace(year=x.year+100))
+    rdf = rdf.set_index(['station', 'timestamp'])
+    return pd.concat([df, rdf])
+
 def conv():
     df = read_weathers()
+    #HACK: to support different planting dates in single year
+    df = hack(df)
     return Store().write(df, 'met', 'uw_garlic')
