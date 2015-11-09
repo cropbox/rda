@@ -71,7 +71,7 @@ class DataSet(object):
             self.obs_station in self.obs_stations(),
             self.met_station in self.met_stations(),
             self.cultivar in self.cultivars(),
-            self.stage in self.stages(),
+            #self.stage in self.stages(),
         ])
 
     # return avaialble indices
