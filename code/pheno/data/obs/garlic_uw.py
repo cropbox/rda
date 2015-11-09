@@ -22,6 +22,7 @@ def read(filename):
     return df.set_index(['station', 'cultivar', 'year'])
 
 def conv():
-    filename = path.input.filename('raw/obs/garlic_uw', 'GarlicPhenology', 'xlsx')
+    #filename = path.input.filename('raw/obs/garlic_uw', 'GarlicPhenology', 'xlsx')
+    filename = path.input.filename('raw/obs/garlic_uw', 'GarlicPhenology2', 'xlsx')
     df = read(filename)
     return Store().write(df, 'obs', 'garlic_uw')
