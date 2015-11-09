@@ -2,6 +2,7 @@ from pheno.data.dataset import DataSet
 from pheno.model.group import ModelGroup
 from pheno.model.collection import ModelCollection
 from pheno.model.base import DEFAULT_ESTIMATORS
+import pheno.estimation as est
 
 def create_cherry_dc():
     ds = DataSet('usa_ds3505', 'cherry_dc', translator={
@@ -14,7 +15,7 @@ def create_cherry_dc():
     )
 
 def create_cherry_dc_yoshino():
-    estimators = DEFAULT_ESTIMATORS + [February, March]
+    estimators = DEFAULT_ESTIMATORS + [est.February, est.March]
     ds = DataSet('usa_ds3505', 'cherry_dc', translator={
         'DC': 724050,
     }).set(cultivar='Yoshino', stage='Peak Bloom')
@@ -26,7 +27,7 @@ def create_cherry_dc_yoshino():
     )
 
 def create_cherry_dc_kwanzan():
-    estimators = DEFAULT_ESTIMATORS + [February, March]
+    estimators = DEFAULT_ESTIMATORS + [est.February, est.March]
     ds = DataSet('usa_ds3505', 'cherry_dc', translator={
         'DC': 724050,
     }).set(cultivar='Kwanzan', stage='Peak Bloom')
