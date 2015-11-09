@@ -71,7 +71,7 @@ def preset(output, slugname, model, years, **kwargs):
             np.save(fn, getattr(model, var))
 
     def single_calibrate():
-        model.calibrate(years)
+        model.calibrate(years, **kwargs)
 
     def multi_calibrate():
         calibrate(model, years, '_splitter_k_fold', **kwargs)
