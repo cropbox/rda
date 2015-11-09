@@ -52,14 +52,28 @@ class ModelSuite(base.Model):
         return [m.name for m in self.models]
 
     def _key_for_coeff(self, m):
+        # return base.slugname(
+        #     m.name,
+        #     self.dataset.met_station,
+        #     self.dataset.obs_station,
+        #     self.dataset.name,
+        #     self.dataset.cultivar,
+        #     self.dataset.stage,
+        #     self.calibrate_years,
+        # )
+        stage = self.dataset.stage
+        if stage == 'Scape Appearance':
+            years = (2014, 2114)
+        else:
+            years = (2013, 2113, 2014, 2114)
         return base.slugname(
             m.name,
-            self.dataset.met_station,
-            self.dataset.obs_station,
-            self.dataset.name,
-            self.dataset.cultivar,
-            self.dataset.stage,
-            self.calibrate_years,
+            'UW',
+            'UW',
+            'garlic_uw',
+            'KM',
+            stage,
+            years,
         )
 
     def export(self):
