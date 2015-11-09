@@ -11,11 +11,12 @@ class DataSet(object):
         self.reset()
 
     def __str__(self):
-        return "met_station={}, obs_station={}, cultivar={}, stage={}".format(
+        return "met_station={}, obs_station={}, cultivar={}, stage={}, initial_stage={}".format(
             self.met_station,
             self.obs_station,
             self.cultivar,
-            self.stage
+            self.stage,
+            self.initial_stage,
         )
 
     def load(self, met_name, obs_name, name=None):
@@ -48,9 +49,10 @@ class DataSet(object):
         self.met_station = pick(self.met_stations()) if met_station is None else met_station
         self.cultivar = pick(self.cultivars())
         self.stage = pick(self.stages())
+        self.initial_stage = None
         return self
 
-    def set(self, met_station=None, obs_station=None, cultivar=None, stage=None):
+    def set(self, met_station=None, obs_station=None, cultivar=None, stage=None, initial_stage=None):
         if obs_station is not None:
             self.obs_station = obs_station
             self.met_station = self.translate(obs_station)
@@ -60,6 +62,8 @@ class DataSet(object):
             self.cultivar = cultivar
         if stage is not None:
             self.stage = stage
+        if initial_stage is not None:
+            self.initial_stage = initial_stage
         return self
 
     def ready(self):
@@ -101,3 +105,12 @@ class DataSet(object):
             return self.obsdf.loc[station, cultivar][stage]
         except:
             raise KeyError("invalid keys: station={}, cultivar={}, stage={}".format(station, cultivar, stage))
+
+    def initial_observation(self, station=None, cultivar=None):
+        station = self.met_station if station is None else station
+        cultivar = self.cultivar if cultivar is None else cultivar
+        stage = self.initial_stage
+        try:
+            return self.obsdf.loc[station, cultivar][stage]
+        except:
+            return None
