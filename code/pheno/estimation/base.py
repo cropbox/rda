@@ -24,7 +24,10 @@ class Estimator(object):
     def __init__(self, dataset, coeff=None):
         self._dataset = dataset
         self._mets = dataset.weather()
-        self._obss = dataset.observation()
+        try:
+            self._obss = dataset.observation()
+        except:
+            self._obss = None
         self._calibrate_years = None
         self._coeff = coeff
         self._coeffs = {'': coeff}
@@ -76,14 +79,36 @@ class Estimator(object):
         return datetime.date(year, 5, 30)
 
     def _clip(self, year, coeff):
-        t0 = datetime.datetime.combine(self.start_date(year, coeff), datetime.time(0))
-        t1 = datetime.datetime.combine(self.end_date(year, coeff), datetime.time(23))
+        try:
+            iobs = self._dataset.initial_observation()
+            try:
+                sd = iobs.loc[year]
+                if sd is pd.NaT:
+                    raise
+                print('iobs {}'.format(sd))
+            except:
+                sds = self._dataset.obsdf.loc(axis=0)[:,:,year][self._dataset.initial_stage].dropna()
+                myear = int(round(sds.apply(lambda x: int(x.strftime('%Y'))).mean()))
+                mjday = int(sds.apply(lambda x: int(x.strftime('%j'))).mean())
+                sd = datetime.datetime.strptime('{}-{}'.format(myear, mjday), '%Y-%j')
+                print('mean {}'.format(sd))
+            #HACK: weather dataset for UW garlic does not cover entire year
+            #ed = sd + datetime.timedelta(days=365)
+            ed = datetime.date(year+1, 7, 7)
+        except:
+            sd = self.start_date(year, coeff)
+            print('EXCEPT {}'.format(sd))
+            import pdb; pdb.set_trace()
+
+            ed = self.end_date(year, coeff)
+        t0 = datetime.datetime.combine(sd, datetime.time(0))
+        t1 = datetime.datetime.combine(ed, datetime.time(23))
         df = self._mets[t0:t1]
         assert df.index[0] == t0, "start date '{}' != '{}'".format(df.index[0], t0)
         assert df.index[-1] == t1, "end date '{}' != '{}'".format(df.index[-1], t1)
         return df
 
-    def _years(self, years, skip_observation_check=False):
+    def _years(self, years, skip_observation_check=True):
         mety = self._mets.dropna().reset_index().timestamp.dt.year.unique()
         if skip_observation_check:
             defy = mety
