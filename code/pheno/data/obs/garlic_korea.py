@@ -15,7 +15,7 @@ def read(filename):
         ss.index.names = ['station', 'cultivar', 'year']
         return ss
     with pd.ExcelFile(filename) as xls:
-        names = ['seeding', 'emergence']
+        names = ['Planting', 'Emergence']
         df = pd.concat([parse(xls, s) for s in names], axis=1)
         df.columns = names
     return df
