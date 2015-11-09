@@ -27,10 +27,18 @@ class ModelSuite(base.Model):
             #m.calibrate(self.calibrate_years)
             #multi.calibrate(m, self.calibrate_years)
             multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years)
+            # if self.dataset.cultivar == 'SP':
+            #     fixed_coeff = {'Tx': 43, 'To': 27}
+            # elif self.dataset.cultivar == 'KM':
+            #     fixed_coeff = {'Tx': 43, 'To': 31}
+            # else:
+            #     raise
+            # print('fixed_coeff :' + str(fixed_coeff))
+            # multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years, fixed_coeff=fixed_coeff)
 
         # add ensemble models
         ensembles = [
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN'),
+            # Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN'),
             # Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.rmse', how='rmse'),
             # Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.xe', how='xe'),
             # Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef', how='ef'),

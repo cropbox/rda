@@ -82,9 +82,9 @@ def create_cherry_korea_bloom():
 
 def create_garlic_uw(stage, initial_stage):
     estimators = [
-        est.GrowingDegree,
+        #est.GrowingDegree,
         est.BetaFunc,
-        est.StandardTemperature,
+        #est.StandardTemperature,
     ]
     ds = DataSet('uw_garlic', 'garlic_uw').set(stage=stage, initial_stage=initial_stage)
     #HACK: scape appearance was not measured in 2013
@@ -142,9 +142,9 @@ def show_garlic_collection(mc):
 import pandas as pd
 def estimate_garlic_korea(stage, initial_stage):
     estimators = [
-        est.GrowingDegree,
+        #est.GrowingDegree,
         est.BetaFunc,
-        est.StandardTemperature,
+        #est.StandardTemperature,
     ]
     ds = DataSet('korea_garlic', 'garlic_korea').set(stage=stage, initial_stage=initial_stage)
     years = [2010, 2011, 2012]
@@ -160,7 +160,12 @@ def estimate_garlic_korea(stage, initial_stage):
 
 if __name__ == '__main__':
     #collection = create_default_collection()
-    collection = create_garlic_collection()
-    collection = create_garlic_collection2()
-    mc = ModelCollection(collection)
+    #collection = create_garlic_collection()
+    #collection = create_garlic_collection2()
+    #mc = ModelCollection(collection)
     #mc.export()
+    # estimate_garlic_korea('Emergence', 'Planting')
+    # estimate_garlic_korea('Scape Appearance', 'Planting')
+    # estimate_garlic_korea('Estimated Harvest', 'Planting')
+    # estimate_garlic_korea('Scape Appearance', 'Emergence')
+    # estimate_garlic_korea('Estimated Harvest', 'Emergence')
