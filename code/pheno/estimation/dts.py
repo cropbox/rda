@@ -11,7 +11,7 @@ class StandardTemperature(Estimator):
     @property
     def coeff_names(self):
         return [
-            'Ds', # start date (days offset)
+            #'Ds', # start date (days offset)
             'Ts', # standard temperature (C)
             'Ea', # temperature sensitivity rate (kJ mol-1)
             'Rd', # standard temperature accumulation requirement
@@ -21,7 +21,8 @@ class StandardTemperature(Estimator):
     def default_options(self):
         return {
             'coeff0': (1, 15, 20, 200),
-            'bounds': ((-100, 100), (-10, 30), (0, 200), (0, 500)),
+            #'bounds': ((-100, 100), (-10, 30), (0, 200), (0, 500)),
+            'bounds': ((-10, 30), (0, 200), (0, 500)),
             'grid': (slice(-100, 100, 1), slice(-10, 30, 1), slice(0, 200, 1), slice(0, 500, 1)),
         }
 

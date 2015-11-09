@@ -13,7 +13,7 @@ class BetaFunc(Estimator):
     @property
     def coeff_names(self):
         return [
-            'Ds', # start date (days offset)
+            #'Ds', # start date (days offset)
             'Tx', # maximum temperature (C)
             'To', # optimum temperature (C)
             'Rg', # growth requirement
@@ -23,7 +23,8 @@ class BetaFunc(Estimator):
     def default_options(self):
         return {
             'coeff0': (1, 35, 20, 50),
-            'bounds': ((-100, 100), (20, 60), (0, 40), (0, 200)),
+            #'bounds': ((-100, 100), (20, 60), (0, 40), (0, 200)),
+            'bounds': ((20, 60), (0, 40), (0, 200)),
             'grid': (slice(-100, 100, 1), slice(20, 60, 0.5), slice(0, 40, 0.5), slice(0, 200, 1)),
         }
 

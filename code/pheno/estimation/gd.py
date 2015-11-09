@@ -13,7 +13,7 @@ class GrowingDegree(Estimator):
     @property
     def coeff_names(self):
         return [
-            'Ds', # start date (days offset)
+            #'Ds', # start date (days offset)
             'Tb', # base temperature (C)
             'Rd', # accumulation requirement
         ]
@@ -22,7 +22,8 @@ class GrowingDegree(Estimator):
     def default_options(self):
         return {
             'coeff0': (1, 4.5, 250),
-            'bounds': ((-100, 100), (0, 10), (0, 1000)),
+            #'bounds': ((-100, 100), (0, 10), (0, 1000)),
+            'bounds': ((0, 10), (0, 1000)),
             'grid': (slice(-100, 100, 1), slice(0, 10, 0.1), slice(0, 1000, 1)),
         }
 
