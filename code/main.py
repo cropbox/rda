@@ -170,3 +170,4 @@ if __name__ == '__main__':
     # estimate_garlic_korea('Estimated Harvest', 'Planting')
     # estimate_garlic_korea('Scape Appearance', 'Emergence')
     # estimate_garlic_korea('Estimated Harvest', 'Emergence')
+    pass
