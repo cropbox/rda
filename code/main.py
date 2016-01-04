@@ -157,6 +157,7 @@ def estimate_garlic_korea(stage, initial_stage):
     df = pd.concat({ms.dataset.obs_station: ms.show_prediction(years) for ms in mg.suites})
     filename = mg.output.outfilename('group/results', 'KM_{}_{}'.format(stage, initial_stage), 'csv')
     df.to_csv(filename)
+    return mg
 
 if __name__ == '__main__':
     #collection = create_default_collection()
