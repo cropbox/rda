@@ -93,8 +93,8 @@ class Estimator(object):
                 sd = datetime.datetime.strptime('{}-{}'.format(myear, mjday), '%Y-%j')
                 print('mean {}'.format(sd))
             #HACK: weather dataset for UW garlic does not cover entire year
-            #ed = sd + datetime.timedelta(days=365)
-            ed = datetime.date(year+1, 7, 7)
+            ed = sd + datetime.timedelta(days=365)
+            #ed = datetime.date(year+1, 7, 7)
         except:
             sd = self.start_date(year, coeff)
             print('EXCEPT {}'.format(sd))
@@ -105,7 +105,7 @@ class Estimator(object):
         t1 = datetime.datetime.combine(ed, datetime.time(23))
         df = self._mets[t0:t1]
         assert df.index[0] == t0, "start date '{}' != '{}'".format(df.index[0], t0)
-        assert df.index[-1] == t1, "end date '{}' != '{}'".format(df.index[-1], t1)
+        #assert df.index[-1] == t1, "end date '{}' != '{}'".format(df.index[-1], t1)
         return df
 
     def _years(self, years, skip_observation_check=True):
