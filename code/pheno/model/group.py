@@ -187,3 +187,13 @@ class ModelGroup(base.Model):
             filename = self.output.outfilename('group/results', basename, 'csv')
             df.to_csv(filename)
         return df
+
+    def show_sensitivity(self, deltas, name=None):
+        df = pd.concat([s.show_sensitivity(deltas, name) for s in self.suites])
+
+        if name:
+            cname = self._key_for_calibration()
+            basename = '{}_{}'.format(name, cname)
+            filename = self.output.outfilename('group/sensitivity', basename, 'csv')
+            df.to_csv(filename)
+        return df

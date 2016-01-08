@@ -28,6 +28,8 @@ class ModelCollection(object):
     def export(self):
         # export results for all model groups
         [g.export() for g in self.groups]
+        # export sensitivity analysis results
+        self.show_sensitivity(deltas=list(range(-5, 5+1)), name='sensitivity')
 
         # export crossvalidation results
         metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'ef1', 'd', 'd1', 'dr', 'm', 'r']
@@ -108,6 +110,27 @@ class ModelCollection(object):
         stat = pd.concat([self._crossvalidation_stat(t, d, how) for t, d in zip(titles, dfs)])
         save(stat, 'stat')
         return stat
+
+    def show_sensitivity(self, deltas, name=None):
+        def raw(title, df):
+            sdf = df.copy()
+            sdf.index.name = 'delta'
+            sdf['title'] = title if title else self.dataset.name
+            sdf = sdf.reset_index().set_index(['title', 'delta'])
+            return sdf
+
+        def save(cdfs, kind):
+            if not name:
+                return
+            basename = '{}_{}'.format(name, kind)
+            filename = self.output.outfilename('collection/sensitivity', basename, 'csv')
+            cdfs.to_csv(filename)
+
+        titles = self.names
+        dfs = [g.show_sensitivity(deltas, name) for g in self.groups]
+        raw = pd.concat([raw(t, d) for t, d in zip(titles, dfs)])
+        save(raw, 'raw')
+        return raw
 
     # var = 'model' or 'dataset'
     def plot_obs_vs_est(self, var='model', exclude_ensembles=True, name=None):

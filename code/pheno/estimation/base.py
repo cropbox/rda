@@ -409,3 +409,15 @@ class Estimator(object):
                 coeff = self.calibrate(calibrate_years, save=False, **kwargs)
             return self.metric(validate_years, how, coeff, ignore_estimation_error)
         return np.ma.array([metric(v) for v in validate_years_list], fill_value=np.nan)
+
+    def analyze_sensitivity(self, years, deltas):
+        years = self._years(years)
+        def estimate(delta):
+            try:
+                self._mets = self._dataset.weather() + delta
+                return self.estimates(years, julian=True)
+            finally:
+                self._mets = self._dataset.weather()
+        o = estimate(0)
+        p_list = np.ma.array([estimate(d) for d in deltas])
+        return (p_list - o).mean(axis=1)

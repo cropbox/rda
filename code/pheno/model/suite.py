@@ -230,3 +230,15 @@ class ModelSuite(base.Model):
             filename = self.output.outfilename('suite/results', basename, 'csv')
             df.to_csv(filename)
         return df
+
+    def show_sensitivity(self, deltas, name=None):
+        df = pd.DataFrame({
+            m.name: m.analyze_sensitivity(self.calibrate_years, deltas) for m in self.models
+        }, index=deltas)
+
+        if name:
+            cname = self._key_for_calibration()
+            basename = '{}_{}'.format(name, cname)
+            filename = self.output.outfilename('suite/sensitivity', basename, 'csv')
+            df.to_csv(filename)
+        return df

@@ -62,9 +62,12 @@ class Ensemble(Estimator):
         coeff = self._dictify([W, opts['C']])
         return coeff
 
-    def _calibrated_coeff(self, years):
-        key = tuple(years)
-        C = [m._coeffs[key] for m in self.estimators]
+    def _calibrated_coeff(self, years=None):
+        if years is None:
+            C = [m._coeff for m in self.estimators]
+        else:
+            key = tuple(years)
+            C = [m._coeffs[key] for m in self.estimators]
         return self.calibrate(years, save=False, C=C)
 
     def _estimate(self, year, met, coeff):
@@ -102,3 +105,22 @@ class Ensemble(Estimator):
         return np.ma.array([
             self.metric_with_calibration(c, v, how) for c, v in zip(calibrate_years_list, validate_years_list)
         ], fill_value=np.nan)
+
+    def _update_mets_delta(self, delta):
+        self._mets = self._dataset.weather() + delta
+        for m in self.estimators:
+            m._mets = self._mets
+
+    def analyze_sensitivity(self, years, deltas, **kwargs):
+        years = self._years(years)
+        def estimate(delta):
+            try:
+                #HACK force set temperature offset
+                self._update_mets_delta(delta)
+                coeff = self._calibrated_coeff()
+                return self.estimates(years, coeff=coeff, julian=True)
+            finally:
+                self._update_mets_delta(0)
+        o = estimate(0)
+        p_list = np.array([estimate(d) for d in deltas])
+        return (p_list - o).mean(axis=1)
