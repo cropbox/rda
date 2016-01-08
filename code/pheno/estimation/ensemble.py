@@ -96,7 +96,7 @@ class Ensemble(Estimator):
         coeff = self._calibrated_coeff(calibrate_years)
         return self.metric(validate_years, how, coeff)
 
-    def crossvalidate(self, years, how='e', ignore_estimation_error=False, splitter=None):
+    def crossvalidate(self, years, how, ignore_estimation_error=False, splitter=None, **kwargs):
         years = self._years(years)
         if not splitter:
             splitter = self._splitter_k_fold
