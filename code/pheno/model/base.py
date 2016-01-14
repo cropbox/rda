@@ -17,6 +17,7 @@ from ..estimation.sigmoid import SigmoidFunc
 from ..estimation.tp import ThermalPeriod
 from ..estimation.spm import SequentialModel, ParallelModel
 from ..estimation.am import AlternatingModel
+from ..estimation.mean import Mean
 
 DEFAULT_ESTIMATORS = [
     GrowingDegree,
@@ -28,6 +29,7 @@ DEFAULT_ESTIMATORS = [
     SequentialModel,
     ParallelModel,
     AlternatingModel,
+    Mean,
 ]
 
 class Model(object):
