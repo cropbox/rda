@@ -29,9 +29,7 @@ class BetaFunc(Estimator):
 
     def _estimate(self, year, met, coeff):
         T = met.tavg
-        Tx, To = coeff['Tx'], coeff['To']
-        Rx = 1.
-        Tn = 0.
+        Tn, To, Tx = 0, coeff['To'], coeff['Tx']
         if not Tn < To < Tx:
             raise EstimationError("temperature out of order: Tn='{}' < To='{}' < Tx='{}'".format(Tn, To, Tx))
 
@@ -40,8 +38,8 @@ class BetaFunc(Estimator):
         Tnu = T - Tn
         Tnl = To - Tn
         c = (To - Tn) / (Tx - To)
-        r = Rx * (Txu/Txl)*(Tnu/Tnl).pow(c).fillna(0)
-        g = r.clip(lower=0) * (1 / 24.)
+        r = (Txu/Txl)*(Tnu/Tnl).pow(c).fillna(0)
+        g = r.clip(lower=0) / 24
 
         aux = pd.concat({
             'r': r,
