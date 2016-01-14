@@ -28,6 +28,7 @@ class ModelCollection(object):
     def export(self):
         # export results for all model groups
         [g.export() for g in self.groups]
+
         # export sensitivity analysis results
         self.show_sensitivity(deltas=list(range(-5, 5+1)), name='sensitivity')
 
