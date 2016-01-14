@@ -26,8 +26,8 @@ class ChillingForce(Estimator):
         }
 
     def start_date(self, year, coeff):
-        # fix the start date as June 1st
-        return datetime.date(year-1, 6, 1)
+        # fix the start date as October 1st
+        return datetime.date(year-1, 10, 1)
 
     def _degrees(self, year, met, coeff):
         T = met.tavg.clip(lower=0)
