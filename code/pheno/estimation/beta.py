@@ -32,6 +32,9 @@ class BetaFunc(Estimator):
         Tx, To = coeff['Tx'], coeff['To']
         Rx = 1.
         Tn = 0.
+        if not Tn < To < Tx:
+            raise EstimationError("temperature out of order: Tn='{}' < To='{}' < Tx='{}'".format(Tn, To, Tx))
+
         Txu = Tx - T
         Txl = Tx - To
         Tnu = T - Tn
