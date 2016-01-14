@@ -35,7 +35,7 @@ class ModelCollection(object):
         metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'ef1', 'd', 'd1', 'dr', 'm', 'r']
         name = 'crossvalidation'
         for how in metrics:
-            self.show_crossvalidation(how, ignore_estimation_error=False, name=name)
+            #self.show_crossvalidation(how, ignore_estimation_error=False, name=name)
             self.show_crossvalidation(how, ignore_estimation_error=True, name=name)
 
         # export obs vs. est plots
