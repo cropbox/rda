@@ -13,12 +13,21 @@ from ..estimation.gd import GrowingDegree
 from ..estimation.cf import ChillingForce, ChillingForceDay
 from ..estimation.beta import BetaFunc
 from ..estimation.dts import StandardTemperature
+from ..estimation.sigmoid import SigmoidFunc
+from ..estimation.tp import ThermalPeriod
+from ..estimation.spm import SequentialModel, ParallelModel
+from ..estimation.am import AlternatingModel
 
 DEFAULT_ESTIMATORS = [
     GrowingDegree,
     ChillingForce,
     BetaFunc,
     StandardTemperature,
+    SigmoidFunc,
+    ThermalPeriod,
+    SequentialModel,
+    ParallelModel,
+    AlternatingModel,
 ]
 
 class Model(object):
