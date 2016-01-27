@@ -98,7 +98,7 @@ class Estimator(object):
                 # support (start, end) tuple for convenience
                 start, end = y
                 return np.intersect1d(defy, range(start, end+1)).tolist()
-            elif hasattr(y, '__iter__'):
+            elif hasattr(y, '__iter__') and len(y) > 1:
                 return sorted(set(sum([parse(i) for i in y], [])))
             else:
                 try:
