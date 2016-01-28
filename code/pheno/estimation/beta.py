@@ -1,6 +1,6 @@
 from __future__ import division
 
-from .base import Estimator
+from .base import Estimator, EstimationError
 
 import numpy as np
 import pandas as pd
