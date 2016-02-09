@@ -1,4 +1,5 @@
 from pheno.data.dataset import DataSet
+from pheno.model.suite import ModelSuite
 from pheno.model.group import ModelGroup
 from pheno.model.collection import ModelCollection
 from pheno.model.base import DEFAULT_ESTIMATORS
