@@ -22,10 +22,10 @@ class Ensemble(Estimator):
     def coeff_names(self):
         return ['W', 'C']
 
-    @property
-    def coeff(self):
-        c = zip(['w{}'.format(i) for i in range(self.n)], self._coeff['W'])
-        return collections.OrderedDict(c)
+    # @property
+    # def coeff(self):
+    #     c = zip(['w{}'.format(i) for i in range(self.n)], self._coeff['W'])
+    #     return collections.OrderedDict(c)
 
     @property
     def default_options(self):
