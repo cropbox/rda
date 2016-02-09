@@ -41,3 +41,21 @@ class RandomForest(Ensemble):
         d = clf.predict(X).item()
         t = o + datetime.timedelta(days=d-1)
         return pd.Timestamp(t)
+
+
+class RandomForest2(RandomForest):
+    def _calibrate(self, years, disp=True, **kwargs):
+        opts = self.options(**kwargs)
+        C = opts['C']
+
+        X = np.ma.array([m.estimates(years, c, julian=True) for (m, c) in zip(self.estimators, C)]).T
+        y = self.observes(years, julian=True)
+        #HACK feed some guiding points (e.g. [100, 100, ..., 100] -> 100)
+        X = np.vstack([X, [[i+1]*self.n for i in range(366)]])
+        y = np.hstack([y, [i+1 for i in range(366)]])
+        clf = RandomForestRegressor(n_estimators=1000, random_state=0)
+        clf = clf.fit(X, y)
+        p = base64.b64encode(pickle.dumps(clf)).decode('ascii')
+
+        coeff = self._dictify([p, C])
+        return coeff
