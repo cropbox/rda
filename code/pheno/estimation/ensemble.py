@@ -65,12 +65,17 @@ class Ensemble(Estimator):
         return coeff
 
     def _calibrated_coeff(self, years=None):
-        if years is None:
-            C = [m._coeff for m in self.estimators]
-        else:
-            key = tuple(years)
-            C = [m._coeffs[key] for m in self.estimators]
-        return self.calibrate(years, save=False, C=C)
+        key = tuple(years)
+        try:
+            return self._coeffs[key]
+        except:
+            if years is None:
+                C = [m._coeff for m in self.estimators]
+            else:
+                C = [m._coeffs[key] for m in self.estimators]
+            coeff = self.calibrate(years, save=False, C=C)
+            self._coeffs[key] = coeff
+            return coeff
 
     def _estimate(self, year, met, coeff):
         o = datetime.datetime(year, 1, 1)
