@@ -38,11 +38,12 @@ class Ensemble(Estimator):
     def n(self):
         return len(self.estimators)
 
-    def use(self, estimators, years, nick=None, how=None):
+    def use(self, estimators, years, nick=None, how=None, skip_calibration=False):
         self.estimators = estimators
         self.nick = nick
         self.how = how
-        self.calibrate(years)
+        if not skip_calibration:
+            self.calibrate(years)
         return self
 
     def _calibrate(self, years, disp=True, **kwargs):
