@@ -1,7 +1,7 @@
 from . import base
 from . import multi
 from ..estimation.ensemble import Ensemble
-from ..estimation.randomforest import RandomForest
+from ..estimation.randomforest import RandomForest, RandomForest2
 
 import numpy as np
 import pandas as pd
@@ -43,6 +43,7 @@ class ModelSuite(base.Model):
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.m', how='m', skip_calibration=skip_calibration),
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.r', how='r', skip_calibration=skip_calibration),
             RandomForest(self.dataset).use(models, self.calibrate_years, nick='EN.rf', skip_calibration=skip_calibration),
+            RandomForest2(self.dataset).use(models, self.calibrate_years, nick='EN.rf2', skip_calibration=skip_calibration),
         ]
         return models + ensembles
 
