@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 import pickle
+import base64
 import datetime
 
 class RandomForest(Ensemble):
@@ -14,21 +15,21 @@ class RandomForest(Ensemble):
     @property
     def default_options(self):
         return {
-            'p': None,
+            'p': '',
             'C': [m._coeff for m in self.estimators],
         }
 
     def _calibrate(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)
+        C = opts['C']
 
-        X = np.ma.array([m.estimates(years, julian=True) for m in self.estimators]).T
+        X = np.ma.array([m.estimates(years, c, julian=True) for (m, c) in zip(self.estimators, C)]).T
         y = self.observes(years, julian=True)
         clf = RandomForestRegressor(n_estimators=1000, random_state=0)
         clf = clf.fit(X, y)
-        self._regressor = clf
+        p = base64.b64encode(pickle.dumps(clf)).decode('ascii')
 
-        p = pickle.dumps(clf)
-        coeff = self._dictify([p, opts['C']])
+        coeff = self._dictify([p, C])
         return coeff
 
     def _estimate(self, year, met, coeff):
@@ -36,6 +37,7 @@ class RandomForest(Ensemble):
         X = [m.estimate_safely(year, c, julian=True) for (m, c) in zip(self.estimators, coeff['C'])]
         X = np.ma.masked_values(X, self._mask(julian=True))
         X = X.filled(X.mean()).reshape(1, -1)
-        d = self._regressor.predict(X).item()
+        clf = pickle.loads(base64.b64decode(coeff['p']))
+        d = clf.predict(X).item()
         t = o + datetime.timedelta(days=d-1)
         return pd.Timestamp(t)
