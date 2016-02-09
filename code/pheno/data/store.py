@@ -29,7 +29,7 @@ class HDF5Store(AbstractStore):
         return pd.read_hdf(self._filename(kind, basename, 'h5'), key=basename)
 
     def write(self, df, kind, basename):
-        df.to_hdf(self._outfilename(kind, basename, 'h5'), key=basename, mode='w', complib='zlib')
+        df.to_hdf(self._outfilename(kind, basename, 'h5'), key=basename, format='table', mode='w', complib='zlib')
         return df
 
 class PickleStore(AbstractStore):
