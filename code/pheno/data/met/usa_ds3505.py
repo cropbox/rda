@@ -3,11 +3,20 @@ from ..store import Store
 
 import pandas as pd
 import datetime
+import pytz
+
+utc = pytz.utc
+est = pytz.timezone('US/Eastern')
 
 NAMES = [
     'dc', #724050
     'martinsburg', #724177
 ]
+
+TIMEZONES = {
+    'dc': est,
+    'martinsburg': est,
+}
 
 def read(name):
     df = pd.read_csv(
@@ -25,7 +34,11 @@ def read(name):
     #TODO: quality control with df.Q?
     #[0, 1, 4, 5, 9, A, C, I, M, P, R, U]
 
-    df['timestamp'] = df.apply(lambda x: datetime.datetime.strptime('{:08d}{:04d}'.format(x.Date, x.HrMn), '%Y%m%d%H%M'), axis=1)
+    tz = TIMEZONES[name]
+    def parse(x):
+        t = datetime.datetime.strptime('{:08d}{:04d}'.format(x.Date, x.HrMn), '%Y%m%d%H%M')
+        return utc.localize(t).astimezone(tz)
+    df['timestamp'] = df.apply(parse, axis=1)
     df = df.drop([
         'USAF', 'NCDC',
         'Date', 'HrMn',
