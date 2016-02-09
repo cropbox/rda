@@ -85,7 +85,7 @@ class ModelSuite(base.Model):
 
     def show_metric(self, years, name=None):
         def metrics(how):
-            return [m.metric(years, how) for m in self.models]
+            return [m.metric(years, how, ignore_estimation_error=True) for m in self.models]
         df = pd.DataFrame({
             'RMSE': metrics('rmse'),
             'ME': metrics('me'),
