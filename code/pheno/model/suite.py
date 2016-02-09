@@ -30,18 +30,19 @@ class ModelSuite(base.Model):
             multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years)
 
         # add ensemble models
+        skip_calibration = False
         ensembles = [
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.rmse', how='rmse'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.xe', how='xe'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef', how='ef'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef1', how='ef1'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d', how='d'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d1', how='d1'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.dr', how='dr'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.m', how='m'),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.r', how='r'),
-            RandomForest(self.dataset).use(models, self.calibrate_years, nick='EN.rf'),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.rmse', how='rmse', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.xe', how='xe', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef', how='ef', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef1', how='ef1', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d', how='d', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d1', how='d1', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.dr', how='dr', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.m', how='m', skip_calibration=skip_calibration),
+            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.r', how='r', skip_calibration=skip_calibration),
+            RandomForest(self.dataset).use(models, self.calibrate_years, nick='EN.rf', skip_calibration=skip_calibration),
         ]
         return models + ensembles
 
