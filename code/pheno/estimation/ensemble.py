@@ -47,19 +47,20 @@ class Ensemble(Estimator):
 
     def _calibrate(self, years, disp=True, **kwargs):
         opts = self.options(**kwargs)
+        C = opts['C']
 
-        def weight(m):
+        def weight(m, c):
             if self.how:
-                e = m.metric(years, self.how)
+                e = m.metric(years, self.how, c)
                 if self._is_higher_better(self.how):
                     return e
                 else:
                     return 1./e
             else:
                 return 1.
-        W = np.array([weight(m) for m in self.estimators])
+        W = np.nan_to_num([weight(m, c) for (m, c) in zip(self.estimators, C)])
         W = (W / sum(W)).tolist()
-        coeff = self._dictify([W, opts['C']])
+        coeff = self._dictify([W, C])
         return coeff
 
     def _calibrated_coeff(self, years=None):
