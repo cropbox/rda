@@ -76,9 +76,12 @@ class Estimator(object):
         return datetime.date(year, 5, 30)
 
     def _clip(self, year, coeff):
+        t0 = datetime.datetime.combine(self.start_date(year, coeff), datetime.time(0))
+        t1 = datetime.datetime.combine(self.end_date(year, coeff), datetime.time(23))
         tz = self._mets.index.tz
-        t0 = tz.localize(datetime.datetime.combine(self.start_date(year, coeff), datetime.time(0)))
-        t1 = tz.localize(datetime.datetime.combine(self.end_date(year, coeff), datetime.time(23)))
+        if tz is not None:
+            t0 = tz.localize(t0)
+            t1 = tz.localize(t1)
         df = self._mets[t0:t1]
         assert df.index[0] == t0, "start date '{}' != '{}'".format(df.index[0], t0)
         assert df.index[-1] == t1, "end date '{}' != '{}'".format(df.index[-1], t1)
