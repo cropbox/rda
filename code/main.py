@@ -3,6 +3,7 @@ from pheno.model.suite import ModelSuite
 from pheno.model.group import ModelGroup
 from pheno.model.collection import ModelCollection
 from pheno.model.base import DEFAULT_ESTIMATORS
+from pheno.data.path import Output
 import pheno.estimation as est
 
 def create_cherry_dc():
