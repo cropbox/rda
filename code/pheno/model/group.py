@@ -138,9 +138,12 @@ class ModelGroup(base.Model):
             return df.reset_index().set_index(['model', 'cultivar', 'type'])
 
         for n in names:
-            df = pd.concat([construct(n, c) for c in cultivars])
-            filename = self.output.outfilename('group/results', '{}_{}'.format(name, n), 'csv')
-            df.to_csv(filename)
+            try:
+                df = pd.concat([construct(n, c) for c in cultivars])
+                filename = self.output.outfilename('group/results', '{}_{}'.format(name, n), 'csv')
+                df.to_csv(filename)
+            except:
+                continue
 
     def _outlier(self, m, threshold):
         y = np.array(m._years(self.validate_years))
