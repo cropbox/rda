@@ -11,8 +11,8 @@ def create_cherry_dc():
         'DC': 724050,
     }).set(stage='Peak Bloom')
     return ModelGroup(ds,
-        calibrate_years=(1990, 2010), # close to (1991, 2010) from Chung et al. (2011)
-        validate_years=[(1946, 1989), (2011, 2014)],
+        calibrate_years=(1991, 2010), # same as (1991, 2010) from Chung et al. (2011)
+        validate_years=[(1946, 1990), (2011, 2014)],
         export_years=(1937, 2015),
     )
 
@@ -22,8 +22,8 @@ def create_cherry_dc_yoshino():
         'DC': 724050,
     }).set(cultivar='Yoshino', stage='Peak Bloom')
     return ModelSuite(ds,
-        calibrate_years=(1990, 2010),
-        validate_years=[(1946, 1989), (2011, 2014)],
+        calibrate_years=(1991, 2010),
+        validate_years=[(1946, 1990), (2011, 2014)],
         export_years=(1937, 2015),
         ESTIMATORS=estimators,
     )
@@ -34,8 +34,8 @@ def create_cherry_dc_kwanzan():
         'DC': 724050,
     }).set(cultivar='Kwanzan', stage='Peak Bloom')
     return ModelSuite(ds,
-        calibrate_years=(1990, 2010),
-        validate_years=[(1946, 1989), (2011, 2014)],
+        calibrate_years=(1991, 2010),
+        validate_years=[(1946, 1990), (2011, 2014)],
         export_years=(1937, 2015),
         ESTIMATORS=estimators,
     )
@@ -45,40 +45,40 @@ def create_apple_kearneysville():
         'Kearneysville': 724177,
     }).set(stage='Full Bloom')
     return ModelGroup(ds,
-        calibrate_years=(1997, 2007),
-        validate_years=(1997, 2007),
+        calibrate_years=(1997, 2006),
+        validate_years=[2007],
         export_years=(1974, 2015),
     )
 
 def create_peach_korea():
     ds = DataSet('korea_shk060', 'peach_korea').set(stage='FFD')
     return ModelGroup(ds,
-        calibrate_years=(1988, 2008),
-        validate_years=(1974, 1987),
+        calibrate_years=(1989, 2008),
+        validate_years=(1974, 1988),
         export_years=(1974, 2010),
     )
 
 def create_pear_korea():
     ds = DataSet('korea_shk060', 'pear_korea').set(stage='FFD')
     return ModelGroup(ds,
-        calibrate_years=(1988, 2008),
-        validate_years=(1974, 1987),
+        calibrate_years=(1989, 2008),
+        validate_years=(1974, 1988),
         export_years=(1974, 2010),
     )
 
 def create_cherry_korea():
     ds = DataSet('korea_shk060', 'cherry_korea').set(stage='Full Bloom')
     return ModelGroup(ds,
-        calibrate_years=(1974, 1994),
-        validate_years=(1964, 1973),
+        calibrate_years=(1975, 1994),
+        validate_years=(1964, 1974),
         export_years=(1964, 2010),
     )
 
 def create_cherry_korea_bloom():
     ds = DataSet('korea_shk060', 'cherry_korea').set(stage='Bloom')
     return ModelGroup(ds,
-        calibrate_years=(1984, 2004),
-        validate_years=(1974, 1983),
+        calibrate_years=(1985, 2004),
+        validate_years=(1974, 1984),
         export_years=(1964, 2010),
     )
 
