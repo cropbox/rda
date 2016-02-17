@@ -181,7 +181,7 @@ class ModelGroup(base.Model):
 
         if name:
             cname = self._key_for_calibration()
-            basename = '{}_{}'.format(name, cname)
+            basename = '{}_{}_{}'.format(name, cname, how)
             if ignore_estimation_error:
                 basename = basename + '_ie'
             filename = self.output.outfilename('group/results', basename, 'csv')
