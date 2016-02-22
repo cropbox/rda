@@ -1,5 +1,9 @@
 import os
 
+work_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+input_path = os.path.join(work_path, 'input')
+output_path = os.path.join(work_path, 'output')
+
 class Pather(object):
     def __init__(self, basepath, timestamp):
         self.setup(basepath, timestamp)
@@ -28,10 +32,10 @@ class Pather(object):
 class Input(Pather):
     def __init__(self, basepath):
         super(Input, self).__init__(basepath, timestamp='')
-input = Input(basepath='../input')
+input = Input(basepath=input_path)
 
 
 class Output(Pather):
     def __init__(self, basepath, timestamp):
         super(Output, self).__init__(basepath, timestamp)
-output = Output(basepath='../output', timestamp='current')
+output = Output(basepath=output_path, timestamp='current')
