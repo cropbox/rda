@@ -62,7 +62,7 @@ def conv():
     meta = META['dc']
     df0 = Store().read('met', 'usa_ds3505')
     start = df0.loc[meta['station']].index[-1].date()
-    end = datetime.date(start.year, 4, 30)
+    end = datetime.date(start.year, 5, 31)
     df1 = load_from_forecastio(meta, start, end)
     df = df0.combine_first(df1)
     return Store().write(df, 'met', 'usa_ds3505')
