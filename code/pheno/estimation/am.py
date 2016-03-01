@@ -41,7 +41,7 @@ class AlternatingModel(Estimator):
         T = met.tavg
 
         Tc = coeff['Tc']
-        Rc = T[T <= Tc].count()
+        Rc = (T <= Tc).cumsum()
 
         a = coeff['Fa']
         b = coeff['Fb']
@@ -55,4 +55,4 @@ class AlternatingModel(Estimator):
             'Dd': F,
             'Cd': F.cumsum(),
         }, axis=1)
-        return self._match(aux['Cd'], Rf)
+        return self._match(aux['Cd'] - Rf, 0)
