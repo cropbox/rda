@@ -25,8 +25,8 @@ class AlternatingModel(Estimator):
     def default_options(self):
         return {
             'coeff0': (4.5, 4.5, 0, 500, 0),
-            'bounds': ((0, 20), (-10, 10), (-300, 300), (100, 2000), (-1, 1)),
-            'grid': (slice(0, 20, 0.1), slice(-10, 10, 0.1), slice(-300, 300, 10), slice(100, 2000, 10), slice(-1, 1, 0.1)),
+            'bounds': ((0, 20), (-10, 10), (-1000, 1000), (100, 2000), (-1, 1)),
+            'grid': (slice(0, 20, 0.1), slice(-10, 10, 0.1), slice(-1000, 1000, 10), slice(100, 2000, 10), slice(-1, 1, 0.1)),
         }
 
     def start_date(self, year, coeff):
