@@ -40,7 +40,7 @@ class MonthlyRegressor(Estimator):
     def _estimate(self, year, met, coeff):
         T = met.tavg.resample('M')
         Ti = T.index
-        x = T[(Ti.year == year) & (Ti.month == self.month)]
+        x = T[(Ti.year == year) & (Ti.month == self.month)].item()
         y = coeff['b0'] + coeff['b1']*x
         return pd.Timestamp(datetime.datetime.strptime('{}-{}'.format(year, int(round(y))), '%Y-%j').replace(hour=12))
 
