@@ -168,18 +168,18 @@ def create_cherry_dc_list(output=None):
     return [
         ModelGroup(ds,
             calibrate_years=(1991, 2010),
-            validate_years=[(1946, 1990), (2011, 2014)],
+            validate_years=[(1946, 1969), (1974, 1990), (2011, 2014)],
             export_years=(1937, 2015),
             output=output,
         ),
         ModelGroup(ds,
-            calibrate_years=(1971, 2010),
-            validate_years=[(1946, 1970), (2011, 2014)],
+            calibrate_years=(1974, 2010),
+            validate_years=[(1946, 1969), (2011, 2014)],
             export_years=(1937, 2015),
             output=output,
         ),
         ModelGroup(ds,
-            calibrate_years=(1951, 2010),
+            calibrate_years=[(1951, 1969), (1974, 2010)],
             validate_years=[(1946, 1950), (2011, 2014)],
             export_years=(1937, 2015),
             output=output,
@@ -187,7 +187,7 @@ def create_cherry_dc_list(output=None):
     ]
 
 if __name__ == '__main__':
-    output = Output(basepath='../output', timestamp='20160210-cherry-dc-long')
+    output = Output(basepath='../output', timestamp='20160221-cherry-dc-long')
     groups = create_cherry_dc_list(output)
     collections = [ModelCollection(g) for g in groups]
     [c.export() for c in collections]
