@@ -147,10 +147,11 @@ class Estimator(object):
 
     # estimation
     def _match(self, ts, value, descending=False):
+        ts = ts.dropna()
         if descending:
             ts = -ts
             value = -value
-        i = ts.fillna(0).searchsorted(value)[0]
+        i = ts.searchsorted(value)[0]
         try:
             return ts.index[i]
         except:
