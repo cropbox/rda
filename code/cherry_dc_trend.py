@@ -189,5 +189,5 @@ def create_cherry_dc_list(output=None):
 if __name__ == '__main__':
     output = Output(basepath='../output', timestamp='20160221-cherry-dc-long')
     groups = create_cherry_dc_list(output)
-    collections = [ModelCollection(g) for g in groups]
+    collections = [ModelCollection([g]) for g in groups]
     [c.export() for c in collections]
