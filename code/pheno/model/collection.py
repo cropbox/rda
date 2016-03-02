@@ -26,9 +26,6 @@ class ModelCollection(object):
         return [g.dataset.name for g in self.groups]
 
     def export(self):
-        # export results for all model groups
-        [g.export() for g in self.groups]
-
         # export sensitivity analysis results
         self.show_sensitivity(deltas=list(range(-5, 5+1)), name='sensitivity')
 
@@ -42,6 +39,9 @@ class ModelCollection(object):
         # export obs vs. est plots
         self.plot_obs_vs_est('model', exclude_ensembles=False, name='obs_vs_est_by_model')
         self.plot_obs_vs_est('dataset', exclude_ensembles=True, name='obs_vs_est_by_dataset')
+
+        # export results for all model groups
+        [g.export() for g in self.groups]
 
     def _rank(self, df, how, dropna=True):
         if dropna:
