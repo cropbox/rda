@@ -30,11 +30,7 @@ class ModelCollection(object):
         self.show_sensitivity(deltas=list(range(-5, 5+1)), name='sensitivity')
 
         # export crossvalidation results
-        metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'ef1', 'd', 'd1', 'dr', 'm', 'r']
-        name = 'crossvalidation'
-        for how in metrics:
-            #self.show_crossvalidation(how, ignore_estimation_error=False, name=name)
-            self.show_crossvalidation(how, ignore_estimation_error=True, name=name)
+        self.show_crossvalidation_all(ignore_estimation_error=True, name='crossvalidation')
 
         # export obs vs. est plots
         self.plot_obs_vs_est('model', exclude_ensembles=False, name='obs_vs_est_by_model')
@@ -111,6 +107,11 @@ class ModelCollection(object):
         stat = pd.concat([self._crossvalidation_stat(t, d, how) for t, d in zip(titles, dfs)])
         save(stat, 'stat')
         return stat
+
+    def show_crossvalidation_all(self, ignore_estimation_error=False, name=None):
+        metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'ef1', 'd', 'd1', 'dr', 'm', 'r']
+        for how in metrics:
+            self.show_crossvalidation(how, ignore_estimation_error, name)
 
     def show_sensitivity(self, deltas, name=None):
         def raw(title, df):
