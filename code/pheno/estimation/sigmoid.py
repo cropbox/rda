@@ -21,7 +21,7 @@ class SigmoidFunc(Estimator):
     @property
     def default_options(self):
         return {
-            'coeff0': (1, 15, -0.1, 100),
+            'coeff0': (0, 15, -0.1, 100),
             'bounds': ((-100, 100), (-10, 20), (-1.0, -0.1), (0, 200)),
             'grid': (slice(-100, 100, 1), slice(-10, 30, 1), slice(-1.0, -0.1, 0.05), slice(0, 200, 1)),
         }
