@@ -25,7 +25,9 @@ def predict_cherry_dc_future(cultivar, scenario, output=None):
     )
     return ms.show_prediction(pyears, julian=True)
 
-def plot_cherry_dc_future(df, selective=True, grouped=True):
+def plot_cherry_dc_future(df, selective=True, grouped=False, rolling=True, **kwargs):
+    if rolling:
+        df = pd.rolling_mean(df, window=10, min_periods=5)
     mdf = pd.melt(df.reset_index(), id_vars=['year'], var_name='model', value_name='jday')
     if selective:
         mdf = mdf[mdf.model.isin(['Obs', 'GD', 'CF', 'BF', 'DTS', 'SF', 'TP', 'SM', 'PM', 'AM', 'M', 'EN'])]
