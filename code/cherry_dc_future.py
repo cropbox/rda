@@ -7,6 +7,7 @@ from pheno.data.path import Output
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.lines
 
 # plot prediction with RCP projection scenarios
 
@@ -30,12 +31,18 @@ def plot_cherry_dc_future(df, selective=True, grouped=False, rolling=True, **kwa
         df = pd.rolling_mean(df, window=10, min_periods=5)
     mdf = pd.melt(df.reset_index(), id_vars=['year'], var_name='model', value_name='jday')
     if selective:
-        mdf = mdf[mdf.model.isin(['Obs', 'GD', 'CF', 'BF', 'DTS', 'SF', 'TP', 'SM', 'PM', 'AM', 'M', 'EN'])]
+        selected_models = ['GD', 'SF', 'BF', 'DTS', 'TP', 'CF', 'SM', 'PM', 'AM', 'M', 'EN']
+        mdf = mdf[mdf.model.isin(selected_models)]
+        mdf.model = pd.Categorical(mdf.model, selected_models)
+        markers = ['1', '2', '3', '.', '+', 4, 5, 6, 'x', 0, '*']
+    else:
+        n = len(mdf['model'].unique())
+        markes = list(matplotlib.lines.Line2D.markers.keys())[:n]
     if grouped:
         mdf['interval'] = (((mdf.year - 2000) / 20).astype(int) * 20 + 2000)
         ax = sns.boxplot(data=mdf, x='interval', y='jday', hue='model')
     else:
-        ax = sns.pointplot(data=mdf, x='year', y='jday', hue='model')
+        ax = sns.pointplot(data=mdf, x='year', y='jday', hue='model', linestyles=':', markers=markers, scale=0.7, **kwargs)
     return ax
 
 def plot_cherry_dc_future_all(output):
