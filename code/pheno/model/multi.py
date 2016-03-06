@@ -1,6 +1,7 @@
 from ..estimation.base import Estimator
 
 import itertools
+import datetime
 import multiprocessing as mp
 import numpy as np
 import pandas as pd
@@ -63,7 +64,7 @@ def preset(output, slugname, model, years, **kwargs):
 
     def load(var, callback):
         fn = filename(var)
-        print('preset.load: ' + fn)
+        print('{} preset.load: {}'.format(datetime.datetime.now(), fn))
         try:
             setattr(model, var, np.load(fn).tolist())
         except:
