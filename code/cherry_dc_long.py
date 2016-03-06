@@ -6,33 +6,44 @@ from pheno.data.path import Output
 
 # crossvalidation with varying size of dataset
 
-def create_cherry_dc_list(output=None):
-    ds = DataSet('usa_ds3505', 'cherry_dc', translator={
+def dataset():
+    return DataSet('usa_ds3505', 'cherry_dc', translator={
         'DC': 724050,
     }).set(stage='Peak Bloom')
-    return [
-        ModelGroup(ds,
+
+def model_group(period, output):
+    ds = dataset()
+    if period == 20:
+        return ModelGroup(ds,
             calibrate_years=(1991, 2010),
             validate_years=[(1946, 1969), (1974, 1990), (2011, 2014)],
             export_years=(1937, 2015),
             output=output,
-        ),
-        ModelGroup(ds,
+        )
+    elif period == 40:
+        return ModelGroup(ds,
             calibrate_years=(1974, 2010),
             validate_years=[(1946, 1969), (2011, 2014)],
             export_years=(1937, 2015),
             output=output,
-        ),
-        ModelGroup(ds,
+        )
+    elif period == 60:
+        return ModelGroup(ds,
             calibrate_years=[(1951, 1969), (1974, 2010)],
             validate_years=[(1946, 1950), (2011, 2014)],
             export_years=(1937, 2015),
             output=output,
-        ),
-    ]
+        )
+
+def model_collection(period, output):
+    mg = model_group(period, output)
+    return ModelCollection([mg], output)
 
 if __name__ == '__main__':
-    output = Output(basepath='../output', timestamp='20160301-cherry-dc-long')
-    groups = create_cherry_dc_list(output)
-    collections = [ModelCollection([g], output) for g in groups]
-    [c.export() for c in collections]
+    output = Output(basepath='../output', timestamp='20160304-cherry-dc-long')
+    periods = [20, 40, 60]
+    collections = {p: model_collection(p, output) for p in periods}
+    [mc.show_crossvalidation_all(
+        ignore_estimation_error=True,
+        name='crossvalidation_{}'.format(p)
+    ) for p, mc in collections.items()]
