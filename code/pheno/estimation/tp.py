@@ -14,6 +14,7 @@ class ThermalPeriod(Estimator):
     @property
     def coeff_names(self):
         return [
+            'Ds', # start date (days offset)
             'Tb', # base temperature (C)
             'Dn', # fixed period (days)
             'Rd', # forcing threshold
@@ -22,14 +23,10 @@ class ThermalPeriod(Estimator):
     @property
     def default_options(self):
         return {
-            'coeff0': (5, 50, 500),
-            'bounds': ((0, 10), (30, 100), (0, 1000)),
-            'grid': (slice(0, 10, 0.1), slice(30, 100, 1), slice(0, 1000, 1)),
+            'coeff0': (31, 5, 50, 500),
+            'bounds': ((-100, 100), (0, 10), (30, 100), (0, 1000)),
+            'grid': (slice(-100, 100, 1), slice(0, 10, 0.1), slice(30, 100, 1), slice(0, 1000, 1)),
         }
-
-    def start_date(self, year, coeff):
-        # fix initial starting date for thermal period to be February 1st
-        return datetime.date(year, 2, 1)
 
     def _estimate(self, year, met, coeff):
         Tb = coeff['Tb']
