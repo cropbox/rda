@@ -61,5 +61,5 @@ def plot_cherry_dc_future_all(output):
             plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_individual'.format(c, s), 'png'))
 
 if __name__ == '__main__':
-    output = Output(basepath='../output', timestamp='20160301-cherry-dc-future')
+    output = Output(basepath='../output', timestamp='20160304-cherry-dc-future')
     plot_cherry_dc_future_all(output)
