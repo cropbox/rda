@@ -13,11 +13,11 @@ from ..estimation.mean import Mean
 
 DEFAULT_ESTIMATORS = [
     GrowingDegree,
-    ChillingForce,
+    SigmoidFunc,
     BetaFunc,
     StandardTemperature,
-    SigmoidFunc,
     ThermalPeriod,
+    ChillingForce,
     SequentialModel,
     ParallelModel,
     AlternatingModel,
