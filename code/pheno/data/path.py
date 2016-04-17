@@ -30,12 +30,18 @@ class Pather(object):
 
 
 class Input(Pather):
-    def __init__(self, basepath):
+    def __init__(self, basepath=None):
+        if basepath is None:
+            basepath = input_path
         super(Input, self).__init__(basepath, timestamp='')
-input = Input(basepath=input_path)
+input = Input()
 
 
 class Output(Pather):
-    def __init__(self, basepath, timestamp):
+    def __init__(self, basepath=None, timestamp=None):
+        if basepath is None:
+            basepath = output_path
+        if timestamp is None:
+            timestamp = 'current'
         super(Output, self).__init__(basepath, timestamp)
-output = Output(basepath=output_path, timestamp='current')
+output = Output()
