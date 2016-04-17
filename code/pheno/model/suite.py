@@ -1,5 +1,4 @@
 from . import base
-from . import multi
 from ..estimation.ensemble import Ensemble
 from ..estimation.randomforest import RandomForest, RandomForest2
 
@@ -7,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import multiprocessing as mp
 
 import json
 
@@ -27,10 +27,11 @@ class ModelSuite(base.Model):
         for m in models:
             #m.calibrate(self.calibrate_years)
             #multi.calibrate(m, self.calibrate_years)
-            multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years)
+            #multi.preset(self.output, self._key_for_coeff(m), m, self.calibrate_years)
+            m.preset(self.calibrate_years, single=True, multi=True, output=self.output)
 
         # add ensemble models
-        skip_calibration = False
+        skip_calibration = True
         ensembles = [
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN', skip_calibration=skip_calibration),
             Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.rmse', how='rmse', skip_calibration=skip_calibration),
@@ -45,6 +46,11 @@ class ModelSuite(base.Model):
             RandomForest(self.dataset).use(models, self.calibrate_years, nick='EN.rf', skip_calibration=skip_calibration),
             RandomForest2(self.dataset).use(models, self.calibrate_years, nick='EN.rf2', skip_calibration=skip_calibration),
         ]
+
+        # ensemble calibration
+        for m in ensembles:
+            m.preset(self.calibrate_years, single=True, multi=True, output=self.output)
+
         return models + ensembles
 
     @property

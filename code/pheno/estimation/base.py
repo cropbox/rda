@@ -1,8 +1,10 @@
 from ..data.dataset import DataSet
+from ..data import path
 
 import numpy as np
 import scipy.optimize
 import pandas as pd
+import multiprocessing as mp
 import datetime
 import itertools
 import collections
@@ -34,6 +36,8 @@ class Estimator(object):
         self._mets = dataset.weather()
         self._obss = dataset.observation()
         self._calibrate_years = None
+        if coeff is None:
+            coeff = {}
         self._coeff = coeff
         self._coeffs = {'': coeff}
         self.setup()
@@ -315,6 +319,58 @@ class Estimator(object):
             self._coeff = coeff
             self._coeffs[''] = coeff
         return coeff
+
+    def calibrate_multi(self, years, splitter_name, save=True):
+        years = self._years(years)
+        splitter = getattr(self, splitter_name)
+        validate_years_list = splitter(years)
+        calibrate_years_list = [sorted(set(years) - set(validate_years)) for validate_years in validate_years_list]
+        args_list = [([calibrate_years, False, False]) for calibrate_years in calibrate_years_list]
+
+        with mp.Pool() as p:
+            coeff_list = p.starmap(self.calibrate, args_list)
+        keys = [tuple(k) for k in calibrate_years_list]
+        coeffs = dict(zip(keys, coeff_list))
+        if save:
+            self._coeffs = coeffs
+        return coeffs
+
+    # preset from multi.py
+    def preset(self, years, single=True, multi=True, output=None):
+        if output is None:
+            output = path.output
+
+        key = slugname(
+            self.name,
+            self._dataset.met_station,
+            self._dataset.obs_station,
+            self._dataset.name,
+            self._dataset.cultivar,
+            self._dataset.stage,
+            years,
+        )
+
+        def filename(var):
+            return output.outfilename('coeffs', '{}_{}'.format(key, var), 'npy')
+
+        def load(var, callback):
+            fn = filename(var)
+            print('{} - {} - preset.load: {}'.format(datetime.datetime.now(), self.name, fn))
+            try:
+                setattr(self, var, np.load(fn).tolist())
+            except:
+                value = callback()
+                setattr(self, var, value)
+                np.save(fn, value)
+
+        #HACK needed for metric()
+        #FIXME is it still needed?
+        self._calibrate_years = self._years(years)
+
+        if single:
+            load('_coeff', lambda: self.calibrate(years))
+        if multi:
+            load('_coeffs', lambda: self.calibrate_multi(years, '_splitter_k_fold'))
 
     # validation
     def residual(self, year, coeff=None):
