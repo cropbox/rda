@@ -227,10 +227,15 @@ class ModelSuite(base.Model):
             for m in self.models:
                 f.write('{} : {}\n'.format(m.name, json.dumps(m._coeff)))
 
+    @staticmethod
+    def _show_crossvalidation(model, calibrate_years, how='rmse', ignore_estimation_error=False):
+        return model.crossvalidate(calibrate_years, how, ignore_estimation_error)
+
     def show_crossvalidation(self, how='rmse', ignore_estimation_error=False, name=None):
-        df = pd.DataFrame({
-            m.name: m.crossvalidate(self.calibrate_years, how, ignore_estimation_error) for m in self.models
-        }, columns=self.names)
+        with mp.Pool() as p:
+            k = [m.name for m in self.models]
+            v = p.starmap(self._show_crossvalidation, [(m, self.calibrate_years, how, ignore_estimation_error) for m in self.models])
+            df = pd.DataFrame(dict(zip(k, v)), columns=self.names)
 
         if name:
             cname = self._key_for_calibration()
