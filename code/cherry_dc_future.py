@@ -48,6 +48,16 @@ def plot_cherry_dc_future(df, selective=True, grouped=False, rolling=True, **kwa
         # ax = plt.legend(loc='best')
     return ax
 
+def plot_cherry_dc_future2(df, rolling=True, **kwargs):
+    if rolling:
+        df = pd.rolling_mean(df, window=10, min_periods=5)
+    df['F'] = df[['GD', 'SF', 'BF', 'DTS', 'TP']].mean(axis=1)
+    df['C'] = df[['CF', 'SM', 'PM', 'AM']].mean(axis=1)
+    mdf = pd.melt(df.reset_index(), id_vars=['year'], var_name='model', value_name='jday')
+    mdf = mdf[mdf.model.isin(['F', 'C', 'EN'])]
+    ax = sns.pointplot(data=mdf, x='year', y='jday', hue='model', linestyles=':', scale=0.7, **kwargs)
+    return ax
+
 def plot_cherry_dc_future_all(output):
     cultivars = ['Yoshino', 'Kwanzan']
     scenarios = ['rcp45', 'rcp85']
@@ -68,6 +78,11 @@ def plot_cherry_dc_future_all(output):
             ax = plot_cherry_dc_future(df, grouped=False)
             ax.set_ylim(ylim)
             plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_individual'.format(c, s), 'png'))
+
+            plt.figure(figsize=(15,6))
+            ax = plot_cherry_dc_future2(df)
+            ax.set_ylim(ylim)
+            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_f_vs_c'.format(c, s), 'png'))
 
 if __name__ == '__main__':
     output = Output(basepath='../output', timestamp='20160308-cherry-dc-future')
