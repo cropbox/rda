@@ -37,7 +37,7 @@ def plot_cherry_dc_future(df, selective=True, grouped=False, rolling=True, **kwa
         markers = ['1', '2', '3', '.', '+', 4, 5, 6, 'x', 0, '*']
     else:
         n = len(mdf['model'].unique())
-        markes = list(matplotlib.lines.Line2D.markers.keys())[:n]
+        markers = list(matplotlib.lines.Line2D.markers.keys())[:n]
     if grouped:
         mdf['interval'] = (((mdf.year - 2000) / 20).astype(int) * 20 + 2000)
         ax = sns.boxplot(data=mdf, x='interval', y='jday', hue='model')
