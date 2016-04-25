@@ -4,6 +4,7 @@ from pheno.model.group import ModelGroup
 from pheno.model.collection import ModelCollection
 from pheno.data.path import Output
 
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -55,7 +56,29 @@ def plot_cherry_dc_future2(df, rolling=True, **kwargs):
     df['C'] = df[['CF', 'SM', 'PM', 'AM']].mean(axis=1)
     mdf = pd.melt(df.reset_index(), id_vars=['year'], var_name='model', value_name='jday')
     mdf = mdf[mdf.model.isin(['F', 'C', 'EN'])]
-    ax = sns.pointplot(data=mdf, x='year', y='jday', hue='model', linestyles=':', scale=0.7, **kwargs)
+    mdf['subject'] = 0
+    ax = sns.tsplot(data=mdf, time='year', value='jday', condition='model', unit='subject', **kwargs)
+    ax.set(xlabel='Year', ylabel='Predicted flowering date')
+    return ax
+
+def plot_cherry_dc_future3(df, rolling=True, **kwargs):
+    if rolling:
+        df = pd.rolling_mean(df, window=10, min_periods=5)
+    def agg(n, c):
+        sdf = df[c]
+        sdf = sdf.rename(columns={c[i]: i for i in range(len(c))})
+        mdf = pd.melt(sdf.reset_index(), id_vars=['year'], var_name='subject', value_name='jday')
+        mdf['Model'] = n
+        return mdf
+    F = ['GD', 'SF', 'BF', 'DTS', 'TP']
+    C = ['CF', 'SM', 'PM', 'AM']
+    mdf = pd.concat([
+        agg('ENf', F),
+        agg('ENc', C),
+        agg('EN', F+C),
+    ])
+    ax = sns.tsplot(data=mdf, time='year', value='jday', condition='Model', unit='subject', ci=95, estimator=np.nanmean, **kwargs)
+    ax.set(xlabel='Year', ylabel='Predicted flowering date')
     return ax
 
 def plot_cherry_dc_future_all(output):
@@ -81,6 +104,11 @@ def plot_cherry_dc_future_all(output):
 
             plt.figure(figsize=(15,6))
             ax = plot_cherry_dc_future2(df)
+            ax.set_ylim(ylim)
+            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_f_vs_c_legacy'.format(c, s), 'png'))
+
+            plt.figure(figsize=(15,6))
+            ax = plot_cherry_dc_future3(df)
             ax.set_ylim(ylim)
             plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_f_vs_c'.format(c, s), 'png'))
 
