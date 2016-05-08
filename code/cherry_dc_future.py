@@ -72,12 +72,17 @@ def plot_cherry_dc_future3(df, rolling=True, **kwargs):
         return mdf
     F = ['GD', 'SF', 'BF', 'DTS', 'TP']
     C = ['CF', 'SM', 'PM', 'AM']
-    mdf = pd.concat([
+    mdf_FC = pd.concat([
         agg('ENf', F),
         agg('ENc', C),
+    ])
+    mdf_EN = pd.concat([
         agg('EN', F+C),
     ])
-    ax = sns.tsplot(data=mdf, time='year', value='jday', condition='Model', unit='subject', ci=95, estimator=np.nanmean, **kwargs)
+    #mdf = pd.concat([mdf_FC, mdf_EN])
+    #ax = sns.tsplot(data=mdf, time='year', value='jday', condition='Model', unit='subject', ci=95, estimator=np.nanmean, **kwargs)
+    ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color=[sns.xkcd_rgb['pale red'], sns.xkcd_rgb['denim blue']], estimator=np.nanmean, ls=':', **kwargs)
+    ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[sns.xkcd_rgb['medium green']], estimator=np.nanmean, ax=ax, **kwargs)
     ax.set(xlabel='Year', ylabel='Predicted flowering date')
     return ax
 
