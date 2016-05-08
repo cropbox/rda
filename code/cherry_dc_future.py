@@ -91,7 +91,7 @@ def plot_cherry_dc_future_all(output):
     scenarios = ['rcp45', 'rcp85']
     for c in cultivars:
         if c == 'Yoshino':
-            ylim = (40, 100)
+            ylim = (50, 100)
         elif c == 'Kwanzan':
             ylim = (70, 110)
         for s in scenarios:
