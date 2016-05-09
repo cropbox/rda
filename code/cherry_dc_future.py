@@ -64,6 +64,7 @@ def plot_cherry_dc_future2(df, rolling=True, **kwargs):
 def plot_cherry_dc_future3(df, rolling=True, **kwargs):
     if rolling:
         df = pd.rolling_mean(df, window=10, min_periods=5)
+    df = df.loc[2020:]
     def agg(n, c):
         sdf = df[c]
         sdf = sdf.rename(columns={c[i]: i for i in range(len(c))})
