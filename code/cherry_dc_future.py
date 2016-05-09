@@ -84,6 +84,7 @@ def plot_cherry_dc_future3(df, rolling=True, **kwargs):
     ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color=[sns.xkcd_rgb['pale red'], sns.xkcd_rgb['denim blue']], estimator=np.nanmean, ls=':', **kwargs)
     ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[sns.xkcd_rgb['medium green']], estimator=np.nanmean, ax=ax, **kwargs)
     ax.set(xlabel='Year', ylabel='Predicted flowering date')
+    ax.legend(loc=3, title='')
     return ax
 
 def plot_cherry_dc_future_all(output):
