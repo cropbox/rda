@@ -401,6 +401,10 @@ class Estimator(object):
         years = self._years(years)
 
         how = how.lower()
+        if how == 'observe':
+            return self.residuals(years, coeff, ignore_estimation_error, func=lambda o, e: o)
+        elif how == 'estimate':
+            return self.residuals(years, coeff, ignore_estimation_error, func=lambda o, e: e)
 
         e = self.residuals(years, coeff, ignore_estimation_error)
 
@@ -484,7 +488,11 @@ class Estimator(object):
             except:
                 coeff = self.calibrate(calibrate_years, save=False, **kwargs)
             return self.metric(validate_years, how, coeff, ignore_estimation_error)
-        return np.ma.array([metric(v) for v in validate_years_list], fill_value=np.nan)
+        cv = np.ma.array([metric(v) for v in validate_years_list])
+        if cv.dtype == np.object:
+            cv = np.concatenate(cv)
+        cv.set_fill_value(np.nan)
+        return cv.flatten()
 
     def analyze_sensitivity(self, years, deltas):
         years = self._years(years)

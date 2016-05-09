@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import multiprocessing as mp
 
+import itertools
 import json
 
 class ModelSuiteError(Exception):
@@ -232,10 +233,20 @@ class ModelSuite(base.Model):
         return model.crossvalidate(calibrate_years, how, ignore_estimation_error)
 
     def show_crossvalidation(self, how='rmse', ignore_estimation_error=False, name=None):
-        with mp.Pool() as p:
-            k = [m.name for m in self.models]
-            v = p.starmap(self._show_crossvalidation, [(m, self.calibrate_years, how, ignore_estimation_error) for m in self.models])
-            df = pd.DataFrame(dict(zip(k, v)), columns=self.names)
+        k = self.names
+        i = [(m, self.calibrate_years, how, ignore_estimation_error) for m in self.models]
+        n = self.names
+
+        #HACK: add observation date when exporting estimation dates
+        if how == 'estimate':
+            k += ['Obs']
+            i += [(self.models[0], self.calibrate_years, 'observe', ignore_estimation_error)]
+
+        # with mp.Pool() as p:
+        #     v = p.starmap(self._show_crossvalidation, i)
+        v = itertools.starmap(self._show_crossvalidation, i)
+
+        df = pd.DataFrame(dict(zip(k, v)), columns=k)
 
         if name:
             cname = self._key_for_calibration()

@@ -109,9 +109,13 @@ class Ensemble(Estimator):
             splitter = self._splitter_k_fold
         validate_years_list = splitter(years)
         calibrate_years_list = [sorted(set(years) - set(y)) for y in validate_years_list]
-        return np.ma.array([
+        cv = np.ma.array([
             self.metric_with_calibration(c, v, how) for c, v in zip(calibrate_years_list, validate_years_list)
-        ], fill_value=np.nan)
+        ])
+        if cv.dtype == np.object:
+            cv = np.concatenate(cv)
+        cv.set_fill_value(np.nan)
+        return cv.flatten()
 
     def _update_mets_delta(self, delta):
         self._mets = self._dataset.weather() + delta
