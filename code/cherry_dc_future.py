@@ -99,25 +99,25 @@ def plot_cherry_dc_future_all(output):
         for s in scenarios:
             df = predict_cherry_dc_future(c, s, output)
 
-            plt.figure(figsize=(15,8))
+            plt.figure(figsize=(12,5))
             ax = plot_cherry_dc_future(df, grouped=True)
             ax.set_ylim(ylim)
-            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_grouped'.format(c, s), 'png'))
+            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_grouped'.format(c, s), 'png'), dpi=300)
 
-            plt.figure(figsize=(15,6))
+            plt.figure(figsize=(12,5))
             ax = plot_cherry_dc_future(df, grouped=False)
             ax.set_ylim(ylim)
-            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_individual'.format(c, s), 'png'))
+            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_individual'.format(c, s), 'png'), dpi=300)
 
-            plt.figure(figsize=(15,6))
+            plt.figure(figsize=(12,5))
             ax = plot_cherry_dc_future2(df)
             ax.set_ylim(ylim)
-            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_f_vs_c_legacy'.format(c, s), 'png'))
+            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_f_vs_c_legacy'.format(c, s), 'png'), dpi=300)
 
-            plt.figure(figsize=(15,6))
+            plt.figure(figsize=(12,5))
             ax = plot_cherry_dc_future3(df)
             ax.set_ylim(ylim)
-            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_f_vs_c'.format(c, s), 'png'))
+            plt.savefig(output.outfilename('results/{}'.format(c), '{}_{}_f_vs_c'.format(c, s), 'png'), dpi=300)
 
 if __name__ == '__main__':
     output = Output(basepath='../output', timestamp='20160308-cherry-dc-future')
