@@ -373,16 +373,25 @@ class Estimator(object):
             load('_coeffs', lambda: self.calibrate_multi(years, '_splitter_k_fold'))
 
     # validation
-    def residual(self, year, coeff=None):
+    def residual(self, year, coeff=None, func=None):
         try:
             obs = self.observe(year, julian=True)
             est = self.estimate(year, coeff, julian=True)
-            return est - obs
+            if func is None:
+                func = lambda o, e: e - o
+            return func(obs, est)
         except ObservationError:
             return RESIDUAL_OBSERVATION_ERROR
         except EstimationError:
             return RESIDUAL_ESTIMATION_ERROR
             #return np.inf
+
+    def residuals(self, years, coeff=None, ignore_estimation_error=False, func=None):
+        #e = np.array([self.residual(y, coeff) for y in years])
+        e = np.ma.masked_values([self.residual(y, coeff, func) for y in years], RESIDUAL_OBSERVATION_ERROR)
+        if ignore_estimation_error:
+            e = np.ma.masked_where(e == RESIDUAL_ESTIMATION_ERROR, e)
+        return e
 
     @staticmethod
     def _is_higher_better(how):
@@ -390,13 +399,11 @@ class Estimator(object):
 
     def metric(self, years, how='e', coeff=None, ignore_estimation_error=False):
         years = self._years(years)
-        #e = np.array([self.residual(y, coeff) for y in years])
-        e = np.ma.masked_values([self.residual(y, coeff) for y in years], RESIDUAL_OBSERVATION_ERROR)
-
-        if ignore_estimation_error:
-            e = np.ma.masked_where(e == RESIDUAL_ESTIMATION_ERROR, e)
 
         how = how.lower()
+
+        e = self.residuals(years, coeff, ignore_estimation_error)
+
         if how == 'e':
             return e
         elif how == 'rmse':
