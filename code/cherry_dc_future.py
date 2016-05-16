@@ -88,6 +88,42 @@ def plot_cherry_dc_future3(df, rolling=True, **kwargs):
     ax.legend(loc=3, title='')
     return ax
 
+def plot_cherry_dc_future_together(dfs, scenarios, rolling=True, ylim=None, **kwargs):
+    if rolling:
+        dfs = [pd.rolling_mean(df, window=10, min_periods=5) for df in dfs]
+    dfs = [df.loc[2020:] for df in dfs]
+    def agg(df, n, c, s):
+        sdf = df[c]
+        sdf = sdf.rename(columns={c[i]: i for i in range(len(c))})
+        mdf = pd.melt(sdf.reset_index(), id_vars=['year'], var_name='subject', value_name='jday')
+        mdf['Model'] = n
+        mdf['Scenario'] = s
+        return mdf
+    F = ['GD', 'SF', 'BF', 'DTS', 'TP']
+    C = ['CF', 'SM', 'PM', 'AM']
+    def agg2(df, s):
+        mdf_FC = pd.concat([
+            agg(df, 'ENf', F, s),
+            agg(df, 'ENc', C, s),
+        ])
+        mdf_EN = pd.concat([
+            agg(df, 'EN', F+C, s),
+        ])
+        return pd.concat([mdf_FC, mdf_EN])
+    mdf = pd.concat([agg2(df, s) for df, s in zip(dfs, scenarios)])
+    def plot(x, y, **kwargs):
+        ax = plt.gca()
+        mdf = kwargs.pop('data')
+        mdf_FC = mdf[mdf['Model'].isin(['ENf', 'ENc'])]
+        mdf_EN = mdf[mdf['Model'] == 'EN']
+        ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color={'ENf': sns.xkcd_rgb['pale red'], 'ENc': sns.xkcd_rgb['denim blue']}, estimator=np.nanmean, ls=':', ax=ax)
+        ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[sns.xkcd_rgb['medium green']], estimator=np.nanmean, ax=ax)
+    g = sns.FacetGrid(mdf, row='Scenario', legend_out=False, size=3, aspect=3)
+    g.map_dataframe(plot, 'year', 'jday')
+    g.set_axis_labels('Year', 'Predicted flowering date')
+    g.add_legend()
+    return g
+
 def plot_cherry_dc_future_all(output):
     cultivars = ['Yoshino', 'Kwanzan']
     scenarios = ['rcp45', 'rcp85']
@@ -96,6 +132,12 @@ def plot_cherry_dc_future_all(output):
             ylim = (50, 100)
         elif c == 'Kwanzan':
             ylim = (70, 110)
+
+        dfs = [predict_cherry_dc_future(c, s, output) for s in scenarios]
+        plot_cherry_dc_future_together(dfs, ['RCP 4.5', 'RCP 8.5'], ylim=ylim)
+        plt.savefig(output.outfilename('results/{}'.format(c), '{}_rcp_f_vs_c'.format(c), 'png'), dpi=300)
+        #continue
+
         for s in scenarios:
             df = predict_cherry_dc_future(c, s, output)
 
