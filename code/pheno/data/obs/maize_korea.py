@@ -28,6 +28,17 @@ def read(filename):
             '홍천': 522, # 화천
         })
 
+    # fix mismatching years in some values
+    def fix_year(r):
+        x = r[c]
+        if pd.isnull(x):
+            return x
+        else:
+            return x.replace(year=r.year)
+
+    for c in ['sowing', 'emergence', 'tasseling', 'silking', 'maturity', 'harvest']:
+        df[c] = df.apply(fix_year, axis=1)
+
     return df.set_index(['station', 'cultivar', 'year'])
 
 def conv():
