@@ -109,7 +109,7 @@ class ModelGroup(base.Model):
 
     def plot_obs_vs_est(self, years=None, exclude_ensembles=True, name=None):
         if years is None:
-            years = self.dataset.validate_years
+            years = self.validate_years
         df = pd.melt(
             self.show_predictions(years, julian=True, exclude_ensembles=exclude_ensembles).reset_index(),
             id_vars=['year', 'Obs'], var_name='model', value_name='Est'
