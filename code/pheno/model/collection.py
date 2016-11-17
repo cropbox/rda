@@ -109,7 +109,7 @@ class ModelCollection(object):
         return stat
 
     def show_crossvalidation_all(self, ignore_estimation_error=False, name=None):
-        metrics = ['rmse', 'me', 'mae', 'xe', 'ef', 'ef1', 'd', 'd1', 'dr', 'm', 'r']
+        metrics = ['dr', 'rmse', 'd', 'ef', 'd1', 'ef1', 'me', 'mae', 'xe', 'm', 'r']
         for how in metrics:
             self.show_crossvalidation(how, ignore_estimation_error, name)
 
