@@ -101,7 +101,7 @@ def create_maize_korea():
         output=output,
     )
 
-if __name__ == '__main__':
+def main():
     collection = [
         create_cherry_dc(),
         create_cherry_korea(),
@@ -113,3 +113,6 @@ if __name__ == '__main__':
 
     mc = ModelCollection(collection)
     mc.export()
+
+if __name__ == '__main__':
+    main()
