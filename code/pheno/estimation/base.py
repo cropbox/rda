@@ -194,7 +194,7 @@ class Estimator(object):
         except:
             #HACK: allow masking for exceptions on missing data
             raise ObservationError("weather cannot be clipped for '{}'".format(year))
-        t = self._estimate(year, met, coeff).to_datetime()
+        t = self._estimate(year, met, coeff).to_pydatetime()
         if julian:
             return self._julian(t, year)
         else:
@@ -224,7 +224,7 @@ class Estimator(object):
     # observation
     def observe(self, year, julian=False):
         try:
-            t = self._obss.loc[year].to_datetime().replace(hour=12)
+            t = self._obss.loc[year].to_pydatetime().replace(hour=12)
         except:
             raise ObservationError("observation is not available for '{}'".format(year))
         if julian:
