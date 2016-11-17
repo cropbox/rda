@@ -92,6 +92,15 @@ def create_cherry_korea_bloom():
         output=output,
     )
 
+def create_maize_korea():
+    ds = DataSet('korea_maize', 'maize_korea').set(stage='silking', start_stage='sowing')
+    return ModelGroup(ds,
+        calibrate_years=(2008, 2013),
+        validate_years=(2014, 2015),
+        export_years=(2008, 2015),
+        output=output,
+    )
+
 if __name__ == '__main__':
     collection = [
         create_cherry_dc(),
