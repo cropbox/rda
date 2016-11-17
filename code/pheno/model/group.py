@@ -8,6 +8,7 @@ import seaborn as sns
 
 from itertools import product
 from collections import OrderedDict
+import multiprocessing as mp
 
 class ModelGroupError(Exception):
     pass
@@ -49,9 +50,13 @@ class ModelGroup(base.Model):
             return '{}_{}'.format(ds.obs_station, ds.cultivar)
         return [index(s.dataset) for s in self.suites]
 
+    def _export_func(self, s):
+        s.export()
+
     def export(self):
         # export results for all model suites
-        [s.export() for s in self.suites]
+        with mp.Pool() as pool:
+           pool.map(self._export_func, self.suites)
 
         # export group-level results
         cname = self._key_for_calibration()

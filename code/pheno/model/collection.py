@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import multiprocessing as mp
 
 class ModelCollectionError(Exception):
     pass
@@ -110,8 +111,8 @@ class ModelCollection(object):
 
     def show_crossvalidation_all(self, ignore_estimation_error=False, name=None):
         metrics = ['dr', 'rmse', 'd', 'ef', 'd1', 'ef1', 'me', 'mae', 'xe', 'm', 'r']
-        for how in metrics:
-            self.show_crossvalidation(how, ignore_estimation_error, name)
+        with mp.Pool(processes=2) as p:
+            return p.starmap(self.show_crossvalidation, [(h, True, name) for h in metrics])
 
     def show_sensitivity(self, deltas, name=None):
         def raw(title, df):
