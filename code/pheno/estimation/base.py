@@ -36,6 +36,7 @@ class Estimator(object):
         self._mets = dataset.weather()
         self._obss = dataset.observation()
         self._sds = dataset.start_dates()
+        self._edo = 150 # 150 days after new year (around end of May)
         self._calibrate_years = None
         if coeff is None:
             coeff = {}
@@ -96,7 +97,7 @@ class Estimator(object):
             return datetime.date(year-1, 10, 1)
 
     def end_date(self, year, coeff):
-        return datetime.date(year, 5, 30)
+        return datetime.date(year, 1, 1) + datetime.timedelta(days=self._edo)
 
     def _clip(self, year, coeff):
         t0 = datetime.datetime.combine(self.start_date(year, coeff), datetime.time(0))
