@@ -22,7 +22,7 @@ class GrowingDegree(Estimator):
     def default_options(self):
         return {
             'coeff0': (0, 4.5, 250),
-            'bounds': ((-100, 100), (0, 10), (0, 1000)),
+            'bounds': ((-100, 100), (0, 10), (0, 2000)),
             'grid': (slice(-100, 100, 1), slice(0, 10, 0.1), slice(0, 1000, 1)),
         }
 
