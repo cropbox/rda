@@ -214,6 +214,9 @@ class ModelSuite(base.Model):
         #plt.legend(loc=9, bbox_to_anchor=(0.5, -0.1))
         plt.legend()
         #plt.xlim(min(x), max(x))
+        plt.ticklabel_format(useOffset=False, style='plain')
+        plt.xlabel("Year")
+        plt.ylabel("Date")
 
         if name:
             filename = self.output.outfilename('suite/figures', name, 'png')
