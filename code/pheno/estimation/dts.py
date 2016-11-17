@@ -28,7 +28,7 @@ class StandardTemperature(Estimator):
     def _estimate(self, year, met, coeff):
         Ea = coeff['Ea']
         #T = met.tavg.resample('D') + 273.15
-        T = met.tavg.resample('H') + 273.15
+        T = met.tavg.resample('H').mean() + 273.15
         #Ts = 271.4 # standard temperature (K)
         Ts = coeff['Ts'] + 273.15
         R = 8.314 # gas constant (J K-1 mol-1)
