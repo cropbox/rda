@@ -6,7 +6,7 @@ from pheno.model.base import DEFAULT_ESTIMATORS
 from pheno.data.path import Output
 import pheno.estimation as est
 
-output = Output(timestamp='current')
+output = Output(timestamp='20160307-preset')
 
 def create_cherry_dc():
     ds = DataSet('usa_ds3505', 'cherry_dc', translator={
@@ -112,7 +112,8 @@ def main():
     cherry_dc, cherry_korea, peach_korea, pear_korea, apple_kearneysville = collection
 
     mc = ModelCollection(collection)
-    mc.export()
+    #mc.export()
+    mc.show_crossvalidation('estimate', True, 'crossvalidation')
 
 if __name__ == '__main__':
     main()
