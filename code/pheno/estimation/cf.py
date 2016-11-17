@@ -116,3 +116,37 @@ class ChillingForceDay(ChillingForce):
             'Dc': unit(chill),
             'Dh': unit(anti_chill),
         }, axis=1)
+
+
+class DecayedChillingForce(ChillingForce):
+    @property
+    def name(self):
+        return 'DCF'
+
+    @property
+    def coeff_names(self):
+        return [
+            'Tc', # base temperature (C)
+            'Rc', # chilling requirement
+            'Rh', # heating requirement
+            'Dr', # decay rate
+        ]
+
+    @property
+    def default_options(self):
+        return {
+            'coeff0': (4.5, -200, 300),
+            'bounds': ((0, 10), (-400, -0), (0, 400)),
+            'grid': (slice(0, 10, 0.1), slice(-400, -0, 1), slice(0, 400, 1)),
+        }
+
+    def _aux(self, year, met, coeff):
+        T = met.tavg.clip(lower=0)
+        Tc = coeff['Tc']
+        tdd = (T - Tc) / 24.
+
+        # daily chill / heat (anti-chill) units
+        return pd.concat({
+            'Dc': tdd.clip(upper=0),
+            'Dh': tdd.clip(lower=0),
+        }, axis=1)
