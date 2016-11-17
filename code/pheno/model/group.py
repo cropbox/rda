@@ -22,6 +22,7 @@ class ModelGroup(base.Model):
         observations = self.dataset.obs_stations()
         cultivars = self.dataset.cultivars()
         ocs = product(observations, cultivars)
+        #ocs = reversed(list(product(observations, cultivars)))
 
         def suite(o, c):
             try:
