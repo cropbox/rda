@@ -12,16 +12,7 @@ from ..estimation.am import AlternatingModel
 from ..estimation.mean import Mean
 
 DEFAULT_ESTIMATORS = [
-    GrowingDegree,
-    SigmoidFunc,
     BetaFunc,
-    StandardTemperature,
-    ThermalPeriod,
-    ChillingForce,
-    SequentialModel,
-    ParallelModel,
-    AlternatingModel,
-    Mean,
 ]
 
 class Model(object):

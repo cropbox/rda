@@ -36,7 +36,7 @@ class Estimator(object):
         self._mets = dataset.weather()
         self._obss = dataset.observation()
         self._sds = dataset.start_dates()
-        self._edo = 150 # 150 days after new year (around end of May)
+        self._edo = 300 # 150 days after new year (around end of May)
         self._calibrate_years = None
         if coeff is None:
             coeff = {}
