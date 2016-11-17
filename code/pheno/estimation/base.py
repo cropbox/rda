@@ -35,6 +35,7 @@ class Estimator(object):
         self._dataset = dataset
         self._mets = dataset.weather()
         self._obss = dataset.observation()
+        self._sds = dataset.start_dates()
         self._calibrate_years = None
         if coeff is None:
             coeff = {}
@@ -52,6 +53,14 @@ class Estimator(object):
     @property
     def coeff_names(self):
         return []
+
+    @property
+    def actual_coeff_names(self):
+        n = self.coeff_names
+        # Ds (start date) coeff is not needed if start dates are predefined
+        if self._sds is not None and 'Ds' in n:
+            n.remove('Ds')
+        return n
 
     @property
     def coeff(self):
@@ -77,6 +86,8 @@ class Estimator(object):
 
     # date range
     def start_date(self, year, coeff):
+        if self._sds is not None:
+            return self._sds.loc[year].date()
         try:
             # use Ds as an offset (e.g. Ds = 0 indicates the first day of the year)
             offset = int(coeff['Ds'])
@@ -127,7 +138,7 @@ class Estimator(object):
     # coefficient
     def _listify(self, coeff, keys=None):
         if keys is None:
-            keys = self.coeff_names
+            keys = self.actual_coeff_names
         if type(coeff) is list:
             return list(coeff)
         else:
@@ -135,7 +146,7 @@ class Estimator(object):
 
     def _dictify(self, values, keys=None, update={}):
         if keys is None:
-            keys = self.coeff_names
+            keys = self.actual_coeff_names
         if type(values) is dict:
             d = dict(values)
         else:
@@ -240,12 +251,17 @@ class Estimator(object):
         except:
             fixed_coeff = {}
         coeff0 = self._dictify(opts['coeff0'])
-        coeff_names = list(self.coeff_names)
+        coeff_names = self.actual_coeff_names.copy()
         fixed_coeff_index = []
         for k in fixed_coeff:
             coeff0.pop(k)
             coeff_names.remove(k)
             fixed_coeff_index.append(self.coeff_names.index(k))
+
+        #HACK: remove Ds coeff if not used
+        for k in self.coeff_names:
+            if not k in coeff_names:
+                fixed_coeff_index.append(self.coeff_names.index(k))
 
         x0 = self._listify(coeff0, coeff_names)
         args = (coeff_names, fixed_coeff)

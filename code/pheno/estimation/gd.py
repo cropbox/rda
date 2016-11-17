@@ -64,7 +64,7 @@ class GrowingDegree(Estimator):
         years = self._years(years)
         opts = self.options(**kwargs)
 
-        grids = dict(zip(self.coeff_names, opts['grid']))
+        grids = dict(zip(self.actual_coeff_names, opts['grid']))
 
         def slice_to_range(s):
             return np.arange(s.start, s.stop + s.step, s.step).tolist()

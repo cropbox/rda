@@ -11,11 +11,12 @@ class DataSet(object):
         self.reset()
 
     def __str__(self):
-        return "met_station={}, obs_station={}, cultivar={}, stage={}".format(
+        return "met_station={}, obs_station={}, cultivar={}, stage={}, start_stage={}".format(
             self.met_station,
             self.obs_station,
             self.cultivar,
-            self.stage
+            self.stage,
+            self.start_stage,
         )
 
     def load(self, met_name, obs_name, name=None):
@@ -48,18 +49,21 @@ class DataSet(object):
         self.met_station = pick(self.met_stations()) if met_station is None else met_station
         self.cultivar = pick(self.cultivars())
         self.stage = pick(self.stages())
+        self.start_stage = None
         return self
 
-    def set(self, met_station=None, obs_station=None, cultivar=None, stage=None):
-        if obs_station is not None:
+    def set(self, met_station=None, obs_station=None, cultivar=None, stage=None, start_stage=None):
+        if obs_station in self.obs_stations():
             self.obs_station = obs_station
             self.met_station = self.translate(obs_station)
-        if met_station is not None:
+        if met_station in self.met_stations():
             self.met_station = met_station
-        if cultivar is not None:
+        if cultivar in self.cultivars():
             self.cultivar = cultivar
-        if stage is not None:
+        if stage in self.stages():
             self.stage = stage
+        if start_stage in self.stages():
+            self.start_stage = start_stage
         return self
 
     def ready(self):
@@ -68,6 +72,7 @@ class DataSet(object):
             self.met_station in self.met_stations(),
             self.cultivar in self.cultivars(),
             self.stage in self.stages(),
+            self.start_stage in self.stages() if self.start_stage is not None else True,
         ])
 
     # return avaialble indices
@@ -98,6 +103,17 @@ class DataSet(object):
         cultivar = self.cultivar if cultivar is None else cultivar
         stage = self.stage if stage is None else stage
         try:
-            return self.obsdf.loc[station, cultivar][stage]
+            return self.obsdf.loc[station].loc[cultivar][stage]
         except:
             raise KeyError("invalid keys: station={}, cultivar={}, stage={}".format(station, cultivar, stage))
+
+    def start_dates(self, station=None, cultivar=None, start_stage=None):
+        station = self.obs_station if station is None else station
+        cultivar = self.cultivar if cultivar is None else cultivar
+        start_stage = self.start_stage if start_stage is None else start_stage
+        if start_stage is None:
+            return None
+        try:
+            return self.obsdf.loc[station].loc[cultivar][start_stage]
+        except:
+            raise KeyError("invalid keys: station={}, cultivar={}, start_stage={}".format(station, cultivar, start_stage))
