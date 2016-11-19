@@ -101,6 +101,15 @@ def create_maize_korea():
         output=output,
     )
 
+def create_potato_korea():
+    ds = DataSet('korea_potato', 'potato_korea').set(stage='tuber_initiation', start_stage='planting')
+    return ModelGroup(ds,
+        calibrate_years=[2014, 2024, 2034, 2044, 2054],
+        validate_years=[2015, 2025, 2035],
+        export_years=[2014, 2024, 2034, 2044, 2054, 2015, 2025, 2035],
+        output=output,
+    )
+
 def main():
     collection = [
         create_cherry_dc(),
