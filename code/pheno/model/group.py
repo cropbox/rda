@@ -115,8 +115,8 @@ class ModelGroup(base.Model):
             self.show_predictions(years, julian=True, exclude_ensembles=exclude_ensembles).reset_index(),
             id_vars=['year', 'Obs'], var_name='model', value_name='Est'
         )
-        l = np.floor(min(min(df.Obs), min(df.Est)))
-        u = np.ceil(max(max(df.Obs), max(df.Est)))
+        l = np.floor(min(np.min(df.Obs), np.min(df.Est)))
+        u = np.ceil(max(np.max(df.Obs), np.max(df.Est)))
         sns.jointplot(x='Obs', y='Est', data=df, xlim=(l,u), ylim=(l,u), kind='reg')
         sns.plt.plot([l,u], [l,u], '--')
         sns.plt.show()

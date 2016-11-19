@@ -146,8 +146,8 @@ class ModelCollection(object):
             pd.concat([predictions(g) for g in self.groups]),
             id_vars=['dataset', 'year', 'Obs'], var_name='model', value_name='Est'
         )
-        l = np.floor(min(min(df.Obs), min(df.Est)))
-        u = np.ceil(max(max(df.Obs), max(df.Est)))
+        l = np.floor(min(np.min(df.Obs), np.min(df.Est)))
+        u = np.ceil(max(np.max(df.Obs), np.max(df.Est)))
         p = sns.lmplot(
             x='Obs', y='Est', col=var, data=df,
             col_wrap=5, markers='.',
