@@ -33,20 +33,7 @@ class ModelSuite(base.Model):
 
         # add ensemble models
         skip_calibration = True
-        ensembles = [
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.rmse', how='rmse', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.xe', how='xe', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef', how='ef', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.ef1', how='ef1', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d', how='d', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.d1', how='d1', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.dr', how='dr', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.m', how='m', skip_calibration=skip_calibration),
-            Ensemble(self.dataset).use(models, self.calibrate_years, nick='EN.r', how='r', skip_calibration=skip_calibration),
-            RandomForest(self.dataset).use(models, self.calibrate_years, nick='EN.rf', skip_calibration=skip_calibration),
-            RandomForest2(self.dataset).use(models, self.calibrate_years, nick='EN.rf2', skip_calibration=skip_calibration),
-        ]
+        ensembles = []
 
         # ensemble calibration
         for m in ensembles:

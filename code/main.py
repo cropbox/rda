@@ -6,7 +6,7 @@ from pheno.model.base import DEFAULT_ESTIMATORS
 from pheno.data.path import Output
 import pheno.estimation as est
 
-output = Output(timestamp='current')
+output = Output(timestamp='20161117-potato-korea')
 
 def create_cherry_dc():
     ds = DataSet('usa_ds3505', 'cherry_dc', translator={
@@ -124,4 +124,4 @@ def main():
     mc.export()
 
 if __name__ == '__main__':
-    main()
+    pass
