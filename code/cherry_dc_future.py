@@ -10,6 +10,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.lines
 
+sns.set_style("ticks")
+sns.set_palette(sns.dark_palette("black"))
+
+color_EN = sns.xkcd_rgb['black'] # 'medium green'
+color_ENc = sns.xkcd_rgb['dark grey'] # 'denim blue'
+color_ENf = sns.xkcd_rgb['light grey'] # 'pale red'
+
 # plot prediction with RCP projection scenarios
 
 def predict_cherry_dc_future(cultivar, scenario, output=None):
@@ -82,8 +89,8 @@ def plot_cherry_dc_future3(df, rolling=True, **kwargs):
     ])
     #mdf = pd.concat([mdf_FC, mdf_EN])
     #ax = sns.tsplot(data=mdf, time='year', value='jday', condition='Model', unit='subject', ci=95, estimator=np.nanmean, **kwargs)
-    ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color=[sns.xkcd_rgb['pale red'], sns.xkcd_rgb['denim blue']], estimator=np.nanmean, ls=':', **kwargs)
-    ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[sns.xkcd_rgb['medium green']], estimator=np.nanmean, ax=ax, **kwargs)
+    ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color=[color_ENf, color_ENc], estimator=np.nanmean, ls=':', **kwargs)
+    ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[color_EN], estimator=np.nanmean, ax=ax, **kwargs)
     ax.set(xlabel='Year', ylabel='Predicted flowering date')
     ax.legend(loc=3, title='')
     return ax
@@ -116,8 +123,8 @@ def plot_cherry_dc_future_together(dfs, scenarios, rolling=True, ylim=None, **kw
         mdf = kwargs.pop('data')
         mdf_FC = mdf[mdf['Model'].isin(['ENf', 'ENc'])]
         mdf_EN = mdf[mdf['Model'] == 'EN']
-        ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color={'ENf': sns.xkcd_rgb['pale red'], 'ENc': sns.xkcd_rgb['denim blue']}, estimator=np.nanmean, ls=':', ax=ax)
-        ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[sns.xkcd_rgb['medium green']], estimator=np.nanmean, ax=ax)
+        ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color={'ENf': color_ENf, 'ENc': color_ENc}, estimator=np.nanmean, ls=':', ax=ax)
+        ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[color_EN], estimator=np.nanmean, ax=ax)
     g = sns.FacetGrid(mdf, row='Scenario', legend_out=False, size=3, aspect=3)
     g.map_dataframe(plot, 'year', 'jday')
     g.set_axis_labels('Year', 'Predicted flowering date')
