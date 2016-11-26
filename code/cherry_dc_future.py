@@ -10,12 +10,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.lines
 
+sns.set(font_scale=1.2)
 sns.set_style("ticks")
 sns.set_palette(sns.dark_palette("black"))
 
 color_EN = sns.xkcd_rgb['black'] # 'medium green'
 color_ENc = sns.xkcd_rgb['dark grey'] # 'denim blue'
-color_ENf = sns.xkcd_rgb['light grey'] # 'pale red'
+color_ENf = sns.xkcd_rgb['grey'] # 'pale red'
 
 # plot prediction with RCP projection scenarios
 
@@ -122,8 +123,12 @@ def plot_cherry_dc_future_together(dfs, scenarios, rolling=True, ylim=None, **kw
         ax = plt.gca()
         mdf = kwargs.pop('data')
         mdf_FC = mdf[mdf['Model'].isin(['ENf', 'ENc'])]
+        mdf_ENc = mdf[mdf['Model'] == 'ENc']
+        mdf_ENf = mdf[mdf['Model'] == 'ENf']
         mdf_EN = mdf[mdf['Model'] == 'EN']
-        ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color={'ENf': color_ENf, 'ENc': color_ENc}, estimator=np.nanmean, ls=':', ax=ax)
+        #ax = sns.tsplot(data=mdf_FC, time='year', value='jday', condition='Model', unit='subject', ci=95, color={'ENf': color_ENf, 'ENc': color_ENc}, estimator=np.nanmean, ls=':', ax=ax)
+        ax = sns.tsplot(data=mdf_ENc, time='year', value='jday', condition='Model', unit='subject', ci=95, color=[color_ENc], estimator=np.nanmean, ls=':', ax=ax)
+        ax = sns.tsplot(data=mdf_ENf, time='year', value='jday', condition='Model', unit='subject', ci=95, color=[color_ENf], estimator=np.nanmean, ls='--', ax=ax)
         ax = sns.tsplot(data=mdf_EN, time='year', value='jday', condition='Model', err_style=None, ci=95, color=[color_EN], estimator=np.nanmean, ax=ax)
     g = sns.FacetGrid(mdf, row='Scenario', legend_out=False, size=3, aspect=3)
     g.map_dataframe(plot, 'year', 'jday')
