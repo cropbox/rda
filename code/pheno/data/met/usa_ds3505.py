@@ -45,6 +45,7 @@ def read(name):
         'I', 'Type', 'QCP', 'Q',
         'dummy'
     ], axis=1).rename(columns={'Temp': 'tavg'})
+    df = df.drop_duplicates('timestamp', keep='last')
     df = df.set_index(['timestamp'])
     df = df.resample('1Min').interpolate('time').resample('1H', how='first')
 
