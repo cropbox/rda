@@ -47,7 +47,7 @@ def read(name):
     ], axis=1).rename(columns={'Temp': 'tavg'})
     df = df.drop_duplicates('timestamp', keep='last')
     df = df.set_index(['timestamp'])
-    df = df.resample('1Min').interpolate('time').resample('1H', how='first')
+    df = df.resample('1Min').interpolate('time').resample('1H').first()
 
     df['station'] = station
     return df.reset_index().set_index(['station', 'timestamp'])
