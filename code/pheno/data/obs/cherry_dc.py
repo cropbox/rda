@@ -33,7 +33,7 @@ def read_pbd(filename, sheetname, station, stage):
 def read_obs(filename, station, cultivar):
     def parse_date(x, year):
         try:
-            return datetime.datetime.strptime('%s-%s' % (year, x), '%Y-%m/%d').date()
+            return datetime.datetime.strptime(x,'%Y-%m-%d').date()
         except:
             return pd.NaT
 
