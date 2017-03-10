@@ -47,7 +47,7 @@ def read_obs(filename, station, cultivar):
     df['cultivar'] = cultivar
 
     #HACK: avoid weird type error
-    df = pd.pivot_table(df, index=['station', 'cultivar', 'year'], columns='stage', aggfunc=lambda x:x)
+    df = df.set_index(['station', 'cultivar', 'year', 'stage']).unstack('stage')
     df.columns = df.columns.droplevel(0)
 
     for k, v in df.iterrows():
