@@ -37,7 +37,7 @@ class PickleStore(AbstractStore):
         return pd.read_pickle(self._filename(kind, basename, 'pkl'))
 
     def write(self, df, kind, basename):
-        df.to_pickle(self._filename(kind, basename, 'pkl'))
+        df.to_pickle(self._outfilename(kind, basename, 'pkl'))
         return df
 
 Store = HDF5Store
