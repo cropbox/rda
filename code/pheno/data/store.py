@@ -40,4 +40,10 @@ class PickleStore(AbstractStore):
         df.to_pickle(self._outfilename(kind, basename, 'pkl'))
         return df
 
+#TODO: column verification (i.e. timestamp columns)
+class WeaStore(AbstractStore):
+    def write(self, df, kind, basename):
+        df.to_csv(self._outfilename(kind, basename, 'wea'), sep='\t', index=False)
+        return df
+
 Store = HDF5Store
