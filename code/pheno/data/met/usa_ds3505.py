@@ -7,15 +7,18 @@ import pytz
 
 utc = pytz.utc
 est = pytz.timezone('US/Eastern')
+pst = pytz.timezone('US/Pacific')
 
 NAMES = [
     'dc', #724050
     'martinsburg', #724177
+    'seatac', #727930
 ]
 
 TIMEZONES = {
     'dc': est,
     'martinsburg': est,
+    'seatac': pst,
 }
 
 def read(name):
