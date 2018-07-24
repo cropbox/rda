@@ -99,7 +99,7 @@ class Estimator(object):
     def end_date(self, year, coeff):
         return datetime.date(year, 1, 1) + datetime.timedelta(days=self._edo)
 
-    def _clip(self, year, coeff):
+    def _clip(self, year, coeff, skip_range_check=False):
         t0 = datetime.datetime.combine(self.start_date(year, coeff), datetime.time(0))
         t1 = datetime.datetime.combine(self.end_date(year, coeff), datetime.time(23))
         tz = self._mets.index.tz
@@ -107,8 +107,9 @@ class Estimator(object):
             t0 = tz.localize(t0)
             t1 = tz.localize(t1)
         df = self._mets[t0:t1]
-        assert df.index[0] == t0, "start date '{}' != '{}'".format(df.index[0], t0)
-        assert df.index[-1] == t1, "end date '{}' != '{}'".format(df.index[-1], t1)
+        if not skip_range_check:
+            assert df.index[0] == t0, "start date '{}' != '{}'".format(df.index[0], t0)
+            assert df.index[-1] == t1, "end date '{}' != '{}'".format(df.index[-1], t1)
         return df
 
     def _years(self, years, skip_observation_check=False):
@@ -185,13 +186,13 @@ class Estimator(object):
         #return self._match(met.ix[:, -1], 1.0)
         raise NotImplementedError
 
-    def estimate(self, year, coeff=None, julian=False):
+    def estimate(self, year, coeff=None, julian=False, skip_range_check=False):
         if coeff is None:
             coeff = self._coeff
         else:
             coeff = self._normalize(coeff)
         try:
-            met = self._clip(year, coeff)
+            met = self._clip(year, coeff, skip_range_check)
         except:
             #HACK: allow masking for exceptions on missing data
             raise ObservationError("weather cannot be clipped for '{}'".format(year))
@@ -201,14 +202,14 @@ class Estimator(object):
         else:
             return t
 
-    def estimate_safely(self, year, coeff=None, julian=False):
+    def estimate_safely(self, year, coeff=None, julian=False, skip_range_check=False):
         try:
-            return self.estimate(year, coeff, julian)
+            return self.estimate(year, coeff, julian, skip_range_check)
         except:
             return self._mask(julian)
 
-    def estimates(self, years, coeff=None, julian=False, skip_observation_check=True):
-        s = [self.estimate_safely(y, coeff, julian) for y in self._years(years, skip_observation_check)]
+    def estimates(self, years, coeff=None, julian=False, skip_observation_check=True, skip_range_check=False):
+        s = [self.estimate_safely(y, coeff, julian, skip_range_check) for y in self._years(years, skip_observation_check)]
         return np.ma.masked_values(s, self._mask(julian))
 
     def estimate_multi(self, year, coeffs=None, julian=False):
