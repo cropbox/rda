@@ -69,7 +69,7 @@ def conv():
     obs = read_obs(obsname, station='DC', cultivar='Yoshino')
 
     # merge
-    cherry = pbd.combine_first(obs)
-    cherry = obs.combine_first(cherry)
-
+    #HACK: combine_first -- https://github.com/pandas-dev/pandas/issues/28481
+    cherry = pbd.reindex(columns=pbd.columns|obs.columns).combine_first(obs)
+    cherry = obs.reindex(columns=obs.columns|cherry.columns).combine_first(cherry)
     return Store().write(cherry, 'obs', 'cherry_dc')

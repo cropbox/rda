@@ -53,7 +53,9 @@ def read(name):
     df = df.resample('1Min').interpolate('time').resample('1H').first()
 
     df['station'] = station
-    return df.reset_index().set_index(['station', 'timestamp'])
+    df = df.reset_index().set_index(['station', 'timestamp'])
+    Store().write(df, 'met', f'usa_ds3505_{name}')
+    return df
 
 def conv():
     df = pd.concat([read(n) for n in NAMES])
